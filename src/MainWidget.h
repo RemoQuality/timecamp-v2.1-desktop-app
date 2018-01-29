@@ -96,7 +96,7 @@ private:
     bool loggedIn;
     QString apiKey;
     QString timerName;
-    bool isTimerRunning;
+    bool timerIsRunning;
 
     void setApiKey(const QString &apiKey);
     void setTimerName(const QString &timerName);

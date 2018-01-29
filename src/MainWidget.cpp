@@ -39,7 +39,7 @@ MainWidget::MainWidget(QWidget *parent) :
 
     // set some defaults
     loggedIn = false;
-    isTimerRunning = false;
+    timerIsRunning = false;
     apiKey = "";
     timerName = "";
 
@@ -208,11 +208,7 @@ void MainWidget::checkIsTimerRunning()
     QTWEPage->runJavaScript("angular.element(document.body).injector().get('TimerService').timer.isTimerRunning",
     [this](const QVariant &v) {
         qDebug() << "Timer running: " << v.toString();
-        bool tempIsItRunning = v.toBool();
-        setIsTimerRunning(tempIsItRunning);
-        if(tempIsItRunning){
-            fetchTimerName();
-        }
+        setIsTimerRunning(v.toBool());
     });
 }
 
@@ -315,10 +311,18 @@ void MainWidget::setApiKey(const QString &apiKey) {
 
 void MainWidget::setTimerName(const QString &timerName) {
     MainWidget::timerName = timerName;
+    stopTaskAct->setText("Stop " + timerName);
+    stopTaskAct->setEnabled(true); // reenable task stopping
 }
 
 void MainWidget::setIsTimerRunning(bool isTimerRunning) {
-    MainWidget::isTimerRunning = isTimerRunning;
+    MainWidget::timerIsRunning = isTimerRunning;
+    if(isTimerRunning){
+        fetchTimerName(); // this will make menu say "Stop XYZ task"
+    }else{ // no timer running
+        setTimerName("timer"); // make the option say "Stop task"; hacky?
+        stopTaskAct->setEnabled(false); // disable the option - gray it out
+    }
 }
 
 const QString &MainWidget::getTimerName() const {
@@ -326,5 +330,5 @@ const QString &MainWidget::getTimerName() const {
 }
 
 bool MainWidget::isIsTimerRunning() const {
-    return isTimerRunning;
+    return timerIsRunning;
 }
