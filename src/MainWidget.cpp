@@ -43,7 +43,7 @@ MainWidget::MainWidget(QWidget *parent) :
     apiKey = "";
     timerName = "";
 
-    restoreGeometry(settings.value("mainWindowGeometry").toByteArray()); // from QWidget; restore saved settings
+    restoreGeometry(settings.value("mainWindowGeometry").toByteArray()); // from QWidget; restore saved window position
 
     this->setupWebview(); // starts the embedded webpage
     this->setupTray(parent); // creates all actions in tray here
@@ -100,7 +100,7 @@ void MainWidget::setupWebview()
 
 //    pagePointer = m_pWebEngineView->page();
 
-    QTWEPage->load(QUrl("https://www.timecamp.com/app#/dashboard"));
+    QTWEPage->load(QUrl("https://www.timecamp.com/dashboard"));
 //    QTWEPage->load(QUrl("http://request.urih.com/"));
 
     refreshBind = new QShortcut(QKeySequence::Refresh, this);
