@@ -44,6 +44,7 @@ list(APPEND TC_SOURCES
 	"src/TCRequestInterceptor.cpp"
 	"src/Comms.cpp"
 	"src/AppData.cpp"
+	"src/Autorun.cpp"
 	"src/WindowEvents.h" # a header without cpp file
 )
 
