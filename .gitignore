@@ -3,7 +3,7 @@ build-*/
 QtCreator_old_projfiles/
 deploy/
 
-CMakeLists.txt.user
+CMakeLists.txt.user*
 CMakeSettings.json
 
 .idea/
