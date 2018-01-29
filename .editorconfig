@@ -1,0 +1,32 @@
+# http://EditorConfig.org
+
+# OOTB support for Visual Studio (and many frontend IDEs)
+# CLion plugin: in repo, or https://github.com/JetBrains/intellij-community/tree/master/plugins/editorconfig
+# XCode plugin: in Alcatraz repo, or https://github.com/MarcoSero/EditorConfig-Xcode
+# QT Creator plugin: waiting for merge into release; for now: https://github.com/editorconfig/editorconfig-qtcreator
+
+
+# This file is the top-most EditorConfig file
+root = true
+
+# All Files
+[*]
+charset = utf-8
+end_of_line = crlf
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Configuration Files
+[*.{json,xml,yml,config,props,targets,nuspec,resx,ruleset,vsixmanifest,vsct}]
+indent_size = 2
+
+# Markdown Files
+[*.md]
+trim_trailing_whitespace = false
+
+# Bash Files
+[*.sh]
+end_of_line = lf
+
