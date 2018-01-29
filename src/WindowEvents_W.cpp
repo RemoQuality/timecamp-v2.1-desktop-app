@@ -8,6 +8,7 @@ void WindowEvents_W::logAppName(unsigned char* appName, unsigned char* windowNam
 void WindowEvents_W::logAppName(QString appName, QString windowName)
 {
     //qInfo("APP: %s | %s \n", appName.toLatin1().constData(), windowName.toLatin1().constData());
+    appName.replace(".exe", "");
     AppData *app = new AppData(appName, windowName);
     Comms::instance().saveApp(app);
 }
