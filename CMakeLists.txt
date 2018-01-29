@@ -6,9 +6,9 @@ if(WIN32)
 	if ("${CMAKE_GENERATOR}" MATCHES "MinGW")
     set(CMAKE_PREFIX_PATH
 		"C:\\Qt\\5.10.0\\mingw53_32\\lib\\cmake" # what about mingw64?
-		#"C:\\Qt\\5.10.0\\mingw53_32" # what about mingw64?
+		# also, there's no QtWebEngine (no chromium) for MinGW, so we're stuck with MSVC on win32
 	)
-	elseif("${CMAKE_GENERATOR}" MATCHES "Visual Studio" OR "${CMAKE_GENERATOR}" MATCHES "NMake")
+	elseif("${CMAKE_GENERATOR}" MATCHES "Visual Studio" OR "${CMAKE_GENERATOR}" MATCHES "NMake" OR "${CMAKE_GENERATOR}" MATCHES "Ninja")
     set(CMAKE_PREFIX_PATH
 		"C:\\Qt\\5.10.0\\msvc2017_64\\lib\\cmake"
 		"C:\\WinDDK\\7600.16385.1\\lib\\win7\\i386"
@@ -34,6 +34,7 @@ find_package(Qt5Gui REQUIRED)
 find_package(Qt5Network REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5WebEngineWidgets REQUIRED)
+find_package(Qt5Sql REQUIRED)
 
 ADD_DEFINITIONS(-DUNICODE -D_UNICODE -DPSAPI_VERSION=1)
 
@@ -61,7 +62,7 @@ if(WIN32)
 		"user32.lib"
 		"comsuppw.lib"
 	)
-endif(WIN32)
+endif()
 
 if(UNIX AND NOT APPLE)
     list(APPEND TC_SOURCES
