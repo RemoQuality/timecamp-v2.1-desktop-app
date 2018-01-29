@@ -1,4 +1,5 @@
 #include "Comms.h"
+#define SETT_APIKEY "API_KEY"
 
 
 Comms &Comms::instance()
@@ -44,8 +45,16 @@ void Comms::notifyOfApp(AppData *app, qint64 start, qint64 end){
     qDebug() << "getAppName: " << app->getAppName();
     qDebug() << "getWindowName: " << app->getWindowName();
 
+    // read api key from settings
+    QString apiKey = settings.value(SETT_APIKEY).toString();
+
+    if(apiKey == ""){
+        qDebug() << "[EMPTY API KEY !!!]";
+        return;
+    }
+
     QUrlQuery params;
-    params.addQueryItem("api_token", "6fb5e606987ab29237e550dd43");
+    params.addQueryItem("api_token", apiKey);
 
     params.addQueryItem("computer_activities[0][application_name]",app->getAppName());
     params.addQueryItem("computer_activities[0][window_title]",app->getWindowName());
@@ -58,7 +67,7 @@ void Comms::notifyOfApp(AppData *app, qint64 start, qint64 end){
     qDebug() << "end_time: " << end_time;
     params.addQueryItem("computer_activities[0][end_time]", end_time);
 
-    QUrl serviceURL("https://www.timecamp.com/third_party/api/activity/api_token/6fb5e606987ab29237e550dd43");
+    QUrl serviceURL("https://www.timecamp.com/third_party/api/activity/api_token/" + apiKey);
     QNetworkRequest request(serviceURL);
     request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
 

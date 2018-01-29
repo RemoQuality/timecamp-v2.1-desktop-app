@@ -4,6 +4,7 @@
 // settings fields
 #define SETT_TRACK_PC_ACTIVITIES "TRACK_PC_ACTIVITIES"
 #define SETT_AUTOSTART "AUTOSTART"
+#define SETT_APIKEY "API_KEY"
 
 #ifdef __linux__
 #include "WindowEvents_U.h"
@@ -308,6 +309,7 @@ void MainWidget::createActions(QMenu *menu)
 
 void MainWidget::setApiKey(const QString &apiKey) {
     MainWidget::apiKey = apiKey;
+    settings.setValue(SETT_APIKEY, apiKey); // save apikey to settings
 }
 
 void MainWidget::setTimerName(const QString &timerName) {
@@ -316,4 +318,12 @@ void MainWidget::setTimerName(const QString &timerName) {
 
 void MainWidget::setIsTimerRunning(bool isTimerRunning) {
     MainWidget::isTimerRunning = isTimerRunning;
+}
+
+const QString &MainWidget::getTimerName() const {
+    return timerName;
+}
+
+bool MainWidget::isIsTimerRunning() const {
+    return isTimerRunning;
 }

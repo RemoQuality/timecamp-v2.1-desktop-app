@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QDateTime>
+#include <QSettings>
 
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
@@ -34,6 +35,7 @@ public:
 private:
     AppData *lastApp;
     qint64 lastAppTimestamp;
+    QSettings settings;
 
 signals:
 

@@ -29,10 +29,14 @@ class QMenu;
 class MainWidget : public QWidget
 {
     Q_OBJECT
+    Q_DISABLE_COPY(MainWidget)
 
 public:
     explicit MainWidget(QWidget *parent = 0);
     ~MainWidget();
+
+    const QString &getTimerName() const;
+    bool isIsTimerRunning() const;
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
