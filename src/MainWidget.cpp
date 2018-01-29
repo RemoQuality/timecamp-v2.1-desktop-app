@@ -271,7 +271,7 @@ void MainWidget::createActions(QMenu *menu)
     startTaskAct->setShortcutContext(Qt::ApplicationShortcut);
     connect(startTaskAct, &QAction::triggered, this, &MainWidget::startTask);
 
-    stopTaskAct = new QAction(tr("Stop task"), this);
+    stopTaskAct = new QAction(tr("Stop timer"), this);
     stopTaskAct->setStatusTip(tr("Stop currently running timer"));
     stopTaskAct->setShortcut(Qt::CTRL + Qt::ALT + Qt::Key_M);
     stopTaskAct->setShortcutVisibleInContextMenu(true);
