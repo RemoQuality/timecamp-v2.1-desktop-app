@@ -53,6 +53,9 @@ list(APPEND TC_SOURCES
 if(WIN32)
     list(APPEND TC_SOURCES
 		"src/WindowEvents_W.cpp"
+		"src/ControlIterator/IControlIterator.cpp"
+		"src/ControlIterator/AccControlIterator.cpp"
+		"src/ControlIterator/UIAControlIterator.cpp"
 	)
 
     list(APPEND TC_LIBS

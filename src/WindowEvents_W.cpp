@@ -1,4 +1,5 @@
 #include "WindowEvents_W.h"
+#include "ControlIterator/UIAControlIterator.h"
 
 void WindowEvents_W::logAppName(unsigned char* appName, unsigned char* windowName)
 {

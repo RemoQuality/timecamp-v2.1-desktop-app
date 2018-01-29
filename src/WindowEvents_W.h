@@ -22,6 +22,7 @@ class WindowEvents_W : public WindowEvents
 {
 public:
     void static logAppName(QString appName, QString windowName);
+    static double getWindowsVersion();
 
 protected:
     void run() override; // your thread implementation goes here
@@ -41,7 +42,6 @@ private:
 
     static BOOL EnumChildAppHostWindowsCallback(HWND hWnd, LPARAM lp);
     static void GetProcessName(HWND hWnd, TCHAR *procName);
-    static double getWindowsVersion();
     static void ParseProcessName(HANDLE hProcess, TCHAR *processName);
 
     void InitializeWindowsHook(HWINEVENTHOOK g_hook, HWINEVENTHOOK wname_hook);
