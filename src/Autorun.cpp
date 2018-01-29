@@ -1,6 +1,6 @@
 #include "Autorun.h"
 
-#define APPLICATION_NAME "TimeCamp"
+#include "Settings.h"
 
 void Autorun::enableAutorun() {
 #ifdef _WIN32

@@ -1,16 +1,15 @@
 #include "MainWidget.h"
 #include "ui_MainWidget.h"
 
-// settings fields
-#define SETT_TRACK_PC_ACTIVITIES "TRACK_PC_ACTIVITIES"
-#define SETT_AUTOSTART "AUTOSTART"
-#define SETT_APIKEY "API_KEY"
+#include "Settings.h"
 
 #ifdef __linux__
 #include "WindowEvents_U.h"
 WindowEvents *captureEventsThread = new WindowEvents_U();
 #elif _WIN32
 #include "WindowEvents_W.h"
+#include "Autorun.h"
+
 WindowEvents *captureEventsThread = new WindowEvents_W();
 #else
     // mac
@@ -240,9 +239,11 @@ void MainWidget::fetchTimerName()
 void MainWidget::autoStart(bool checked)
 {
     settings.setValue(SETT_AUTOSTART, checked);
-    // await impl
-    // WAutoRun.add();
-    // WAutoRun.remove();
+    if(checked){
+        Autorun::enableAutorun();
+    }else{
+        Autorun::disableAutorun();
+    }
 }
 
 void MainWidget::tracker(bool checked)

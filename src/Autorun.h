@@ -7,8 +7,8 @@
 
 class Autorun {
 public:
-    void enableAutorun();
-    void disableAutorun();
+    static void enableAutorun();
+    static void disableAutorun();
 };
 
 

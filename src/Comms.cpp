@@ -1,5 +1,6 @@
 #include "Comms.h"
-#define SETT_APIKEY "API_KEY"
+
+#include "Settings.h"
 
 
 Comms &Comms::instance()

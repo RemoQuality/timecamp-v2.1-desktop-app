@@ -39,6 +39,7 @@ find_package(Qt5Sql REQUIRED)
 ADD_DEFINITIONS(-DUNICODE -D_UNICODE -DPSAPI_VERSION=1)
 
 list(APPEND TC_SOURCES
+	"src/Settings.h" # a header without cpp file
 	"src/main.cpp"
 	"src/MainWidget.cpp"
 	"src/TCRequestInterceptor.cpp"

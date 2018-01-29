@@ -1,3 +1,4 @@
+#include "Settings.h"
 #include "MainWidget.h"
 #include <QApplication>
 
@@ -7,10 +8,10 @@ int main(int argc, char *argv[])
     // Eg. C:\Users\timecamp\AppData\Local\Time Solutions\TimeCamp tracking tool
     // Settings are saved in registry: HKEY_CURRENT_USER\Software\Time Solutions\TimeCamp tracking tool
 
-    QCoreApplication::setOrganizationDomain("TimeCamp.com");
-    QCoreApplication::setOrganizationName("Time Solutions");
-    QCoreApplication::setApplicationName("TimeCamp tracking tool");
-    QCoreApplication::setApplicationVersion("2.0.0.0");
+    QCoreApplication::setOrganizationName(ORGANIZATION_NAME);
+    QCoreApplication::setOrganizationDomain(ORGANIZATION_DOMAIN);
+    QCoreApplication::setApplicationName(APPLICATION_NAME);
+    QCoreApplication::setApplicationVersion(APPLICATION_VERSION);
 
     // Enable high dpi support
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -19,7 +20,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     MainWidget w;
 
-    w.setWindowTitle("TimeCamp");
+    w.setWindowTitle(WINDOW_NAME);
 
     return app.exec();
 }
