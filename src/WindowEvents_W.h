@@ -22,7 +22,7 @@ typedef struct {
 class WindowEvents_W : public WindowEvents
 {
 public:
-    void static logAppName(QString appName, QString windowName);
+    void static logAppName(QString appName, QString windowName, HWND passedHwnd);
     static double getWindowsVersion();
 
 protected:
@@ -54,15 +54,21 @@ class WindowDetails
 public:
     WindowDetails();
     HWND currenthwnd;
+
     bool standardAccCallback(IControlItem* node, void* userData);
     bool chromeAccCallback(IControlItem * node, void * userData);
     bool operaAccCallback(IControlItem * node, void * userData);
-    QString GetAdditionalInfo(QString processName);
-    const QString &getURL_REGEX() const;
-    void setURL_REGEX(const QString &URL_REGEX);
+
+    QString GetAdditionalInfo(QString processName, HWND passedHwnd);
+    bool startsWithGoodProtocol(QString checkedStr);
+
+    const QRegExp &getURL_REGEX() const;
+    void setURL_REGEX(const QRegExp &URL_REGEX);
+
 protected:
 private:
-    QString URL_REGEX;
+    QString URL_REGEX_STR;
+    QRegExp URL_REGEX;
 };
 
 #endif // WINDOWEVENTS_W_H

@@ -117,8 +117,8 @@ void MainWidget::setupWebview()
 
 void MainWidget::webpageTitleChanged(QString title)
 {
-    qInfo("[NEW_TC]: Webpage title changed: ");
-    qInfo(title.toLatin1().constData());
+//    qInfo("[NEW_TC]: Webpage title changed: ");
+//    qInfo(title.toLatin1().constData());
     trayIcon->setToolTip(title);
     if(!loggedIn){
         checkIfLoggedIn(title);

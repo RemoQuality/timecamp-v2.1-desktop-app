@@ -7,12 +7,12 @@ void WindowEvents_W::logAppName(unsigned char* appName, unsigned char* windowNam
     //qInfo("APP: %s | %s \n", appName, windowName);
 }
 
-void WindowEvents_W::logAppName(QString appName, QString windowName)
+void WindowEvents_W::logAppName(QString appName, QString windowName, HWND passedHwnd)
 {
     //qInfo("APP: %s | %s \n", appName.toLatin1().constData(), windowName.toLatin1().constData());
     appName.replace(".exe", "");
     WindowDetails *details = new WindowDetails();
-    QString additionalInfo = details->GetAdditionalInfo(appName);
+    QString additionalInfo = details->GetAdditionalInfo(appName, passedHwnd);
     AppData *app = new AppData(appName, windowName, additionalInfo);
     Comms::instance().saveApp(app);
 }
@@ -80,7 +80,7 @@ void WindowEvents_W::HandleWinNameEvent(HWINEVENTHOOK hook, DWORD event, HWND hw
                 windowName = _com_util::ConvertBSTRToString(bstrName);
 
                 if (SysStringLen(bstrName) > 0) {
-                    WindowEvents_W::logAppName(procNameNorm, windowName2);
+                    WindowEvents_W::logAppName(procNameNorm, windowName2, hwnd);
                 }
 
                 SysFreeString(bstrName);
@@ -122,13 +122,16 @@ void WindowEvents_W::HandleWinEvent(HWINEVENTHOOK hook, DWORD event, HWND hwnd,
 
              QString windowName2((QChar*)bstrName, SysStringLen(bstrName));
 
+// broken
 //            TCHAR windowName[255];
 //            MultiByteToWideChar(CP_UTF8, 0, bstrName, SysStringLen(bstrName), windowName, 255);
-            char *windowName;
-            windowName = _com_util::ConvertBSTRToString(bstrName);
+
+// was working, but not Qt
+//            char *windowName;
+//            windowName = _com_util::ConvertBSTRToString(bstrName);
 
             if (SysStringLen(bstrName) > 0) {
-                 WindowEvents_W::logAppName(procNameNorm, windowName2);
+                 WindowEvents_W::logAppName(procNameNorm, windowName2, hwnd);
             }
 
             SysFreeString(bstrName);
@@ -147,7 +150,7 @@ void WindowEvents_W::GetProcessName(HWND hWnd, TCHAR *procName)
 
     hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, false, dwProcessId);
     if (hProcess == nullptr) {
-        if (WindowEvents_W::getWindowsVersion() > 5) {
+        if (getWindowsVersion() > 5) {
             hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, dwProcessId);
             if (hProcess == nullptr) {
                 procName = (TCHAR *) _T("");
@@ -155,7 +158,7 @@ void WindowEvents_W::GetProcessName(HWND hWnd, TCHAR *procName)
         }
     }
 
-    WindowEvents_W::ParseProcessName(hProcess, procName);
+    ParseProcessName(hProcess, procName);
 
     if (memcmp(procName, TEXT("ApplicationFrameHost.exe"), sizeof(procName)) == 0) { // we need to go deeper
         windowinfo info = {0, 0}; // set owner and child to zeros
@@ -171,12 +174,12 @@ void WindowEvents_W::GetProcessName(HWND hWnd, TCHAR *procName)
             if (getWindowsVersion() > 5) {
                 active_process = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, info.childpid);
                 if (active_process == nullptr) {
-                    procName = (TCHAR *) _T("explorer000");
+                    procName = (TCHAR *) _T("");
                 }
             }
         }
 
-        WindowEvents_W::ParseProcessName(active_process, procName);
+        ParseProcessName(active_process, procName);
 
         CloseHandle(active_process);
     }
@@ -242,19 +245,26 @@ void WindowEvents_W::ShutdownWindowsHook(HWINEVENTHOOK g_hook, HWINEVENTHOOK wna
     CoUninitialize();
 }
 
+bool WindowDetails::startsWithGoodProtocol(QString checkedStr)
+{
+    if (checkedStr.midRef(0, 7) == "http://" || checkedStr.midRef(0, 8) == "https://" || checkedStr.midRef(0, 6) == "ftp://" || checkedStr.midRef(0, 7) == "file://") {
+        return true;
+    }
+    return false;
+}
+
 bool WindowDetails::standardAccCallback(IControlItem *node, void *userData)
 {
     QString *pStr = (QString *) userData;
     QString value = QString::fromStdWString(node->getValue());
 
-    if (value.midRef(0, 7) == "http://" || value.midRef(0, 8) == "https://" || value.midRef(0, 6) == "ftp://" || value.midRef(0, 7) == "file://") {
-        if (*pStr == "<unknown>" || *pStr == "") {
-            *pStr = value;
-        }
-    }
 
-    if (*pStr != "") {
-        return false;
+    if (startsWithGoodProtocol(value)) {
+        qDebug() << "[VAL] " << value;
+        if (*pStr == "" || *pStr == "0" || *pStr == "<unknown>") {
+            *pStr = value;
+            return false;
+        }
     }
 
     return true;
@@ -264,19 +274,19 @@ bool WindowDetails::chromeAccCallback(IControlItem *node, void *userData)
 {
     QString *pStr = (QString *) userData;
     QString value = QString::fromStdWString(node->getValue());
-    if (value != "" && value != "0") {
-        qDebug() << "[WForegroundApp::chromeAccCallback] Got IControlItem node value = " << value;
+    if (value != "" && value != "0" && value != "<unknown>") {
+//        qDebug() << "[WForegroundApp::chromeAccCallback] Got IControlItem node value = " << value;
+        qDebug() << "[VAL] " << value;
 
-        if (node->parent->getRole() == ROLE_SYSTEM_GROUPING && value.contains(QRegExp(getURL_REGEX()))) {
-            qDebug("[WForegroundApp::chromeAccCallback] It is a valid URL, so we return it.");
+        if (node->parent->getRole() == ROLE_SYSTEM_GROUPING && value.contains(URL_REGEX)) {
+//            qDebug("[WForegroundApp::chromeAccCallback] It is a valid URL, so we return it.");
+            if(!startsWithGoodProtocol(value)){
+                value = "http://" + value; // prepend http to it to fix URLs!
+            }
             *pStr = value;
+            return false;
         }
     }
-
-    if (*pStr != "") {
-        return false;
-    }
-
     return true;
 }
 
@@ -285,16 +295,17 @@ bool WindowDetails::operaAccCallback(IControlItem *node, void *userData)
     QString *pStr = (QString *) userData;
     QString value = QString::fromStdWString(node->getValue());
     if (value != "" && value != "0" && value != "<unknown>") {
-        qDebug() << "[WForegroundApp::operaAccCallback] Got IControlItem node value = " << value;
+//        qDebug() << "[WForegroundApp::operaAccCallback] Got IControlItem node value = " << value;
+        qDebug() << "[VAL] " << value;
 
-        if (value.contains(QRegExp(getURL_REGEX()))) {
-            qDebug("[WForegroundApp::operaAccCallback] It is a valid URL, so we return it.");
+        if (value.contains(URL_REGEX)) {
+//            qDebug("[WForegroundApp::operaAccCallback] It is a valid URL, so we return it.");
+            if(!startsWithGoodProtocol(value)){
+                value = "http://" + value; // prepend http to it to fix URLs!
+            }
             *pStr = value;
+            return false;
         }
-    }
-
-    if (*pStr != "") {
-        return false;
     }
 
     return true;
@@ -302,7 +313,7 @@ bool WindowDetails::operaAccCallback(IControlItem *node, void *userData)
 
 WindowDetails::WindowDetails()
 {
-    URL_REGEX = QString("^") +
+    URL_REGEX_STR = QString("^") +
         QString("(?:") +
         // protocol identifier
         QString("(?:(?:https?|ftp)://)?") +
@@ -337,70 +348,85 @@ WindowDetails::WindowDetails()
         QString(")") +
         QString("|(?:file://.*)") +
         QString("$");
+
+    URL_REGEX = QRegExp(URL_REGEX_STR);
 }
 
-QString WindowDetails::GetAdditionalInfo(QString processName)
+QString WindowDetails::GetAdditionalInfo(QString processName, HWND passedHwnd)
 {
     processName = processName.toLower();
-    currenthwnd = GetForegroundWindow();
+    if (passedHwnd == NULL) {
+        currenthwnd = GetForegroundWindow();
+    } else {
+        currenthwnd = passedHwnd;
+    }
 
-    qDebug() << "[Additional info] Process name: " << processName;
-    if(processName.toLower().contains(QRegExp("chrome|firefox|opera|microsoftedge|iexplore|safari|maxthon"))){
-        QString res("");
-        AccControlIterator iterator;
-        iterator.iterate(currenthwnd, this, &WindowDetails::operaAccCallback, (void*)&res, true);
+    bool browser = false;
+    auto pointerMagic = &WindowDetails::standardAccCallback;
 
-        qDebug() << "[Additional info] Res 1: " << res;
-        if(res == "" && WindowEvents_W::getWindowsVersion() <= 6.0){
-            UIAControlIterator iterator2;
-            iterator2.iterate(currenthwnd, this, &WindowDetails::operaAccCallback, (void*)&res, true);
-            qDebug() << "[Additional info] Res 2: " << res;
-        }
-        return res;
+    // iexplore gets only first tab (!)
+    // all others were not checked
+    if (processName.toLower().contains(QRegExp("iexplore|mosaic|maxthon|safari"))) {
+        pointerMagic = &WindowDetails::standardAccCallback;
+        browser = true;
     }
 
     /*
-    if(processName.contains("chrome")){
-        qDebug() << "[Additional info] Process name: " << processName;
+        chromium / blink based:
+            Chromium (for Windows): chrome.exe - works
+            Google Chrome: chrome.exe - works
+            SRWare Iron: chrome.exe - works
+            Opera: opera.exe - works
+            Epic Privacy Browser: epic.exe - works
+            all other - not checked
+     */
+    if (processName.toLower().contains(QRegExp("chrome|epic|opera|cent|slimjet|sleipnir|silk|blisk|yandex|iron"))) {
+        pointerMagic = &WindowDetails::chromeAccCallback;
+        browser = true;
+    }
 
+    /*
+        ALL, so:
+            MS Edge: weird processes - somewhat works, but inserts random pages sometimes
+            Firefox: firefox.exe - latest is VERY BROKEN; either first tab or some random page
+            Tor: firefox.exe - not checked yet
+
+        "broken" chromium based:
+            Yandex Browser: browser.exe - (gets only website title via chromeCb) either cut after space, or use regex result?
+            Vivaldi: vivaldi.exe - STILL broken; nothing works at all
+            Brave: brave.exe - STILL broken; nothing works at all
+            UC Browser: UCBrowser.exe -STILL broken; nothing works at all
+     */
+    if (processName.toLower().contains(QRegExp("microsoftedge|netscp6|mozilla|netscape|firefox|vivaldi|brave|ucbrowser|browser"))) {
+        pointerMagic = &WindowDetails::operaAccCallback;
+        browser = true;
+    }
+
+    if (browser) {
         QString res("");
         AccControlIterator iterator;
-        iterator.iterate(currenthwnd, this, &WindowDetails::chromeAccCallback, (void*)&res, true);
+        iterator.iterate(currenthwnd, this, pointerMagic, (void *) &res, true);
 
-        qDebug() << "[Additional info] Res 1: " << res;
-        if(res == ""){
+        QUrl url(res);
+        QString host = url.host();
+        qInfo() << "[ACC] " << res;
+        qInfo() << "[HOST]" << host << "\r\n";
+
+        if (res == "" && WindowEvents_W::getWindowsVersion() <= 6.0) {
             UIAControlIterator iterator2;
-            iterator2.iterate(currenthwnd, this, &WindowDetails::chromeAccCallback, (void*)&res, true);
-            qDebug() << "[Additional info] Res 2: " << res;
+            iterator2.iterate(currenthwnd, this, pointerMagic, (void *) &res, true);
+            qInfo() << "[UIA] " << res << "\r\n";
         }
         return res;
     }
-
-    if(processName.contains("opera")){
-        qDebug() << "[Additional info] Process name: " << processName;
-
-        QString res("");
-        AccControlIterator iterator;
-        iterator.iterate(currenthwnd, this, &WindowDetails::chromeAccCallback, (void*)&res, true);
-
-        qDebug() << "[Additional info] Res 1: " << res;
-        if(res == ""){
-            UIAControlIterator iterator2;
-            iterator2.iterate(currenthwnd, this, &WindowDetails::chromeAccCallback, (void*)&res, true);
-            qDebug() << "[Additional info] Res 2: " << res;
-        }
-        return res;
-    }
-    */
 
     return "";
 }
-const QString &WindowDetails::getURL_REGEX() const
+const QRegExp &WindowDetails::getURL_REGEX() const
 {
     return URL_REGEX;
 }
-void WindowDetails::setURL_REGEX(const QString &URL_REGEX)
+void WindowDetails::setURL_REGEX(const QRegExp &URL_REGEX)
 {
     WindowDetails::URL_REGEX = URL_REGEX;
 }
-

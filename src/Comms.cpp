@@ -17,7 +17,7 @@ void Comms::saveApp(AppData *app) {
 //    qDebug() << "getAppName: " << app->getAppName();
 //    qDebug() << "getWindowName: " << app->getWindowName();
     if(Comms::instance().lastApp == NULL || Comms::instance().lastAppTimestamp == NULL){
-        qDebug() << "FIRST SAVE APP RUN";
+//        qDebug() << "FIRST SAVE APP RUN";
         qint64 now = QDateTime::currentMSecsSinceEpoch();
         Comms::instance().lastAppTimestamp = now;
         Comms::instance().lastApp = app;
@@ -46,11 +46,11 @@ void Comms::saveApp(AppData *app) {
 }
 
 void Comms::notifyOfApp(AppData *app, qint64 start, qint64 end){
-    qDebug() << "[NOTIFY OF APP]";
-    qDebug() << "getAppName: " << app->getAppName();
-    qDebug() << "getWindowName: " << app->getWindowName();
-    qDebug() << "getAdditionalInfo: " << app->getAdditionalInfo();
-    qDebug() << "getDomainFromAdditionalInfo: " << app->getDomainFromAdditionalInfo();
+//    qDebug() << "[NOTIFY OF APP]";
+//    qDebug() << "getAppName: " << app->getAppName();
+//    qDebug() << "getWindowName: " << app->getWindowName();
+//    qDebug() << "getAdditionalInfo: " << app->getAdditionalInfo();
+//    qDebug() << "getDomainFromAdditionalInfo: " << app->getDomainFromAdditionalInfo();
 
     // read api key from settings
     QString apiKey = settings.value(SETT_APIKEY).toString();
@@ -71,11 +71,11 @@ void Comms::notifyOfApp(AppData *app, qint64 start, qint64 end){
     // "Web Browser App" when appName is Internet but no domain
 
     QString start_time = QDateTime::fromMSecsSinceEpoch(start).toString(Qt::ISODate).replace("T", " ");
-    qDebug() << "start_time: " << start_time;
+//    qDebug() << "start_time: " << start_time;
     params.addQueryItem("computer_activities[0][start_time]", start_time);
 
     QString end_time = QDateTime::fromMSecsSinceEpoch(end).toString(Qt::ISODate).replace("T", " ");
-    qDebug() << "end_time: " << end_time;
+//    qDebug() << "end_time: " << end_time;
     params.addQueryItem("computer_activities[0][end_time]", end_time);
 
     QUrl serviceURL("https://www.timecamp.com/third_party/api/activity/api_token/" + apiKey);
@@ -110,5 +110,5 @@ void Comms::notifyOfApp(AppData *app, qint64 start, qint64 end){
 
 void Comms::serviceRequestFinished(QNetworkReply* reply){
     QByteArray buffer = reply->readAll();
-    qDebug() << "Response: " << buffer;
+//    qDebug() << "Response: " << buffer;
 }
