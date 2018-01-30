@@ -31,6 +31,10 @@ void Comms::saveApp(AppData *app) {
     if (app->getWindowName() != &Comms::instance().lastApp->getWindowName()) {
         needsReporting = true;
     }
+
+    if(app->getAdditionalInfo() != ""){
+        app->setAppName("Internet");
+    }
 //    qDebug() << "Needs reporting: " << needsReporting;
 
     if (needsReporting) {
@@ -45,6 +49,8 @@ void Comms::notifyOfApp(AppData *app, qint64 start, qint64 end){
     qDebug() << "[NOTIFY OF APP]";
     qDebug() << "getAppName: " << app->getAppName();
     qDebug() << "getWindowName: " << app->getWindowName();
+    qDebug() << "getAdditionalInfo: " << app->getAdditionalInfo();
+    qDebug() << "getDomainFromAdditionalInfo: " << app->getDomainFromAdditionalInfo();
 
     // read api key from settings
     QString apiKey = settings.value(SETT_APIKEY).toString();
@@ -59,6 +65,10 @@ void Comms::notifyOfApp(AppData *app, qint64 start, qint64 end){
 
     params.addQueryItem("computer_activities[0][application_name]",app->getAppName());
     params.addQueryItem("computer_activities[0][window_title]",app->getWindowName());
+    if(app->getAdditionalInfo() != ""){
+        params.addQueryItem("computer_activities[0][website_domain]",app->getDomainFromAdditionalInfo());
+    }
+    // "Web Browser App" when appName is Internet but no domain
 
     QString start_time = QDateTime::fromMSecsSinceEpoch(start).toString(Qt::ISODate).replace("T", " ");
     qDebug() << "start_time: " << start_time;

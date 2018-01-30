@@ -13,7 +13,7 @@ void WindowEvents_W::logAppName(QString appName, QString windowName)
     appName.replace(".exe", "");
     WindowDetails *details = new WindowDetails();
     QString additionalInfo = details->GetAdditionalInfo(appName);
-    AppData *app = new AppData(appName, windowName);
+    AppData *app = new AppData(appName, windowName, additionalInfo);
     Comms::instance().saveApp(app);
 }
 
@@ -284,7 +284,7 @@ bool WindowDetails::operaAccCallback(IControlItem *node, void *userData)
 {
     QString *pStr = (QString *) userData;
     QString value = QString::fromStdWString(node->getValue());
-    if (value != "") {
+    if (value != "" && value != "0" && value != "<unknown>") {
         qDebug() << "[WForegroundApp::operaAccCallback] Got IControlItem node value = " << value;
 
         if (value.contains(QRegExp(getURL_REGEX()))) {
@@ -339,29 +339,27 @@ WindowDetails::WindowDetails()
         QString("$");
 }
 
-
-
 QString WindowDetails::GetAdditionalInfo(QString processName)
 {
     processName = processName.toLower();
     currenthwnd = GetForegroundWindow();
 
-    if(processName.contains(QRegExp("/safari|maxthon|microsoftedge/gi"))){
-        qDebug() << "[Additional info] Process name: " << processName;
-
+    qDebug() << "[Additional info] Process name: " << processName;
+    if(processName.toLower().contains(QRegExp("chrome|firefox|opera|microsoftedge|iexplore|safari|maxthon"))){
         QString res("");
         AccControlIterator iterator;
-        iterator.iterate(currenthwnd, this, &WindowDetails::standardAccCallback, (void*)&res, true);
+        iterator.iterate(currenthwnd, this, &WindowDetails::operaAccCallback, (void*)&res, true);
 
         qDebug() << "[Additional info] Res 1: " << res;
-        if(res == ""){
+        if(res == "" && WindowEvents_W::getWindowsVersion() <= 6.0){
             UIAControlIterator iterator2;
-            iterator2.iterate(currenthwnd, this, &WindowDetails::standardAccCallback, (void*)&res, true);
+            iterator2.iterate(currenthwnd, this, &WindowDetails::operaAccCallback, (void*)&res, true);
             qDebug() << "[Additional info] Res 2: " << res;
         }
         return res;
     }
 
+    /*
     if(processName.contains("chrome")){
         qDebug() << "[Additional info] Process name: " << processName;
 
@@ -393,7 +391,7 @@ QString WindowDetails::GetAdditionalInfo(QString processName)
         }
         return res;
     }
-
+    */
 
     return "";
 }

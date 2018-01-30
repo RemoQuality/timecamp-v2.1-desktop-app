@@ -3,19 +3,26 @@
 
 #include <QtCore/QString>
 
-class AppData {
-    QString appName;
-    QString windowName;
+class AppData
+{
 public:
-    AppData(QString appName, QString windowName);
+    AppData(QString appName, QString windowName, QString additionalInfo);
 
     const QString &getAppName() const;
-
     void setAppName(const QString &appName);
 
     const QString &getWindowName() const;
-
     void setWindowName(const QString &windowName);
+
+    const QString &getAdditionalInfo() const;
+    void setAdditionalInfo(const QString &additionalInfo);
+
+    QString getDomainFromAdditionalInfo();
+
+private:
+    QString appName;
+    QString windowName;
+    QString additionalInfo;
 };
 
 
