@@ -8,7 +8,7 @@ public:
 	IControlItem * parent;
 	int level;
 
-	IControlItem(IControlItem * parent = NULL):parent(parent), level(parent?parent->level + 1:0){};	
+	IControlItem(IControlItem * parent = NULL):parent(parent), level(parent?parent->level + 1:0){};
 
 	virtual std::wstring getDescription(){return L"";};
 	virtual std::wstring getRoleText(){return L"";};
@@ -24,5 +24,5 @@ public:
 	~IConttrolIterator(void);
 
 	template <class C>
-	void iterate( HWND currenthwnd, C* callbackObj, bool (C::*callbackFunction)(IControlItem * node, void * userData), void * userData = NULL, bool fromLast = false ) = 0;
+    void iterate( HWND currenthwnd, C* callbackObj, bool (C::*callbackFunction)(IControlItem * node, void * userData), void * userData = NULL, bool fromLast = false ) = 0;
 };

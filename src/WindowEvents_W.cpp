@@ -1,3 +1,4 @@
+#include <src/ControlIterator/AccControlIterator.h>
 #include "WindowEvents_W.h"
 #include "ControlIterator/UIAControlIterator.h"
 
@@ -10,6 +11,8 @@ void WindowEvents_W::logAppName(QString appName, QString windowName)
 {
     //qInfo("APP: %s | %s \n", appName.toLatin1().constData(), windowName.toLatin1().constData());
     appName.replace(".exe", "");
+    WindowDetails *details = new WindowDetails();
+    QString additionalInfo = details->GetAdditionalInfo(appName);
     AppData *app = new AppData(appName, windowName);
     Comms::instance().saveApp(app);
 }
@@ -238,3 +241,168 @@ void WindowEvents_W::ShutdownWindowsHook(HWINEVENTHOOK g_hook, HWINEVENTHOOK wna
     UnhookWinEvent(g_hook);
     CoUninitialize();
 }
+
+bool WindowDetails::standardAccCallback(IControlItem *node, void *userData)
+{
+    QString *pStr = (QString *) userData;
+    QString value = QString::fromStdWString(node->getValue());
+
+    if (value.midRef(0, 7) == "http://" || value.midRef(0, 8) == "https://" || value.midRef(0, 6) == "ftp://" || value.midRef(0, 7) == "file://") {
+        if (*pStr == "<unknown>" || *pStr == "") {
+            *pStr = value;
+        }
+    }
+
+    if (*pStr != "") {
+        return false;
+    }
+
+    return true;
+}
+
+bool WindowDetails::chromeAccCallback(IControlItem *node, void *userData)
+{
+    QString *pStr = (QString *) userData;
+    QString value = QString::fromStdWString(node->getValue());
+    if (value != "" && value != "0") {
+        qDebug() << "[WForegroundApp::chromeAccCallback] Got IControlItem node value = " << value;
+
+        if (node->parent->getRole() == ROLE_SYSTEM_GROUPING && value.contains(QRegExp(getURL_REGEX()))) {
+            qDebug("[WForegroundApp::chromeAccCallback] It is a valid URL, so we return it.");
+            *pStr = value;
+        }
+    }
+
+    if (*pStr != "") {
+        return false;
+    }
+
+    return true;
+}
+
+bool WindowDetails::operaAccCallback(IControlItem *node, void *userData)
+{
+    QString *pStr = (QString *) userData;
+    QString value = QString::fromStdWString(node->getValue());
+    if (value != "") {
+        qDebug() << "[WForegroundApp::operaAccCallback] Got IControlItem node value = " << value;
+
+        if (value.contains(QRegExp(getURL_REGEX()))) {
+            qDebug("[WForegroundApp::operaAccCallback] It is a valid URL, so we return it.");
+            *pStr = value;
+        }
+    }
+
+    if (*pStr != "") {
+        return false;
+    }
+
+    return true;
+}
+
+WindowDetails::WindowDetails()
+{
+    URL_REGEX = QString("^") +
+        QString("(?:") +
+        // protocol identifier
+        QString("(?:(?:https?|ftp)://)?") +
+        // user:pass authentication
+        QString("(?:\\S+(?::\\S*)?@)?") +
+        QString("(?:") +
+        // IP address exclusion
+        // private & local networks
+        // IP address dotted notation octets
+        // excludes loopback network 0.0.0.0
+        // excludes reserved space >= 224.0.0.0
+        // excludes network & broacast addresses
+        // (first & last IP address of each class)
+        QString("(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])") +
+        QString("(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}") +
+        QString("(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))") +
+        QString("|") +
+        // host name
+        QString("(?:(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)") +
+        // domain name
+        QString("(?:") +
+        QString("(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)*") +
+        // TLD identifier
+        QString("(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))") +
+        //Domain exceptions for single segment domains (without port numbers)
+        QString(")|(localhost)|(crm)|(replace_me)") +
+        QString(")") +
+        // port number
+        QString("(?::\\d{2,5})?") +
+        // resource path
+        QString("(?:/[^\\s]*)?") +
+        QString(")") +
+        QString("|(?:file://.*)") +
+        QString("$");
+}
+
+
+
+QString WindowDetails::GetAdditionalInfo(QString processName)
+{
+    processName = processName.toLower();
+    currenthwnd = GetForegroundWindow();
+
+    if(processName.contains(QRegExp("/safari|maxthon|microsoftedge/gi"))){
+        qDebug() << "[Additional info] Process name: " << processName;
+
+        QString res("");
+        AccControlIterator iterator;
+        iterator.iterate(currenthwnd, this, &WindowDetails::standardAccCallback, (void*)&res, true);
+
+        qDebug() << "[Additional info] Res 1: " << res;
+        if(res == ""){
+            UIAControlIterator iterator2;
+            iterator2.iterate(currenthwnd, this, &WindowDetails::standardAccCallback, (void*)&res, true);
+            qDebug() << "[Additional info] Res 2: " << res;
+        }
+        return res;
+    }
+
+    if(processName.contains("chrome")){
+        qDebug() << "[Additional info] Process name: " << processName;
+
+        QString res("");
+        AccControlIterator iterator;
+        iterator.iterate(currenthwnd, this, &WindowDetails::chromeAccCallback, (void*)&res, true);
+
+        qDebug() << "[Additional info] Res 1: " << res;
+        if(res == ""){
+            UIAControlIterator iterator2;
+            iterator2.iterate(currenthwnd, this, &WindowDetails::chromeAccCallback, (void*)&res, true);
+            qDebug() << "[Additional info] Res 2: " << res;
+        }
+        return res;
+    }
+
+    if(processName.contains("opera")){
+        qDebug() << "[Additional info] Process name: " << processName;
+
+        QString res("");
+        AccControlIterator iterator;
+        iterator.iterate(currenthwnd, this, &WindowDetails::chromeAccCallback, (void*)&res, true);
+
+        qDebug() << "[Additional info] Res 1: " << res;
+        if(res == ""){
+            UIAControlIterator iterator2;
+            iterator2.iterate(currenthwnd, this, &WindowDetails::chromeAccCallback, (void*)&res, true);
+            qDebug() << "[Additional info] Res 2: " << res;
+        }
+        return res;
+    }
+
+
+    return "";
+}
+const QString &WindowDetails::getURL_REGEX() const
+{
+    return URL_REGEX;
+}
+void WindowDetails::setURL_REGEX(const QString &URL_REGEX)
+{
+    WindowDetails::URL_REGEX = URL_REGEX;
+}
+

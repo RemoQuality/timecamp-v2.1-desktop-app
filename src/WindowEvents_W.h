@@ -9,6 +9,7 @@
 #include <tchar.h>
 #include <Psapi.h>
 #include <comutil.h>
+#include <src/ControlIterator/IControlIterator.h>
 
 #include "Comms.h"
 #include "AppData.h"
@@ -46,6 +47,22 @@ private:
 
     void InitializeWindowsHook(HWINEVENTHOOK g_hook, HWINEVENTHOOK wname_hook);
     void ShutdownWindowsHook(HWINEVENTHOOK g_hook, HWINEVENTHOOK wname_hook);
+};
+
+class WindowDetails
+{
+public:
+    WindowDetails();
+    HWND currenthwnd;
+    bool standardAccCallback(IControlItem* node, void* userData);
+    bool chromeAccCallback(IControlItem * node, void * userData);
+    bool operaAccCallback(IControlItem * node, void * userData);
+    QString GetAdditionalInfo(QString processName);
+    const QString &getURL_REGEX() const;
+    void setURL_REGEX(const QString &URL_REGEX);
+protected:
+private:
+    QString URL_REGEX;
 };
 
 #endif // WINDOWEVENTS_W_H
