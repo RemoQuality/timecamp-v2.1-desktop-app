@@ -110,10 +110,10 @@ QList DbManager::getAppsSinceLastSync(qint64 last_sync)
         {
             AppData *tempApp = new AppData();
             tempApp->setAppName(querySelect.value("app_name").toString());
-            tempApp->setAppName(querySelect.value("window_name").toString());
-            tempApp->setAppName(querySelect.value("additional_info").toString());
-            tempApp->setAppName(querySelect.value("start_time").toString());
-            tempApp->setAppName(querySelect.value("end_time").toString());
+            tempApp->setWindowName(querySelect.value("window_name").toString());
+            tempApp->setAdditionalInfo(querySelect.value("additional_info").toString());
+            tempApp->setStart(querySelect.value("start_time").toInt());
+            tempApp->setEnd(querySelect.value("end_time").toInt());
             appList.push_back(tempApp);
         }
     }
