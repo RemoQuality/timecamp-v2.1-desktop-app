@@ -27,7 +27,7 @@ public:
      * @brief Add data to db
      * @return true - person added successfully, false - person not added
      */
-    bool saveToDb(AppData *app, qint64 start, qint64 end);
+    bool saveAppToDb(AppData *app);
 
 private:
     QSqlDatabase m_db;

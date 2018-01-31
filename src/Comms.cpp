@@ -28,11 +28,11 @@ Comms::Comms(QObject *parent)
 
 void Comms::saveApp(AppData *app)
 {
-    if (Comms::instance().lastApp == NULL || Comms::instance().lastAppTimestamp == NULL) {
+    if (Comms::instance().lastApp == NULL) {
         qDebug() << "[FIRST APP DETECTED]";
         qint64 now = QDateTime::currentMSecsSinceEpoch();
-        Comms::instance().lastAppTimestamp = now;
         Comms::instance().lastApp = app;
+        app->setStart(now);
         return;
     }
 
@@ -52,13 +52,15 @@ void Comms::saveApp(AppData *app)
     if (needsReporting) {
         qint64 now = QDateTime::currentMSecsSinceEpoch();
 //        sendAppData(Comms::instance().lastApp, Comms::instance().lastAppTimestamp, now);
-        DbManager::instance().saveToDb(Comms::instance().lastApp, Comms::instance().lastAppTimestamp, now);
-        Comms::instance().lastApp = app; // update app
-        Comms::instance().lastAppTimestamp = now;
+        lastApp->setEnd(now); // it already has start, now we only update end
+        DbManager::instance().saveAppToDb(lastApp);
+
+        app->setStart(now);
+        lastApp = app; // update app reference
     }
 }
 
-void Comms::sendAppData(AppData *app, qint64 start, qint64 end)
+void Comms::sendAppData(AppData *app)
 {
 //    qDebug() << "[NOTIFY OF APP]";
 //    qDebug() << "getAppName: " << app->getAppName();
@@ -84,11 +86,11 @@ void Comms::sendAppData(AppData *app, qint64 start, qint64 end)
     }
     // "Web Browser App" when appName is Internet but no domain
 
-    QString start_time = QDateTime::fromMSecsSinceEpoch(start).toString(Qt::ISODate).replace("T", " ");
+    QString start_time = QDateTime::fromMSecsSinceEpoch(app->getStart()).toString(Qt::ISODate).replace("T", " ");
 //    qDebug() << "start_time: " << start_time;
     params.addQueryItem("computer_activities[0][start_time]", start_time);
 
-    QString end_time = QDateTime::fromMSecsSinceEpoch(end).toString(Qt::ISODate).replace("T", " ");
+    QString end_time = QDateTime::fromMSecsSinceEpoch(app->getEnd()).toString(Qt::ISODate).replace("T", " ");
 //    qDebug() << "end_time: " << end_time;
     params.addQueryItem("computer_activities[0][end_time]", end_time);
 
@@ -101,9 +103,11 @@ void Comms::sendAppData(AppData *app, qint64 start, qint64 end)
     QByteArray jsonString = URLParams.toEncoded();
     QByteArray postDataSize = QByteArray::number(jsonString.size());
 
-
+    // set up connection parameters
+    // identify as our app
     request.setRawHeader("User-Agent", CONN_USER_AGENT);
     request.setRawHeader(CONN_CUSTOM_HEADER_NAME, CONN_CUSTOM_HEADER_VALUE);
+    // make it "www form" because thats what API expects; and add length
     request.setRawHeader("Content-Type", "application/x-www-form-urlencoded");
     request.setRawHeader("Content-Length", postDataSize);
 

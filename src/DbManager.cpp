@@ -59,12 +59,14 @@ bool DbManager::createTable()
     return success;
 }
 
-bool DbManager::saveToDb(AppData *app, qint64 start, qint64 end)
+bool DbManager::saveAppToDb(AppData *app)
 {
     bool success = false;
     QString appName = app->getAppName();
     QString windowName = app->getWindowName();
     QString additionalInfo = app->getAdditionalInfo();
+    qint64 start = app->getStart();
+    qint64 end = app->getEnd();
 
     if (start > 0 && end > 0)
     {

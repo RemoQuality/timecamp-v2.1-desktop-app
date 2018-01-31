@@ -18,7 +18,7 @@ public:
     virtual ~Comms(){}
 
     void saveApp(AppData *app);
-    void sendAppData(AppData *app, qint64 start, qint64 end);
+    void sendAppData(AppData *app);
 
 private:
     AppData *lastApp;

@@ -17,12 +17,20 @@ public:
     const QString &getAdditionalInfo() const;
     void setAdditionalInfo(const QString &additionalInfo);
 
+    qint64 getStart() const;
+    void setStart(qint64 start);
+
+    qint64 getEnd() const;
+    void setEnd(qint64 end);
+
     QString getDomainFromAdditionalInfo();
 
 private:
     QString appName;
     QString windowName;
     QString additionalInfo;
+    qint64 start;
+    qint64 end;
 };
 
 
