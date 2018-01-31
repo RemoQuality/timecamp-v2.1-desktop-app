@@ -9,10 +9,10 @@
 #include <tchar.h>
 #include <Psapi.h>
 #include <comutil.h>
-#include <src/ControlIterator/IControlIterator.h>
 
 #include "Comms.h"
 #include "AppData.h"
+#include "src/ControlIterator/IControlIterator.h"
 
 typedef struct {
     DWORD ownerpid;

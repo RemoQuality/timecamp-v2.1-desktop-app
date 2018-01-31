@@ -1,7 +1,7 @@
 #ifndef THEGUI_APPDATA_H
 #define THEGUI_APPDATA_H
 
-#include <QtCore/QString>
+#include <QString>
 
 class AppData
 {
