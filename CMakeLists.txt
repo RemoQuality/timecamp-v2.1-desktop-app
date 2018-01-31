@@ -36,11 +36,20 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5WebEngineWidgets REQUIRED)
 find_package(Qt5Sql REQUIRED)
 
+foreach(plugin ${Qt5Sql_PLUGINS})
+    get_target_property(_loc ${plugin} LOCATION)
+    message("Plugin ${plugin} is at location ${_loc}")
+#    if(${plugin} MATCHES "Qt5::QSQLiteDriverPlugin")
+#        list(APPEND TC_LIBS ${_loc})
+#    endif()
+endforeach()
+
 ADD_DEFINITIONS(-DUNICODE -D_UNICODE -DPSAPI_VERSION=1)
 
 list(APPEND TC_SOURCES
 	"src/Settings.h" # a header without cpp file
 	"src/main.cpp"
+    "src/DbManager.cpp"
 	"src/MainWidget.cpp"
 	"src/TCRequestInterceptor.cpp"
 	"src/Comms.cpp"
@@ -101,4 +110,4 @@ endif()
 
 target_link_libraries(TheGUI ${TC_LIBS} ${Qt5Core_QTMAIN_LIBRARIES})
 
-qt5_use_modules(TheGUI Core Gui Widgets WebEngineWidgets)
+qt5_use_modules(TheGUI Core Gui Network Widgets WebEngineWidgets Sql)
