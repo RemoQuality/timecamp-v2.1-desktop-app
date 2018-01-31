@@ -60,7 +60,7 @@ void Comms::saveApp(AppData *app)
     }
 }
 
-void Comms::sendAppData(AppData *app)
+void Comms::sendAppData(QList<AppData*> *appList)
 {
 //    qDebug() << "[NOTIFY OF APP]";
 //    qDebug() << "getAppName: " << app->getAppName();
@@ -79,20 +79,25 @@ void Comms::sendAppData(AppData *app)
     QUrlQuery params;
     params.addQueryItem("api_token", apiKey);
 
-    params.addQueryItem("computer_activities[0][application_name]", app->getAppName());
-    params.addQueryItem("computer_activities[0][window_title]", app->getWindowName());
-    if (app->getAdditionalInfo() != "") {
-        params.addQueryItem("computer_activities[0][website_domain]", app->getDomainFromAdditionalInfo());
+    int count = 0;
+    QString computer_activities = "computer_activities";
+
+    for (AppData *app: *appList) {
+        params.addQueryItem(computer_activities + "[" + count + "][application_name]", app->getAppName());
+        params.addQueryItem(computer_activities + "[" + count + "][window_title]", app->getWindowName());
+        if (app->getAdditionalInfo() != "") {
+            params.addQueryItem(computer_activities + "[" + count + "][website_domain]", app->getDomainFromAdditionalInfo());
+        }
+        // "Web Browser App" when appName is Internet but no domain
+
+        QString start_time = QDateTime::fromMSecsSinceEpoch(app->getStart()).toString(Qt::ISODate).replace("T", " ");
+        //    qDebug() << "start_time: " << start_time;
+        params.addQueryItem(computer_activities + "[" + count + "][start_time]", start_time);
+
+        QString end_time = QDateTime::fromMSecsSinceEpoch(app->getEnd()).toString(Qt::ISODate).replace("T", " ");
+        //    qDebug() << "end_time: " << end_time;
+        params.addQueryItem(QString(computer_activities + "[" + count + "][end_time]"), end_time);
     }
-    // "Web Browser App" when appName is Internet but no domain
-
-    QString start_time = QDateTime::fromMSecsSinceEpoch(app->getStart()).toString(Qt::ISODate).replace("T", " ");
-//    qDebug() << "start_time: " << start_time;
-    params.addQueryItem("computer_activities[0][start_time]", start_time);
-
-    QString end_time = QDateTime::fromMSecsSinceEpoch(app->getEnd()).toString(Qt::ISODate).replace("T", " ");
-//    qDebug() << "end_time: " << end_time;
-    params.addQueryItem("computer_activities[0][end_time]", end_time);
 
     QUrl serviceURL("https://www.timecamp.com/third_party/api/activity/api_token/" + apiKey);
     QNetworkRequest request(serviceURL);

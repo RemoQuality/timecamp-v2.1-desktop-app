@@ -18,11 +18,10 @@ public:
     virtual ~Comms(){}
 
     void saveApp(AppData *app);
-    void sendAppData(AppData *app);
+    void Comms::sendAppData(QList<AppData*> *appList);
 
 private:
     AppData *lastApp;
-    qint64 lastAppTimestamp;
     QSettings settings;
 
 signals:

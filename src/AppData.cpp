@@ -1,6 +1,10 @@
 #include "AppData.h"
 #include <QUrl>
 
+AppData::AppData()
+{
+}
+
 AppData::AppData(QString appName, QString windowName, QString additionalInfo)
 {
     this->appName = appName;

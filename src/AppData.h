@@ -6,6 +6,7 @@
 class AppData
 {
 public:
+    AppData();
     AppData(QString appName, QString windowName, QString additionalInfo);
 
     const QString &getAppName() const;

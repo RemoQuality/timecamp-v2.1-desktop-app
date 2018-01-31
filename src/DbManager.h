@@ -29,6 +29,8 @@ public:
      */
     bool saveAppToDb(AppData *app);
 
+    QList getAppsSinceLastSync(qint64 last_sync);
+
 private:
     QSqlDatabase m_db;
 };

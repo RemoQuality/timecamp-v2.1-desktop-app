@@ -5,6 +5,7 @@
 #include <QSqlError>
 #include <QSqlRecord>
 #include <QDebug>
+#include <QList>
 
 DbManager &DbManager::instance()
 {
@@ -94,4 +95,27 @@ bool DbManager::saveAppToDb(AppData *app)
     }
 
     return success;
+}
+
+QList DbManager::getAppsSinceLastSync(qint64 last_sync)
+{
+    QSqlQuery querySelect;
+    querySelect.prepare("SELECT app_name, window_name, additional_info, start_time, end_time FROM apps WHERE start_time > :last_sync");
+    querySelect.bindValue(":last_sync", last_sync);
+
+    QList<AppData*> appList;
+
+    if(querySelect.exec()){
+        while(querySelect.next())
+        {
+            AppData *tempApp = new AppData();
+            tempApp->setAppName(querySelect.value("app_name").toString());
+            tempApp->setAppName(querySelect.value("window_name").toString());
+            tempApp->setAppName(querySelect.value("additional_info").toString());
+            tempApp->setAppName(querySelect.value("start_time").toString());
+            tempApp->setAppName(querySelect.value("end_time").toString());
+            appList.push_back(tempApp);
+        }
+    }
+    return appList;
 }
