@@ -1,6 +1,7 @@
 #include <src/ControlIterator/AccControlIterator.h>
 #include "WindowEvents_W.h"
 #include "ControlIterator/UIAControlIterator.h"
+#include <QElapsedTimer>
 
 void WindowEvents_W::logAppName(unsigned char* appName, unsigned char* windowName)
 {
@@ -272,7 +273,6 @@ bool WindowDetails::standardAccCallback(IControlItem *node, void *userData)
 
 bool WindowDetails::chromeAccCallback(IControlItem *node, void *userData)
 {
-    QString *pStr = (QString *) userData;
     QString value = QString::fromStdWString(node->getValue());
     if (value != "" && value != "0" && value != "<unknown>") {
 //        qDebug() << "[WForegroundApp::chromeAccCallback] Got IControlItem node value = " << value;
@@ -283,6 +283,7 @@ bool WindowDetails::chromeAccCallback(IControlItem *node, void *userData)
             if(!startsWithGoodProtocol(value)){
                 value = "http://" + value; // prepend http to it to fix URLs!
             }
+            QString *pStr = (QString *) userData;
             *pStr = value;
             return false;
         }
@@ -404,19 +405,22 @@ QString WindowDetails::GetAdditionalInfo(QString processName, HWND passedHwnd)
 
     if (browser) {
         QString res("");
+        QElapsedTimer timer;
+        timer.start();
         AccControlIterator iterator;
         iterator.iterate(currenthwnd, this, pointerMagic, (void *) &res, true);
 
-        QUrl url(res);
-        QString host = url.host();
         qInfo() << "[ACC] " << res;
-        qInfo() << "[HOST]" << host << "\r\n";
 
         if (res == "" && WindowEvents_W::getWindowsVersion() <= 6.0) {
             UIAControlIterator iterator2;
             iterator2.iterate(currenthwnd, this, pointerMagic, (void *) &res, true);
-            qInfo() << "[UIA] " << res << "\r\n";
+            qInfo() << "[UIA] " << res;// << "\r\n";
         }
+
+        QUrl url(res);
+        QString host = url.host();
+        qInfo() << "[HOST]" << host << "(" << timer.elapsed() << ")" << "ms" << "\r\n";
         return res;
     }
 
