@@ -2,20 +2,8 @@
 #define COMMS_H
 
 #include <QObject>
-#include <QDateTime>
 #include <QSettings>
-
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
 #include <QNetworkReply>
-
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
-
-#include <QUrlQuery>
-#include <QVariant>
-#include <QEventLoop>
 
 #include "AppData.h"
 
@@ -30,7 +18,7 @@ public:
     virtual ~Comms(){}
 
     void saveApp(AppData *app);
-    void notifyOfApp(AppData *app, qint64 start, qint64 end);
+    void sendAppData(AppData *app, qint64 start, qint64 end);
 
 private:
     AppData *lastApp;

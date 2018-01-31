@@ -1,7 +1,18 @@
 #include "Comms.h"
-
 #include "Settings.h"
 
+#include "DbManager.h"
+
+#include <QDateTime>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+
+#include <QUrlQuery>
+#include <QEventLoop>
 
 Comms &Comms::instance()
 {
@@ -9,15 +20,16 @@ Comms &Comms::instance()
     return _instance;
 }
 
-Comms::Comms(QObject *parent) : QObject(parent) {
+Comms::Comms(QObject *parent)
+    : QObject(parent)
+{
 
 }
 
-void Comms::saveApp(AppData *app) {
-//    qDebug() << "getAppName: " << app->getAppName();
-//    qDebug() << "getWindowName: " << app->getWindowName();
-    if(Comms::instance().lastApp == NULL || Comms::instance().lastAppTimestamp == NULL){
-//        qDebug() << "FIRST SAVE APP RUN";
+void Comms::saveApp(AppData *app)
+{
+    if (Comms::instance().lastApp == NULL || Comms::instance().lastAppTimestamp == NULL) {
+        qDebug() << "[FIRST APP DETECTED]";
         qint64 now = QDateTime::currentMSecsSinceEpoch();
         Comms::instance().lastAppTimestamp = now;
         Comms::instance().lastApp = app;
@@ -32,20 +44,22 @@ void Comms::saveApp(AppData *app) {
         needsReporting = true;
     }
 
-    if(app->getAdditionalInfo() != ""){
+    if (app->getAdditionalInfo() != "") {
         app->setAppName("Internet");
     }
 //    qDebug() << "Needs reporting: " << needsReporting;
 
     if (needsReporting) {
         qint64 now = QDateTime::currentMSecsSinceEpoch();
-        notifyOfApp(Comms::instance().lastApp, Comms::instance().lastAppTimestamp, now);
+//        sendAppData(Comms::instance().lastApp, Comms::instance().lastAppTimestamp, now);
+        DbManager::instance().saveToDb(Comms::instance().lastApp, Comms::instance().lastAppTimestamp, now);
         Comms::instance().lastApp = app; // update app
         Comms::instance().lastAppTimestamp = now;
     }
 }
 
-void Comms::notifyOfApp(AppData *app, qint64 start, qint64 end){
+void Comms::sendAppData(AppData *app, qint64 start, qint64 end)
+{
 //    qDebug() << "[NOTIFY OF APP]";
 //    qDebug() << "getAppName: " << app->getAppName();
 //    qDebug() << "getWindowName: " << app->getWindowName();
@@ -55,7 +69,7 @@ void Comms::notifyOfApp(AppData *app, qint64 start, qint64 end){
     // read api key from settings
     QString apiKey = settings.value(SETT_APIKEY).toString();
 
-    if(apiKey == ""){
+    if (apiKey == "") {
         qDebug() << "[EMPTY API KEY !!!]";
         return;
     }
@@ -63,10 +77,10 @@ void Comms::notifyOfApp(AppData *app, qint64 start, qint64 end){
     QUrlQuery params;
     params.addQueryItem("api_token", apiKey);
 
-    params.addQueryItem("computer_activities[0][application_name]",app->getAppName());
-    params.addQueryItem("computer_activities[0][window_title]",app->getWindowName());
-    if(app->getAdditionalInfo() != ""){
-        params.addQueryItem("computer_activities[0][website_domain]",app->getDomainFromAdditionalInfo());
+    params.addQueryItem("computer_activities[0][application_name]", app->getAppName());
+    params.addQueryItem("computer_activities[0][window_title]", app->getWindowName());
+    if (app->getAdditionalInfo() != "") {
+        params.addQueryItem("computer_activities[0][website_domain]", app->getDomainFromAdditionalInfo());
     }
     // "Web Browser App" when appName is Internet but no domain
 
@@ -95,20 +109,21 @@ void Comms::notifyOfApp(AppData *app, qint64 start, qint64 end){
 
     QNetworkAccessManager *m_qnam = new QNetworkAccessManager();
     m_qnam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
-    connect(m_qnam, SIGNAL(finished(QNetworkReply*)), this, SLOT(serviceRequestFinished(QNetworkReply*)));
+    connect(m_qnam, SIGNAL(finished(QNetworkReply * )), this, SLOT(serviceRequestFinished(QNetworkReply * )));
 
 
 //    qDebug() << "JSON String: " << jsonString;
 
 // Use QNetworkReply * QNetworkAccessManager::post(const QNetworkRequest & request, const QByteArray & data); to send your request. Qt will rearrange everything correctly.
-    QNetworkReply * reply = m_qnam->post(request, jsonString);
+    QNetworkReply *reply = m_qnam->post(request, jsonString);
 
     QEventLoop loop;
     connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
 }
 
-void Comms::serviceRequestFinished(QNetworkReply* reply){
+void Comms::serviceRequestFinished(QNetworkReply *reply)
+{
     QByteArray buffer = reply->readAll();
 //    qDebug() << "Response: " << buffer;
 }

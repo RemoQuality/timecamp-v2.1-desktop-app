@@ -10,6 +10,9 @@
 
 #define WINDOW_NAME "TimeCamp"
 
+// db params
+#define DB_FILENAME "resources\\localdb.db"
+
 // connection params
 #define CONN_USER_AGENT "TC Desktop App 2.0"
 #define CONN_CUSTOM_HEADER_NAME "X-DAPP"
