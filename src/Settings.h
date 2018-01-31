@@ -10,6 +10,11 @@
 
 #define WINDOW_NAME "TimeCamp"
 
+// connection params
+#define CONN_USER_AGENT "TC Desktop App 2.0"
+#define CONN_CUSTOM_HEADER_NAME "X-DAPP"
+#define CONN_CUSTOM_HEADER_VALUE "2.0"
+
 // settings fields
 #define SETT_TRACK_PC_ACTIVITIES "TRACK_PC_ACTIVITIES"
 #define SETT_AUTOSTART "AUTOSTART"

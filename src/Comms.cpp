@@ -88,8 +88,8 @@ void Comms::notifyOfApp(AppData *app, qint64 start, qint64 end){
     QByteArray postDataSize = QByteArray::number(jsonString.size());
 
 
-    //request.setRawHeader("User-Agent", "My app name v0.1");
-    //request.setRawHeader("X-Custom-User-Agent", "My app name v0.1");
+    request.setRawHeader("User-Agent", CONN_USER_AGENT);
+    request.setRawHeader(CONN_CUSTOM_HEADER_NAME, CONN_CUSTOM_HEADER_VALUE);
     request.setRawHeader("Content-Type", "application/x-www-form-urlencoded");
     request.setRawHeader("Content-Length", postDataSize);
 

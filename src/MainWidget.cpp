@@ -87,7 +87,7 @@ void MainWidget::setupWebview()
     QTWEView->setContextMenuPolicy(Qt::NoContextMenu); // disable context menu in embedded webpage
 
     QTWEProfile = new QWebEngineProfile(QCoreApplication::applicationName(), QTWEView); // set "profile" as appName
-    QTWEProfile->setHttpUserAgent(tr("TC Desktop App 2.0")); // add useragent to this profile
+    QTWEProfile->setHttpUserAgent(CONN_USER_AGENT); // add useragent to this profile
 
     QTWESettings = QTWEProfile->settings();
     QTWESettings->setAttribute(QWebEngineSettings::FullScreenSupportEnabled, true); // modify settings: enable Fullscreen

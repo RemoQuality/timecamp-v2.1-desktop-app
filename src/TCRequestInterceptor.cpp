@@ -1,4 +1,5 @@
 #include "TCRequestInterceptor.h"
+#include "Settings.h"
 
 TCRequestInterceptor::TCRequestInterceptor(QObject *p)
   :QWebEngineUrlRequestInterceptor(p)
@@ -7,5 +8,5 @@ TCRequestInterceptor::TCRequestInterceptor(QObject *p)
 }
 
 void TCRequestInterceptor::interceptRequest(QWebEngineUrlRequestInfo &info) {
-    info.setHttpHeader("X-DAPP", "2.0");
+    info.setHttpHeader(CONN_CUSTOM_HEADER_NAME, CONN_CUSTOM_HEADER_VALUE);
 }
