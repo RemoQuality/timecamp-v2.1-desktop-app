@@ -11,7 +11,7 @@
 #define WINDOW_NAME "TimeCamp"
 
 // db params
-#define DB_FILENAME "resources\\localdb.db"
+#define DB_FILENAME "localdb.sqlite"
 
 // connection params
 #define CONN_USER_AGENT "TC Desktop App 2.0"
@@ -22,6 +22,7 @@
 #define SETT_TRACK_PC_ACTIVITIES "TRACK_PC_ACTIVITIES"
 #define SETT_AUTOSTART "AUTOSTART"
 #define SETT_APIKEY "API_KEY"
+#define SETT_LAST_SYNC "LAST_SYNC"
 
 
 #endif //THEGUI_SETTINGS_H

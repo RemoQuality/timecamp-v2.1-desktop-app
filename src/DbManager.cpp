@@ -5,7 +5,6 @@
 #include <QSqlError>
 #include <QSqlRecord>
 #include <QDebug>
-#include <QList>
 
 DbManager &DbManager::instance()
 {
@@ -81,7 +80,7 @@ bool DbManager::saveAppToDb(AppData *app)
 
         if(queryAdd.exec())
         {
-            qDebug() << "[DB] app added successfully";
+//            qDebug() << "[DB] app added successfully";
             success = true;
         }
         else
@@ -97,23 +96,24 @@ bool DbManager::saveAppToDb(AppData *app)
     return success;
 }
 
-QList DbManager::getAppsSinceLastSync(qint64 last_sync)
+QList<AppData*> DbManager::getAppsSinceLastSync(qint64 last_sync)
 {
     QSqlQuery querySelect;
-    querySelect.prepare("SELECT app_name, window_name, additional_info, start_time, end_time FROM apps WHERE start_time > :last_sync");
-    querySelect.bindValue(":last_sync", last_sync);
+    querySelect.prepare("SELECT app_name, window_name, additional_info, start_time, end_time FROM apps WHERE start_time > :lastSync");
+    querySelect.bindValue(":lastSync", last_sync);
 
     QList<AppData*> appList;
 
-    if(querySelect.exec()){
+    if(querySelect.exec())
+    {
         while(querySelect.next())
         {
             AppData *tempApp = new AppData();
             tempApp->setAppName(querySelect.value("app_name").toString());
             tempApp->setWindowName(querySelect.value("window_name").toString());
             tempApp->setAdditionalInfo(querySelect.value("additional_info").toString());
-            tempApp->setStart(querySelect.value("start_time").toInt());
-            tempApp->setEnd(querySelect.value("end_time").toInt());
+            tempApp->setStart(querySelect.value("start_time").toLongLong());
+            tempApp->setEnd(querySelect.value("end_time").toLongLong());
             appList.push_back(tempApp);
         }
     }

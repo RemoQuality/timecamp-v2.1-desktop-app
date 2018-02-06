@@ -13,6 +13,7 @@
 
 #include <QUrlQuery>
 #include <QEventLoop>
+#include <QTimer>
 
 Comms &Comms::instance()
 {
@@ -23,24 +24,39 @@ Comms &Comms::instance()
 Comms::Comms(QObject *parent)
     : QObject(parent)
 {
+}
 
+void Comms::timedUpdates()
+{
+    lastSync = settings.value(SETT_LAST_SYNC, 0).toLongLong(); // set our variable to value from settings (so it works between app restarts)
+
+    qDebug() << "last sync: " << lastSync;
+
+    setCurrentTime(QDateTime::currentMSecsSinceEpoch()); // time of DB fetch is passed, so we can update to it if successful
+
+    QList<AppData*> appList = DbManager::instance().getAppsSinceLastSync(lastSync); // get apps since last sync
+
+    qDebug() << "app list length: " << appList.length();
+    if(appList.length() > 0){ // send only if there is anything
+        sendAppData(&appList);
+    }
 }
 
 void Comms::saveApp(AppData *app)
 {
-    if (Comms::instance().lastApp == NULL) {
+    if (lastApp == NULL) {
         qDebug() << "[FIRST APP DETECTED]";
         qint64 now = QDateTime::currentMSecsSinceEpoch();
-        Comms::instance().lastApp = app;
+        lastApp = app;
         app->setStart(now);
         return;
     }
 
     bool needsReporting = false;
-    if (app->getAppName() != &Comms::instance().lastApp->getAppName()) {
+    if (app->getAppName() != &lastApp->getAppName()) {
         needsReporting = true;
     }
-    if (app->getWindowName() != &Comms::instance().lastApp->getWindowName()) {
+    if (app->getWindowName() != &lastApp->getWindowName()) {
         needsReporting = true;
     }
 
@@ -51,7 +67,7 @@ void Comms::saveApp(AppData *app)
 
     if (needsReporting) {
         qint64 now = QDateTime::currentMSecsSinceEpoch();
-//        sendAppData(Comms::instance().lastApp, Comms::instance().lastAppTimestamp, now);
+//        sendAppData(lastApp, lastAppTimestamp, now);
         lastApp->setEnd(now); // it already has start, now we only update end
         DbManager::instance().saveAppToDb(lastApp);
 
@@ -62,11 +78,6 @@ void Comms::saveApp(AppData *app)
 
 void Comms::sendAppData(QList<AppData*> *appList)
 {
-//    qDebug() << "[NOTIFY OF APP]";
-//    qDebug() << "getAppName: " << app->getAppName();
-//    qDebug() << "getWindowName: " << app->getWindowName();
-//    qDebug() << "getAdditionalInfo: " << app->getAdditionalInfo();
-//    qDebug() << "getDomainFromAdditionalInfo: " << app->getDomainFromAdditionalInfo();
 
     // read api key from settings
     QString apiKey = settings.value(SETT_APIKEY).toString();
@@ -83,21 +94,35 @@ void Comms::sendAppData(QList<AppData*> *appList)
     QString computer_activities = "computer_activities";
 
     for (AppData *app: *appList) {
-        params.addQueryItem(computer_activities + "[" + count + "][application_name]", app->getAppName());
-        params.addQueryItem(computer_activities + "[" + count + "][window_title]", app->getWindowName());
+//    qDebug() << "[NOTIFY OF APP]";
+//    qDebug() << "getAppName: " << app->getAppName();
+//    qDebug() << "getWindowName: " << app->getWindowName();
+//    qDebug() << "getAdditionalInfo: " << app->getAdditionalInfo();
+//    qDebug() << "getDomainFromAdditionalInfo: " << app->getDomainFromAdditionalInfo();
+//    qDebug() << "getStart: " << app->getStart();
+//    qDebug() << "getEnd: " << app->getEnd();
+
+        params.addQueryItem(computer_activities + "[" + QString::number(count) + "][application_name]", app->getAppName());
+        params.addQueryItem(computer_activities + "[" + QString::number(count) + "][window_title]", app->getWindowName());
         if (app->getAdditionalInfo() != "") {
-            params.addQueryItem(computer_activities + "[" + count + "][website_domain]", app->getDomainFromAdditionalInfo());
+            params.addQueryItem(computer_activities + "[" + QString::number(count) + "][website_domain]", app->getDomainFromAdditionalInfo());
         }
         // "Web Browser App" when appName is Internet but no domain
 
         QString start_time = QDateTime::fromMSecsSinceEpoch(app->getStart()).toString(Qt::ISODate).replace("T", " ");
-        //    qDebug() << "start_time: " << start_time;
-        params.addQueryItem(computer_activities + "[" + count + "][start_time]", start_time);
+            qDebug() << "start_time: " << start_time;
+        params.addQueryItem(computer_activities + "[" + QString::number(count) + "][start_time]", start_time);
 
         QString end_time = QDateTime::fromMSecsSinceEpoch(app->getEnd()).toString(Qt::ISODate).replace("T", " ");
-        //    qDebug() << "end_time: " << end_time;
-        params.addQueryItem(QString(computer_activities + "[" + count + "][end_time]"), end_time);
+            qDebug() << "end_time: " << end_time;
+        params.addQueryItem(QString(computer_activities + "[" + QString::number(count) + "][end_time]"), end_time);
+        count++;
     }
+
+//    qDebug() << "--------------";
+//    qDebug() << "URL params: ";
+//    qDebug() << params.toString();
+//    qDebug() << "--------------\n";
 
     QUrl serviceURL("https://www.timecamp.com/third_party/api/activity/api_token/" + apiKey);
     QNetworkRequest request(serviceURL);
@@ -118,7 +143,7 @@ void Comms::sendAppData(QList<AppData*> *appList)
 
     QNetworkAccessManager *m_qnam = new QNetworkAccessManager();
     m_qnam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
-    connect(m_qnam, SIGNAL(finished(QNetworkReply * )), this, SLOT(serviceRequestFinished(QNetworkReply * )));
+    connect(m_qnam, SIGNAL(finished(QNetworkReply *)), this, SLOT(serviceRequestFinished(QNetworkReply *)));
 
 
 //    qDebug() << "JSON String: " << jsonString;
@@ -134,5 +159,17 @@ void Comms::sendAppData(QList<AppData*> *appList)
 void Comms::serviceRequestFinished(QNetworkReply *reply)
 {
     QByteArray buffer = reply->readAll();
-//    qDebug() << "Response: " << buffer;
+    qDebug() << "Response: " << buffer;
+    if(buffer == ""){
+        qDebug() << "update last sync to whenever we sent the data";
+        settings.setValue(SETT_LAST_SYNC, getCurrentTime()); // update last sync to whenever we sent the data
+    }
+}
+qint64 Comms::getCurrentTime() const
+{
+    return currentTime;
+}
+void Comms::setCurrentTime(qint64 current_time)
+{
+    Comms::currentTime = current_time;
 }

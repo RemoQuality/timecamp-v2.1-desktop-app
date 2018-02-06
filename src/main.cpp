@@ -1,6 +1,10 @@
+#include <QApplication>
+#include <QTimer>
+#include <QObject>
+
 #include "Settings.h"
 #include "MainWidget.h"
-#include <QApplication>
+#include "Comms.h"
 
 int main(int argc, char *argv[])
 {
@@ -18,9 +22,15 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     QApplication app(argc, argv);
-    MainWidget w;
 
+    // create main widget
+    MainWidget w;
     w.setWindowTitle(WINDOW_NAME);
+
+    // send updates from DB to server
+    QTimer *timer = new QTimer();
+    QObject::connect(timer, SIGNAL(timeout()), &Comms::instance(), SLOT(timedUpdates()));
+    timer->start(30*1000); // do it every 30s
 
     return app.exec();
 }

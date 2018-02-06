@@ -18,16 +18,21 @@ public:
     virtual ~Comms(){}
 
     void saveApp(AppData *app);
-    void Comms::sendAppData(QList<AppData*> *appList);
+    void sendAppData(QList<AppData*> *appList);
+    qint64 getCurrentTime() const;
+    void setCurrentTime(qint64 current_time);
 
 private:
     AppData *lastApp;
     QSettings settings;
+    qint64 lastSync;
+    qint64 currentTime;
 
 signals:
 
 public slots:
     void serviceRequestFinished(QNetworkReply* reply);
+    void timedUpdates();
 };
 
 #endif // COMMS_H
