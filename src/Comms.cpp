@@ -7,10 +7,6 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
-
 #include <QUrlQuery>
 #include <QEventLoop>
 #include <QTimer>
@@ -110,11 +106,11 @@ void Comms::sendAppData(QList<AppData*> *appList)
         // "Web Browser App" when appName is Internet but no domain
 
         QString start_time = QDateTime::fromMSecsSinceEpoch(app->getStart()).toString(Qt::ISODate).replace("T", " ");
-            qDebug() << "start_time: " << start_time;
+//            qDebug() << "converted start_time: " << start_time;
         params.addQueryItem(computer_activities + "[" + QString::number(count) + "][start_time]", start_time);
 
         QString end_time = QDateTime::fromMSecsSinceEpoch(app->getEnd()).toString(Qt::ISODate).replace("T", " ");
-            qDebug() << "end_time: " << end_time;
+//            qDebug() << "converted end_time: " << end_time;
         params.addQueryItem(QString(computer_activities + "[" + QString::number(count) + "][end_time]"), end_time);
         count++;
     }

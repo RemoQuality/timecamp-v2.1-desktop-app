@@ -9,6 +9,7 @@
 #include <tchar.h>
 #include <Psapi.h>
 #include <comutil.h>
+#include <UIAutomation.h>
 
 #include "Comms.h"
 #include "AppData.h"

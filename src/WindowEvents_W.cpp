@@ -1,6 +1,7 @@
 #include <src/ControlIterator/AccControlIterator.h>
 #include "WindowEvents_W.h"
 #include "ControlIterator/UIAControlIterator.h"
+#include "FirefoxUtils.h"
 #include <QElapsedTimer>
 
 void WindowEvents_W::logAppName(unsigned char* appName, unsigned char* windowName)
@@ -10,7 +11,7 @@ void WindowEvents_W::logAppName(unsigned char* appName, unsigned char* windowNam
 
 void WindowEvents_W::logAppName(QString appName, QString windowName, HWND passedHwnd)
 {
-    //qInfo("APP: %s | %s \n", appName.toLatin1().constData(), windowName.toLatin1().constData());
+    qInfo("APP: %s | %s \n", appName.toLatin1().constData(), windowName.toLatin1().constData());
     appName.replace(".exe", "");
     WindowDetails *details = new WindowDetails();
     QString additionalInfo = details->GetAdditionalInfo(appName, passedHwnd);
@@ -389,7 +390,6 @@ QString WindowDetails::GetAdditionalInfo(QString processName, HWND passedHwnd)
     /*
         ALL, so:
             MS Edge: weird processes - somewhat works, but inserts random pages sometimes
-            Firefox: firefox.exe - latest is VERY BROKEN; either first tab or some random page
             Tor: firefox.exe - not checked yet
 
         "broken" chromium based:
@@ -398,7 +398,7 @@ QString WindowDetails::GetAdditionalInfo(QString processName, HWND passedHwnd)
             Brave: brave.exe - STILL broken; nothing works at all
             UC Browser: UCBrowser.exe -STILL broken; nothing works at all
      */
-    if (processName.toLower().contains(QRegExp("microsoftedge|netscp6|mozilla|netscape|firefox|vivaldi|brave|ucbrowser|browser"))) {
+    if (processName.toLower().contains(QRegExp("microsoftedge|netscp6|mozilla|netscape|vivaldi|brave|ucbrowser|browser"))) {
         pointerMagic = &WindowDetails::operaAccCallback;
         browser = true;
     }
@@ -422,6 +422,10 @@ QString WindowDetails::GetAdditionalInfo(QString processName, HWND passedHwnd)
         QString host = url.host();
         qInfo() << "[HOST]" << host << "(" << timer.elapsed() << ")" << "ms" << "\r\n";
         return res;
+    }
+
+    if (processName.toLower().contains(QRegExp("firefox"))) {
+        return getCurrentURLFromFirefox();
     }
 
     return "";
