@@ -425,7 +425,15 @@ QString WindowDetails::GetAdditionalInfo(QString processName, HWND passedHwnd)
     }
 
     if (processName.toLower().contains(QRegExp("firefox"))) {
-        return getCurrentURLFromFirefox();
+        QElapsedTimer timer;
+        timer.start();
+        QString res = QString::fromStdWString(FirefoxURL::GetFirefoxURL(currenthwnd));
+
+        qInfo() << "[FX_W]" << res;
+        QUrl url(res);
+        QString host = url.host();
+        qInfo() << "[HOST]" << host << "(" << timer.elapsed() << ")" << "ms" << "\r\n";
+        return res; // we do [HOST] here for debug only, but we save full URL to DB
     }
 
     return "";
@@ -437,4 +445,164 @@ const QRegExp &WindowDetails::getURL_REGEX() const
 void WindowDetails::setURL_REGEX(const QRegExp &URL_REGEX)
 {
     WindowDetails::URL_REGEX = URL_REGEX;
+}
+
+
+HRESULT FirefoxURL::GetControlCondition(IUIAutomation *automation, const long controlType, IUIAutomationCondition** controlCondition)
+{
+    VARIANT propVar;
+    propVar.vt = VT_I4;
+    propVar.lVal = controlType;
+    return automation->CreatePropertyCondition(UIA_ControlTypePropertyId, propVar, controlCondition);
+}
+
+std::wstring FirefoxURL::GetFirefoxURL(HWND hwnd)
+{
+    IUIAutomation *_automation;
+    HRESULT hr = CoInitialize(NULL);
+    if (FAILED(hr))
+    {
+        wprintf(L"CoInitialize failed, HR:0x%08x\n", hr);
+    }
+    else
+    {
+        hr = CoCreateInstance(__uuidof(CUIAutomation), NULL, CLSCTX_INPROC_SERVER,
+                              __uuidof(IUIAutomation), (void**)&_automation);
+        if (FAILED(hr))
+        {
+            wprintf(L"Failed to create a CUIAutomation, HR: 0x%08x\n", hr);
+        }
+        else
+        {
+            IUIAutomationElement *firefoxElement = NULL;
+            hr = _automation->ElementFromHandle(hwnd, &firefoxElement);
+            if (FAILED(hr))
+            {
+                wprintf(L"Failed to ElementFromHandle, HR: 0x%08x\n\n", hr);
+            }
+            else
+            {
+                IUIAutomationCondition* toolbarCondition;
+                hr = GetControlCondition(_automation, UIA_ToolBarControlTypeId, &toolbarCondition);
+                if (FAILED(hr))
+                {
+                    wprintf(L"Failed to get toolbar condition, HR: 0x%08x\n\n", hr);
+                }
+                else
+                {
+                    IUIAutomationElementArray *toolbars = NULL;
+                    hr = firefoxElement->FindAll(TreeScope_Children, toolbarCondition, &toolbars);
+                    if (FAILED(hr))
+                    {
+                        wprintf(L"Failed to get Firefox toolbars, HR: 0x%08x\n\n", hr);
+                    }
+                    else
+                    {
+                        int length = 0;
+                        hr = toolbars->get_Length(&length);
+                        if (FAILED(hr))
+                        {
+                            wprintf(L"Failed to get Firefox toolbars length, HR: 0x%08x\n\n", hr);
+                        }
+                        else
+                        {
+                            if (length >= 3)
+                            {
+                                IUIAutomationElement *toolbarElement = NULL;
+                                hr = toolbars->GetElement(2,&toolbarElement);
+                                if (FAILED(hr))
+                                {
+                                    wprintf(L"Failed to get address toolbar, HR: 0x%08x\n\n", hr);
+                                }
+                                else
+                                {
+                                    IUIAutomationCondition* comboCondition;
+                                    hr = GetControlCondition(_automation, UIA_ComboBoxControlTypeId, &comboCondition);
+                                    if (FAILED(hr))
+                                    {
+                                        wprintf(L"Failed to get comboBox condition, HR: 0x%08x\n\n", hr);
+                                    }
+                                    else
+                                    {
+                                        IUIAutomationElement *comboElement = NULL;
+                                        hr = toolbarElement->FindFirst(TreeScope_Children, comboCondition, &comboElement);
+                                        if (FAILED(hr))
+                                        {
+                                            wprintf(L"Failed to get comboBox of address toolbar, HR: 0x%08x\n\n", hr);
+                                        }
+                                        else
+                                        {
+                                            IUIAutomationCondition* editCondition;
+                                            VARIANT propVar;
+                                            propVar.vt = VT_I4;
+                                            propVar.lVal = UIA_EditControlTypeId;
+                                            hr = _automation->CreatePropertyCondition(UIA_ControlTypePropertyId, propVar, &editCondition);
+                                            if (FAILED(hr))
+                                            {
+                                                wprintf(L"Failed to get edit condition, HR: 0x%08x\n\n", hr);
+                                            }
+                                            else
+                                            {
+                                                IUIAutomationElement *urlElement = NULL;
+                                                hr = comboElement->FindFirst(TreeScope_Children, editCondition, &urlElement);
+                                                if (FAILED(hr))
+                                                {
+                                                    wprintf(L"Failed to get edit of address toolbar, HR: 0x%08x\n\n", hr);
+                                                }
+                                                else
+                                                {
+                                                    IUnknown* patternInter = NULL;
+                                                    hr = urlElement->GetCurrentPattern(UIA_ValuePatternId, &patternInter);
+                                                    if (FAILED(hr))
+                                                    {
+                                                        wprintf(L"Failed to get value pattern interface, HR: 0x%08x\n\n", hr);
+                                                    }
+                                                    else
+                                                    {
+                                                        IUIAutomationValuePattern* valuePattern = NULL;
+                                                        hr = patternInter->QueryInterface(IID_IUIAutomationValuePattern, (void **)&valuePattern);
+                                                        if (FAILED(hr))
+                                                        {
+                                                            wprintf(L"Failed to get value pattern, HR: 0x%08x\n\n", hr);
+                                                        }
+                                                        else
+                                                        {
+                                                            BSTR url;
+                                                            hr = valuePattern->get_CurrentValue(&url);
+                                                            if (FAILED(hr))
+                                                            {
+                                                                wprintf(L"Failed to get url value, HR: 0x%08x\n\n", hr);
+                                                            }
+                                                            else
+                                                            {
+                                                                return std::wstring(url, SysStringLen(url));
+                                                            }
+                                                            valuePattern->Release();
+                                                        }
+                                                        patternInter->Release();
+                                                    }
+                                                    urlElement->Release();
+                                                }
+                                                editCondition->Release();
+                                            }
+                                            comboElement->Release();
+                                        }
+                                        comboCondition->Release();
+                                    }
+                                    toolbarElement->Release();
+                                }
+                            }
+                            else wprintf(L"Too less Firefox's toolbars, %d\n\n", length);
+                            toolbars->Release();
+                        }
+                    }
+                    toolbarCondition->Release();
+                }
+                firefoxElement->Release();
+            }
+            _automation->Release();
+        }
+        CoUninitialize();
+    }
+    return L"Failed to get current firefox url value";
 }

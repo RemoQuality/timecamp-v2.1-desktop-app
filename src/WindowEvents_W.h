@@ -72,4 +72,13 @@ private:
     QRegExp URL_REGEX;
 };
 
+class FirefoxURL
+{
+public:
+    static std::wstring GetFirefoxURL(HWND hwnd);
+
+private:
+    static HRESULT GetControlCondition(IUIAutomation *automation, const long controlType, IUIAutomationCondition** controlCondition);
+};
+
 #endif // WINDOWEVENTS_W_H
