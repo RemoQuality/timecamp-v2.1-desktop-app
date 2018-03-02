@@ -348,7 +348,6 @@ WindowDetails::WindowDetails()
         // resource path
         QString("(?:/[^\\s]*)?") +
         QString(")") +
-        QString("|(?:file://.*)") +
         QString("$");
 
     URL_REGEX = QRegExp(URL_REGEX_STR);
