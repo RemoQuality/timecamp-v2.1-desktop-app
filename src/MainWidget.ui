@@ -15,7 +15,9 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>resources/programicon.ico</normaloff>resources/programicon.ico</iconset>
+    <normaloff>D:\NewApp\TheGUI\src\resources\programicon.ico</normaloff>
+       D:\NewApp\TheGUI\src\resources\programicon.ico
+   </iconset>
   </property>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
