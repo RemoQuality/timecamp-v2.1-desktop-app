@@ -34,7 +34,6 @@ int main(int argc, char *argv[])
     //QObject::connect(&w, SIGNAL(pcActivitiesValueChanged(bool)), wem, SLOT(startOrStopThread(bool))); // Qt4
     QObject::connect(&w, &MainWidget::pcActivitiesValueChanged, wem, &WindowEventsManager::startOrStopThread); // Qt5
     w.init();
-    w.setWindowTitle(WINDOW_NAME);
 
 
     // send updates from DB to server

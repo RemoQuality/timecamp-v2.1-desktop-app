@@ -30,6 +30,7 @@ MainWidget::~MainWidget()
 }
 
 void MainWidget::init(){
+    this->setWindowTitle(WINDOW_NAME);
     this->setupWebview(); // starts the embedded webpage
     this->setupTray(); // creates all actions in tray here
     this->setupSettings(); // sets tray values
