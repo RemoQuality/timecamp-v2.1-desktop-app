@@ -98,21 +98,23 @@ void Comms::sendAppData(QList<AppData*> *appList)
 //    qDebug() << "getStart: " << app->getStart();
 //    qDebug() << "getEnd: " << app->getEnd();
 
-        params.addQueryItem(computer_activities + "[" + QString::number(count) + "][application_name]", app->getAppName());
-        params.addQueryItem(computer_activities + "[" + QString::number(count) + "][window_title]", app->getWindowName());
-        if (app->getAdditionalInfo() != "") {
-            params.addQueryItem(computer_activities + "[" + QString::number(count) + "][website_domain]", app->getDomainFromAdditionalInfo());
-        }
-        // "Web Browser App" when appName is Internet but no domain
+        if(app->getAppName() != "IDLE" && app->getWindowName() != "IDLE") {
+            params.addQueryItem(computer_activities + "[" + QString::number(count) + "][application_name]", app->getAppName());
+            params.addQueryItem(computer_activities + "[" + QString::number(count) + "][window_title]", app->getWindowName());
+            if (app->getAdditionalInfo() != "") {
+                params.addQueryItem(computer_activities + "[" + QString::number(count) + "][website_domain]", app->getDomainFromAdditionalInfo());
+            }
+            // "Web Browser App" when appName is Internet but no domain
 
-        QString start_time = QDateTime::fromMSecsSinceEpoch(app->getStart()).toString(Qt::ISODate).replace("T", " ");
+            QString start_time = QDateTime::fromMSecsSinceEpoch(app->getStart()).toString(Qt::ISODate).replace("T", " ");
 //            qDebug() << "converted start_time: " << start_time;
-        params.addQueryItem(computer_activities + "[" + QString::number(count) + "][start_time]", start_time);
+            params.addQueryItem(computer_activities + "[" + QString::number(count) + "][start_time]", start_time);
 
-        QString end_time = QDateTime::fromMSecsSinceEpoch(app->getEnd()).toString(Qt::ISODate).replace("T", " ");
+            QString end_time = QDateTime::fromMSecsSinceEpoch(app->getEnd()).toString(Qt::ISODate).replace("T", " ");
 //            qDebug() << "converted end_time: " << end_time;
-        params.addQueryItem(QString(computer_activities + "[" + QString::number(count) + "][end_time]"), end_time);
-        count++;
+            params.addQueryItem(QString(computer_activities + "[" + QString::number(count) + "][end_time]"), end_time);
+            count++;
+        }
     }
 
 //    qDebug() << "--------------";

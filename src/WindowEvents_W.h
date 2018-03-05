@@ -12,7 +12,6 @@
 #include <UIAutomation.h>
 
 #include "Comms.h"
-#include "AppData.h"
 #include "src/ControlIterator/IControlIterator.h"
 
 typedef struct {
@@ -29,6 +28,7 @@ public:
 protected:
     void run() override; // your thread implementation goes here
     void logAppName(unsigned char* appName, unsigned char* windowName) override;
+    unsigned long getIdleTime() override;
 
 private:
     HWINEVENTHOOK wname_hook;

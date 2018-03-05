@@ -4,6 +4,7 @@
 #include "Settings.h"
 #include "MainWidget.h"
 #include "Comms.h"
+#include "WindowEvents.h"
 #include "WindowEventsManager.h"
 #include "TrayManager.h"
 
@@ -52,6 +53,7 @@ int main(int argc, char *argv[])
     auto *twoSecondTimer = new QTimer();
     //QObject::connect(twoSecondTimer, SIGNAL(timeout()), &mainWidget, SLOT(twoSecTimerTimeout())); // Qt4
     QObject::connect(twoSecondTimer, &QTimer::timeout, &mainWidget, &MainWidget::twoSecTimerTimeout); // Qt5
+    QObject::connect(twoSecondTimer, &QTimer::timeout, windowEventsManager->getCaptureEventsThread(), &WindowEvents::checkIdleStatus); // Qt5
     twoSecondTimer->start(2 * 1000);
 
     return app.exec();

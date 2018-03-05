@@ -51,3 +51,7 @@ void WindowEventsManager::stopThread()
         }
     }
 }
+WindowEvents *WindowEventsManager::getCaptureEventsThread() const
+{
+    return captureEventsThread;
+}

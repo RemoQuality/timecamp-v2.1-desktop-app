@@ -59,7 +59,7 @@ list(APPEND TC_SOURCES
     "src/WindowEventsManager.cpp"
     "src/TrayManager.cpp"
     "src/third-party/mozilla_lz4/lz4.c"
-	"src/WindowEvents.h" # a header without cpp file
+	"src/WindowEvents.cpp" # a header without cpp file
 )
 
 

@@ -13,6 +13,7 @@ public:
     static WindowEventsManager &instance();
     explicit WindowEventsManager(QObject *parent = nullptr);
     virtual ~WindowEventsManager(){}
+    WindowEvents *getCaptureEventsThread() const;
 
 public slots:
     void startOrStopThread(bool startOrStop);

@@ -4,6 +4,20 @@
 #include "FirefoxUtils.h"
 #include <QElapsedTimer>
 
+unsigned long WindowEvents_W::getIdleTime()
+{
+    LASTINPUTINFO lpi;
+    lpi.cbSize = sizeof(LASTINPUTINFO);
+
+    if (GetLastInputInfo(&lpi)) {
+        return (GetTickCount() - lpi.dwTime); //pobierz czas bezczynnosci po power resume
+    } else {
+        qDebug() << "[WindowEvents_W::getIdleTime] GetIdleTime failed";
+    }
+
+    return 0;
+}
+
 void WindowEvents_W::logAppName(unsigned char* appName, unsigned char* windowName)
 {
     //qInfo("APP: %s | %s \n", appName, windowName);

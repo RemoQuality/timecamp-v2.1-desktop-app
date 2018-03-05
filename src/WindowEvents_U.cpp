@@ -1,5 +1,21 @@
 #include "WindowEvents_U.h"
 
+unsigned long WindowEvents_U::getIdleTime()
+{
+    XScreenSaverInfo *info = XScreenSaverAllocInfo();
+    Display *display = XOpenDisplay(0);
+
+    if (display != 0) {
+        XScreenSaverQueryInfo(display, DefaultRootWindow(display), info);
+        XCloseDisplay(display);
+        return info->idle;
+    } else {
+        qDebug() << "[WindowEvents_U::getIdleTime] GetIdleTime failed";
+    }
+
+    return 0;
+}
+
 std::string WindowEvents_U::execCommand(const char* cmd)
 {
     std::array<char, 128> buffer;
