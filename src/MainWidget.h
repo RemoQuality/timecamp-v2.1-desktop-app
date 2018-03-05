@@ -34,9 +34,14 @@ class MainWidget : public QWidget
 public:
     explicit MainWidget(QWidget *parent = 0);
     ~MainWidget();
+    void init();
 
     const QString &getTimerName() const;
     bool isIsTimerRunning() const;
+    void twoSecTimerTimeout();
+
+signals:
+    void pcActivitiesValueChanged(bool);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -48,7 +53,6 @@ private slots:
 
     void webpageTitleChanged(QString title);
 
-    void twoSecTimerTimeout();
 
     void iconActivated(QSystemTrayIcon::ActivationReason);
 
@@ -81,7 +85,7 @@ private:
 
     void checkIfLoggedIn(QString title);
     void setupWebview();
-    void setupTray(QWidget *parent);
+    void setupTray();
     void setupSettings();
 
     QShortcut *refreshBind;

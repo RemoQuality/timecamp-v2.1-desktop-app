@@ -2,34 +2,11 @@
 #include "ui_MainWidget.h"
 
 #include "Settings.h"
+#include "WindowEventsManager.h"
 
-#ifdef __linux__
-#include "WindowEvents_U.h"
-WindowEvents *captureEventsThread = new WindowEvents_U();
-#elif _WIN32
-#include "WindowEvents_W.h"
+#ifdef  _WIN32
 #include "Autorun.h"
-
-WindowEvents *captureEventsThread = new WindowEvents_W();
-#else
-    // mac
 #endif
-
-void startThread(QThread *thread)
-{
-    thread->start();
-}
-
-void stopThread(QThread *thread)
-{
-    thread->requestInterruption(); // if it checks for isInterruptionRequested
-    if(thread->isRunning()){
-        thread->exit(); // if it uses QEventLoop
-        if(thread->isRunning()){
-            thread->terminate(); // force close
-        }
-    }
-}
 
 MainWidget::MainWidget(QWidget *parent) :
     QWidget(parent),
@@ -45,14 +22,17 @@ MainWidget::MainWidget(QWidget *parent) :
 
     restoreGeometry(settings.value("mainWindowGeometry").toByteArray()); // from QWidget; restore saved window position
 
-    this->setupWebview(); // starts the embedded webpage
-    this->setupTray(parent); // creates all actions in tray here
-    this->setupSettings(); // sets tray values
 }
 
 MainWidget::~MainWidget()
 {
     delete ui;
+}
+
+void MainWidget::init(){
+    this->setupWebview(); // starts the embedded webpage
+    this->setupTray(); // creates all actions in tray here
+    this->setupSettings(); // sets tray values
 }
 
 void MainWidget::resizeEvent(QResizeEvent *event)
@@ -94,7 +74,7 @@ void MainWidget::setupWebview()
     QTWEView = new QWebEngineView(this);
     QTWEView->setContextMenuPolicy(Qt::NoContextMenu); // disable context menu in embedded webpage
 
-    QTWEProfile = new QWebEngineProfile(QCoreApplication::applicationName(), QTWEView); // set "profile" as appName
+    QTWEProfile = new QWebEngineProfile(APPLICATION_NAME, QTWEView); // set "profile" as appName
     QTWEProfile->setHttpUserAgent(CONN_USER_AGENT); // add useragent to this profile
 
     QTWESettings = QTWEProfile->settings();
@@ -158,13 +138,13 @@ void MainWidget::checkIfLoggedIn(QString title)
 }
 
 
-void MainWidget::setupTray(QWidget *parent)
+void MainWidget::setupTray()
 {
     if(QSystemTrayIcon::isSystemTrayAvailable() == false){
         QMessageBox::critical(this,":(","Ninja Mode is not available on this computer. Try again later :P");
     }
 
-    trayMenu = new QMenu(parent);
+    trayMenu = new QMenu();
     createActions(trayMenu);
 
     trayIcon = new QSystemTrayIcon(this);
@@ -252,13 +232,8 @@ void MainWidget::autoStart(bool checked)
 void MainWidget::tracker(bool checked)
 {
     settings.setValue(SETT_TRACK_PC_ACTIVITIES, checked);
-    if(checked){
-        startThread(captureEventsThread);
-    } else {
-        stopThread(captureEventsThread);
-    }
+    emit pcActivitiesValueChanged(checked);
 }
-
 
 void MainWidget::quit()
 {

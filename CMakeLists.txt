@@ -56,6 +56,7 @@ list(APPEND TC_SOURCES
 	"src/AppData.cpp"
     "src/Autorun.cpp"
     "src/FirefoxUtils.cpp"
+    "src/WindowEventsManager.cpp"
     "src/third-party/mozilla_lz4/lz4.c"
 	"src/WindowEvents.h" # a header without cpp file
 )

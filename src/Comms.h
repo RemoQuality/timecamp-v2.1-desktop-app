@@ -21,6 +21,7 @@ public:
     void sendAppData(QList<AppData*> *appList);
     qint64 getCurrentTime() const;
     void setCurrentTime(qint64 current_time);
+    void timedUpdates();
 
 private:
     AppData *lastApp;
@@ -32,7 +33,6 @@ signals:
 
 public slots:
     void serviceRequestFinished(QNetworkReply* reply);
-    void timedUpdates();
 };
 
 #endif // COMMS_H
