@@ -6,6 +6,7 @@
 #include "MainWidget.h"
 #include "Comms.h"
 #include "WindowEventsManager.h"
+#include "TrayManager.h"
 
 int main(int argc, char *argv[])
 {
@@ -31,10 +32,14 @@ int main(int argc, char *argv[])
 
     // create main widget
     MainWidget w;
-    //QObject::connect(&w, SIGNAL(pcActivitiesValueChanged(bool)), wem, SLOT(startOrStopThread(bool))); // Qt4
-    QObject::connect(&w, &MainWidget::pcActivitiesValueChanged, wem, &WindowEventsManager::startOrStopThread); // Qt5
     w.init();
 
+    // craete tray manager
+    TrayManager *trayManager = new TrayManager();
+    QObject::connect(&w, &MainWidget::pageTitleChanged, trayManager, &TrayManager::updateTooltip);
+    QObject::connect(&w, &MainWidget::timerStatusChanged, trayManager, &TrayManager::updateStopMenu);
+    QObject::connect(trayManager, &TrayManager::pcActivitiesValueChanged, wem, &WindowEventsManager::startOrStopThread);
+    trayManager->setupTray(&w);
 
     // send updates from DB to server
     Comms *comms = new Comms();

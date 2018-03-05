@@ -4,9 +4,6 @@
 #include "Settings.h"
 #include "WindowEventsManager.h"
 
-#ifdef  _WIN32
-#include "Autorun.h"
-#endif
 
 MainWidget::MainWidget(QWidget *parent) :
     QWidget(parent),
@@ -32,8 +29,6 @@ MainWidget::~MainWidget()
 void MainWidget::init(){
     this->setWindowTitle(WINDOW_NAME);
     this->setupWebview(); // starts the embedded webpage
-    this->setupTray(); // creates all actions in tray here
-    this->setupSettings(); // sets tray values
 }
 
 void MainWidget::resizeEvent(QResizeEvent *event)
@@ -57,17 +52,6 @@ void MainWidget::twoSecTimerTimeout()
         fetchAPIkey();
         checkIsTimerRunning();
     }
-}
-
-void MainWidget::setupSettings()
-{
-    // set checkboxes
-    autoStartAct->setChecked(settings.value(SETT_AUTOSTART, false).toBool());
-    trackerAct->setChecked(settings.value(SETT_TRACK_PC_ACTIVITIES, false).toBool());
-
-    // act on the saved settings
-    this->autoStart(autoStartAct->isChecked());
-    this->tracker(trackerAct->isChecked());
 }
 
 void MainWidget::setupWebview()
@@ -108,9 +92,9 @@ void MainWidget::webpageTitleChanged(QString title)
 {
 //    qInfo("[NEW_TC]: Webpage title changed: ");
 //    qInfo(title.toLatin1().constData());
-    trayIcon->setToolTip(title);
     if(!loggedIn){
         checkIfLoggedIn(title);
+        emit pageTitleChanged(title);
     }
 }
 
@@ -135,35 +119,6 @@ void MainWidget::checkIfLoggedIn(QString title)
     if(title == "Timer Timesheet | TimeCamp"){
         loggedIn = true;
         twoSecTimerTimeout();
-    }
-}
-
-
-void MainWidget::setupTray()
-{
-    if(QSystemTrayIcon::isSystemTrayAvailable() == false){
-        QMessageBox::critical(this,":(","Ninja Mode is not available on this computer. Try again later :P");
-    }
-
-    trayMenu = new QMenu();
-    createActions(trayMenu);
-
-    trayIcon = new QSystemTrayIcon(this);
-
-    trayIcon->setIcon(this->windowIcon());
-    trayIcon->setContextMenu(trayMenu);
-    trayIcon->show();
-
-
-    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
-            this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
-}
-
-
-void MainWidget::iconActivated(QSystemTrayIcon::ActivationReason reason)
-{
-    if(reason != QSystemTrayIcon::Context){
-        this->open();
     }
 }
 
@@ -220,71 +175,10 @@ void MainWidget::fetchTimerName()
     });
 }
 
-void MainWidget::autoStart(bool checked)
-{
-    settings.setValue(SETT_AUTOSTART, checked);
-    if(checked){
-        Autorun::enableAutorun();
-    }else{
-        Autorun::disableAutorun();
-    }
-}
-
-void MainWidget::tracker(bool checked)
-{
-    settings.setValue(SETT_TRACK_PC_ACTIVITIES, checked);
-    emit pcActivitiesValueChanged(checked);
-}
 
 void MainWidget::quit()
 {
     QApplication::quit();
-}
-
-void MainWidget::createActions(QMenu *menu)
-{
-    openAct = new QAction(tr("Open"), this);
-    openAct->setStatusTip(tr("Open browser"));
-    connect(openAct, &QAction::triggered, this, &MainWidget::open);
-
-    startTaskAct = new QAction(tr("Start timer"), this);
-    startTaskAct->setStatusTip(tr("Go to task selection screen"));
-    startTaskAct->setShortcut(Qt::CTRL + Qt::ALT + Qt::Key_N);
-    startTaskAct->setShortcutVisibleInContextMenu(true);
-    startTaskAct->setShortcutContext(Qt::ApplicationShortcut);
-    connect(startTaskAct, &QAction::triggered, this, &MainWidget::startTask);
-
-    stopTaskAct = new QAction(tr("Stop timer"), this);
-    stopTaskAct->setStatusTip(tr("Stop currently running timer"));
-    stopTaskAct->setShortcut(Qt::CTRL + Qt::ALT + Qt::Key_M);
-    stopTaskAct->setShortcutVisibleInContextMenu(true);
-    stopTaskAct->setShortcutContext(Qt::ApplicationShortcut);
-    connect(stopTaskAct, &QAction::triggered, this, &MainWidget::stopTask);
-
-    trackerAct = new QAction(tr("Track computer activities"), this);
-    trackerAct->setCheckable(true);
-    connect(trackerAct, &QAction::triggered, this, &MainWidget::tracker);
-
-    autoStartAct = new QAction(tr("Launch app on login"), this);
-    autoStartAct->setCheckable(true);
-    connect(autoStartAct, &QAction::triggered, this, &MainWidget::autoStart);
-
-    quitAct = new QAction(tr("Quit"), this);
-    quitAct->setStatusTip(tr("Close the app"));
-    connect(quitAct, &QAction::triggered, this, &MainWidget::quit);
-
-
-    menu->addAction(openAct);
-    menu->addSeparator();
-    //menu->addAction(statusAct);
-    menu->addAction(startTaskAct);
-    menu->addAction(stopTaskAct);
-    menu->addSeparator();
-    menu->addAction(trackerAct);
-    menu->addSeparator();
-    menu->addAction(autoStartAct);
-    menu->addSeparator();
-    menu->addAction(quitAct);
 }
 
 void MainWidget::setApiKey(const QString &apiKey) {
@@ -294,24 +188,14 @@ void MainWidget::setApiKey(const QString &apiKey) {
 
 void MainWidget::setTimerName(const QString &timerName) {
     MainWidget::timerName = timerName;
-    stopTaskAct->setText("Stop " + timerName);
-    stopTaskAct->setEnabled(true); // reenable task stopping
+    emit timerStatusChanged(true, timerName); // reenable task stopping
 }
 
 void MainWidget::setIsTimerRunning(bool isTimerRunning) {
     MainWidget::timerIsRunning = isTimerRunning;
     if(isTimerRunning){
-        fetchTimerName(); // this will make menu say "Stop XYZ task"
+        fetchTimerName(); // this will make menu say "Stop XYZ timer"
     }else{ // no timer running
-        setTimerName("timer"); // make the option say "Stop task"; hacky?
-        stopTaskAct->setEnabled(false); // disable the option - gray it out
+        emit timerStatusChanged(false, "timer"); // disable the option - gray it out;  make the option say "Stop timer"
     }
-}
-
-const QString &MainWidget::getTimerName() const {
-    return timerName;
-}
-
-bool MainWidget::isIsTimerRunning() const {
-    return timerIsRunning;
 }

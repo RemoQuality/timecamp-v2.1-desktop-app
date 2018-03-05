@@ -22,10 +22,6 @@ namespace Ui {
 class MainWidget;
 }
 
-class QAction;
-class QLabel;
-class QMenu;
-
 class MainWidget : public QWidget
 {
     Q_OBJECT
@@ -36,32 +32,27 @@ public:
     ~MainWidget();
     void init();
 
-    const QString &getTimerName() const;
-    bool isIsTimerRunning() const;
     void twoSecTimerTimeout();
 
 signals:
-    void pcActivitiesValueChanged(bool);
+    void pageTitleChanged(QString);
+    void timerStatusChanged(bool, QString);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
 
-private slots:
+public slots:
     void webviewRefresh();
     void webviewFullscreen();
 
     void webpageTitleChanged(QString title);
 
 
-    void iconActivated(QSystemTrayIcon::ActivationReason);
-
     void open();
     //void status();
     void startTask();
     void stopTask();
-    void autoStart(bool checked);
-    void tracker(bool checked);
     void quit();
 
 private:
@@ -80,31 +71,17 @@ private:
     void fetchAPIkey();
     void fetchTimerName();
 
-    QSystemTrayIcon *trayIcon;
-    QMenu *trayMenu;
 
     void checkIfLoggedIn(QString title);
     void setupWebview();
-    void setupTray();
-    void setupSettings();
 
     QShortcut *refreshBind;
     QShortcut *fullscreenBind;
-
-    void createActions(QMenu *menu);
-    QAction *openAct;
-    QAction *startTaskAct;
-    QAction *stopTaskAct;
-    QAction *trackerAct;
-    QAction *autoStartAct;
-    QAction *quitAct;
-
 
     bool loggedIn;
     QString apiKey;
     QString timerName;
     bool timerIsRunning;
-    QTimer *twoSecondTimer;
 
     void setApiKey(const QString &apiKey);
     void setTimerName(const QString &timerName);
