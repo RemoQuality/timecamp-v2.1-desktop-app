@@ -70,6 +70,14 @@ void MainWidget::closeEvent(QCloseEvent *event)
     event->ignore(); // don't do the default action (which usually is app exit)
 }
 
+void MainWidget::twoSecTimerTimeout()
+{
+    if(loggedIn) {
+        fetchAPIkey();
+        checkIsTimerRunning();
+    }
+}
+
 void MainWidget::setupSettings()
 {
     // set checkboxes
@@ -145,8 +153,7 @@ void MainWidget::checkIfLoggedIn(QString title)
 {
     if(title == "Timer Timesheet | TimeCamp"){
         loggedIn = true;
-        fetchAPIkey();
-        checkIsTimerRunning();
+        twoSecTimerTimeout();
     }
 }
 
@@ -187,14 +194,14 @@ void MainWidget::open()
 
 void MainWidget::runJSinPage(QString js)
 {
-    if(!this->isVisible()){
-        this->show();
-    }
     QTWEPage->runJavaScript(js);
 }
 
 void MainWidget::startTask()
 {
+    if(!this->isVisible()){
+        this->show();
+    }
     this->runJSinPage("$('#timer-task-picker').click();");
 }
 
@@ -207,7 +214,7 @@ void MainWidget::checkIsTimerRunning()
 {
     QTWEPage->runJavaScript("angular.element(document.body).injector().get('TimerService').timer.isTimerRunning",
     [this](const QVariant &v) {
-        qDebug() << "Timer running: " << v.toString();
+//        qDebug() << "Timer running: " << v.toString();
         setIsTimerRunning(v.toBool());
     });
 }
@@ -218,7 +225,7 @@ void MainWidget::fetchAPIkey()
 //    QTWEPage->runJavaScript("await window.apiService.getToken()",
     QTWEPage->runJavaScript("window.apiService.getToken().$$state.value",
     [this](const QVariant &v) {
-        qDebug() << "API Key: " << v.toString();
+//        qDebug() << "API Key: " << v.toString();
         setApiKey(v.toString());
     });
 }
@@ -227,7 +234,7 @@ void MainWidget::fetchTimerName()
 {
     QTWEPage->runJavaScript("TC.TimeTracking.getTask(angular.element(document.body).injector().get('TimerService').timer.task_id).name",
     [this](const QVariant &v) {
-        qDebug() << "Timer name: " << v.toString();
+//        qDebug() << "Timer name: " << v.toString();
         setTimerName(v.toString());
     });
 }

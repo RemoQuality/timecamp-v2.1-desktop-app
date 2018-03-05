@@ -48,7 +48,10 @@ private slots:
 
     void webpageTitleChanged(QString title);
 
+    void twoSecTimerTimeout();
+
     void iconActivated(QSystemTrayIcon::ActivationReason);
+
     void open();
     //void status();
     void startTask();
@@ -97,6 +100,7 @@ private:
     QString apiKey;
     QString timerName;
     bool timerIsRunning;
+    QTimer *twoSecondTimer;
 
     void setApiKey(const QString &apiKey);
     void setTimerName(const QString &timerName);

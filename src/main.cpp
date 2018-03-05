@@ -32,5 +32,10 @@ int main(int argc, char *argv[])
     QObject::connect(timer, SIGNAL(timeout()), &Comms::instance(), SLOT(timedUpdates()));
     timer->start(30*1000); // do it every 30s
 
+    // 2 sec timer for updating submenu and other features
+    QTimer *twoSecondTimer = new QTimer();
+    QObject::connect(twoSecondTimer, SIGNAL(timeout()), &w, SLOT(twoSecTimerTimeout()));
+    twoSecondTimer->start(2 * 1000);
+
     return app.exec();
 }
