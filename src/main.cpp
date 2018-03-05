@@ -1,6 +1,5 @@
 #include <QApplication>
 #include <QTimer>
-#include <QObject>
 
 #include "Settings.h"
 #include "MainWidget.h"
@@ -28,31 +27,31 @@ int main(int argc, char *argv[])
 
 
     // create events manager
-    WindowEventsManager *wem = new WindowEventsManager();
+    auto *windowEventsManager = new WindowEventsManager();
 
     // create main widget
-    MainWidget w;
-    w.init();
+    MainWidget mainWidget;
+    mainWidget.init();
 
-    // craete tray manager
-    TrayManager *trayManager = new TrayManager();
-    QObject::connect(&w, &MainWidget::pageTitleChanged, trayManager, &TrayManager::updateTooltip);
-    QObject::connect(&w, &MainWidget::timerStatusChanged, trayManager, &TrayManager::updateStopMenu);
-    QObject::connect(trayManager, &TrayManager::pcActivitiesValueChanged, wem, &WindowEventsManager::startOrStopThread);
-    trayManager->setupTray(&w);
+    // create tray manager
+    auto *trayManager = new TrayManager();
+    QObject::connect(&mainWidget, &MainWidget::pageTitleChanged, trayManager, &TrayManager::updateTooltip);
+    QObject::connect(&mainWidget, &MainWidget::timerStatusChanged, trayManager, &TrayManager::updateStopMenu);
+    QObject::connect(trayManager, &TrayManager::pcActivitiesValueChanged, windowEventsManager, &WindowEventsManager::startOrStopThread);
+    trayManager->setupTray(&mainWidget);
 
     // send updates from DB to server
-    Comms *comms = new Comms();
-    QTimer *syncDBtimer = new QTimer();
+    auto *comms = new Comms();
+    auto *syncDBtimer = new QTimer();
     //QObject::connect(timer, SIGNAL(timeout()), &Comms::instance(), SLOT(timedUpdates())); // Qt4
     QObject::connect(syncDBtimer, &QTimer::timeout, comms, &Comms::timedUpdates); // Qt5
-    syncDBtimer->start(30*1000); // do it every 30s
+    syncDBtimer->start(30 * 1000); // sync DB every 30s
 
 
     // 2 sec timer for updating submenu and other features
-    QTimer *twoSecondTimer = new QTimer();
-    //QObject::connect(twoSecondTimer, SIGNAL(timeout()), &w, SLOT(twoSecTimerTimeout())); // Qt4
-    QObject::connect(twoSecondTimer, &QTimer::timeout, &w, &MainWidget::twoSecTimerTimeout); // Qt5
+    auto *twoSecondTimer = new QTimer();
+    //QObject::connect(twoSecondTimer, SIGNAL(timeout()), &mainWidget, SLOT(twoSecTimerTimeout())); // Qt4
+    QObject::connect(twoSecondTimer, &QTimer::timeout, &mainWidget, &MainWidget::twoSecTimerTimeout); // Qt5
     twoSecondTimer->start(2 * 1000);
 
     return app.exec();
