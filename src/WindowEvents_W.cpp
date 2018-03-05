@@ -168,7 +168,7 @@ void WindowEvents_W::GetProcessName(HWND hWnd, TCHAR *procName)
         GetWindowThreadProcessId(hWnd, &info.ownerpid);
         info.childpid = info.ownerpid;
 
-        EnumChildWindows(hWnd, WindowEvents_W::EnumChildAppHostWindowsCallback,
+        EnumChildWindows(hWnd, reinterpret_cast<WNDENUMPROC>(WindowEvents_W::EnumChildAppHostWindowsCallback),
                          (LPARAM) &info); // go through all windows and find the right child
 
         active_process = OpenProcess(PROCESS_QUERY_INFORMATION, false, info.childpid);
@@ -227,14 +227,14 @@ void WindowEvents_W::InitializeWindowsHook(HWINEVENTHOOK g_hook, HWINEVENTHOOK w
     g_hook = SetWinEventHook(
             EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND,   // Range of events
             nullptr,                                            // Handle to DLL
-            WindowEvents_W::HandleWinEvent,                                     // The callback
+            reinterpret_cast<WINEVENTPROC>(WindowEvents_W::HandleWinEvent),                                     // The callback
             0, 0,                                               // Process and thread IDs of interest (0 = all)
             WINEVENT_OUTOFCONTEXT);
 
     wname_hook = SetWinEventHook(
             EVENT_OBJECT_NAMECHANGE, EVENT_OBJECT_NAMECHANGE,   // Range of events
             nullptr,                                            // Handle to DLL
-            WindowEvents_W::HandleWinNameEvent,                                 // The callback
+            reinterpret_cast<WINEVENTPROC>(WindowEvents_W::HandleWinNameEvent),                                 // The callback
             0, 0,                                     // Process and thread IDs of interest (0 = all)
             WINEVENT_OUTOFCONTEXT);
 }
