@@ -100,7 +100,11 @@ endif()
 #endif()
 
 
-add_executable(TheGUI ${TC_SOURCES} ${UI_HEADERS})
+if(WIN32)
+add_executable(TheGUI ${TC_SOURCES} ${UI_HEADERS} src/resources/icons.rc)
+else()
+    add_executable(TheGUI ${TC_SOURCES} ${UI_HEADERS})
+endif()
 
 if(WIN32)
 	# hide windows console...
