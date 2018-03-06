@@ -35,8 +35,9 @@ public:
     void twoSecTimerTimeout();
 
 signals:
-    void pageTitleChanged(QString);
+    void pageStatusChanged(bool, QString);
     void timerStatusChanged(bool, QString);
+    void checkIsIdle();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;

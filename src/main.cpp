@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 
     // create tray manager
     auto *trayManager = new TrayManager();
-    QObject::connect(&mainWidget, &MainWidget::pageTitleChanged, trayManager, &TrayManager::updateTooltip);
+    QObject::connect(&mainWidget, &MainWidget::pageStatusChanged, trayManager, &TrayManager::loginLogout);
     QObject::connect(&mainWidget, &MainWidget::timerStatusChanged, trayManager, &TrayManager::updateStopMenu);
     QObject::connect(trayManager, &TrayManager::pcActivitiesValueChanged, windowEventsManager, &WindowEventsManager::startOrStopThread);
     trayManager->setupTray(&mainWidget);
@@ -53,7 +53,8 @@ int main(int argc, char *argv[])
     auto *twoSecondTimer = new QTimer();
     //QObject::connect(twoSecondTimer, SIGNAL(timeout()), &mainWidget, SLOT(twoSecTimerTimeout())); // Qt4
     QObject::connect(twoSecondTimer, &QTimer::timeout, &mainWidget, &MainWidget::twoSecTimerTimeout); // Qt5
-    QObject::connect(twoSecondTimer, &QTimer::timeout, windowEventsManager->getCaptureEventsThread(), &WindowEvents::checkIdleStatus); // Qt5
+    // above timeout triggers func that emits checkIsIdle when logged in
+    QObject::connect(&mainWidget, &MainWidget::checkIsIdle, windowEventsManager->getCaptureEventsThread(), &WindowEvents::checkIdleStatus); // Qt5
     twoSecondTimer->start(2 * 1000);
 
     return app.exec();

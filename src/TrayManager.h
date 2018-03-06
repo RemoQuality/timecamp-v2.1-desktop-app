@@ -23,8 +23,9 @@ public:
 
     void setupTray(MainWidget*);
     void setupSettings();
-    void updateTooltip(QString);
+
     void updateStopMenu(bool, QString);
+    void loginLogout(bool, QString);
 
 signals:
     void pcActivitiesValueChanged(bool);

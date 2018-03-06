@@ -38,8 +38,6 @@ void TrayManager::setupTray(MainWidget *parent)
     trayIcon->setIcon(mainWidget->windowIcon());
     trayIcon->setContextMenu(trayMenu);
     trayIcon->show();
-
-    this->setupSettings();
 }
 
 
@@ -52,11 +50,6 @@ void TrayManager::setupSettings()
     // act on the saved settings
     this->autoStart(autoStartAct->isChecked());
     this->tracker(trackerAct->isChecked());
-}
-
-void TrayManager::updateTooltip(QString tooltipText)
-{
-    trayIcon->setToolTip(tooltipText);
 }
 
 void TrayManager::updateStopMenu(bool canBeStopped, QString timerName)
@@ -123,7 +116,6 @@ void TrayManager::createActions(QMenu *menu)
 
     menu->addAction(openAct);
     menu->addSeparator();
-    //menu->addAction(statusAct);
     menu->addAction(startTaskAct);
     menu->addAction(stopTaskAct);
     menu->addSeparator();
@@ -132,4 +124,17 @@ void TrayManager::createActions(QMenu *menu)
     menu->addAction(autoStartAct);
     menu->addSeparator();
     menu->addAction(quitAct);
+}
+
+void TrayManager::loginLogout(bool loggedIn, QString tooltipText)
+{
+    startTaskAct->setEnabled(loggedIn);
+    stopTaskAct->setEnabled(loggedIn);
+    trackerAct->setEnabled(loggedIn);
+    trayIcon->setToolTip(tooltipText);
+    if (loggedIn) {
+        this->setupSettings();
+    } else {
+        emit pcActivitiesValueChanged(false); // don't track PC activities
+    }
 }

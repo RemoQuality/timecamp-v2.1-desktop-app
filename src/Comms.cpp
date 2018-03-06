@@ -163,10 +163,12 @@ void Comms::serviceRequestFinished(QNetworkReply *reply)
         settings.setValue(SETT_LAST_SYNC, getCurrentTime()); // update last sync to whenever we sent the data
     }
 }
+
 qint64 Comms::getCurrentTime() const
 {
     return currentTime;
 }
+
 void Comms::setCurrentTime(qint64 current_time)
 {
     Comms::currentTime = current_time;

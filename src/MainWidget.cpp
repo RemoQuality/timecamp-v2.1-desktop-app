@@ -51,6 +51,7 @@ void MainWidget::twoSecTimerTimeout()
     if(loggedIn) {
         fetchAPIkey();
         checkIsTimerRunning();
+        emit checkIsIdle();
     }
 }
 
@@ -92,10 +93,8 @@ void MainWidget::webpageTitleChanged(QString title)
 {
 //    qInfo("[NEW_TC]: Webpage title changed: ");
 //    qInfo(title.toLatin1().constData());
-    if(!loggedIn){
-        checkIfLoggedIn(title);
-        emit pageTitleChanged(title);
-    }
+    checkIfLoggedIn(title);
+    emit pageStatusChanged(loggedIn, title);
 }
 
 void MainWidget::webviewRefresh()
@@ -116,9 +115,10 @@ void MainWidget::webviewFullscreen()
 
 void MainWidget::checkIfLoggedIn(QString title)
 {
-    if(title == "Timer Timesheet | TimeCamp"){
+    if (!title.toLower().contains(QRegExp("log in|login|register|create free account|create account|time tracking software"))) {
         loggedIn = true;
-        twoSecTimerTimeout();
+    } else {
+        loggedIn = false; // when we log out, we need to set this variable again
     }
 }
 
