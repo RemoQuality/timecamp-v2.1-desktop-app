@@ -14,9 +14,10 @@ if(WIN32)
 		"C:\\WinDDK\\7600.16385.1\\lib\\win7\\i386"
 	)
 	endif()
-else()
-	# UNIX
+elseif(UNIX AND NOT APPLE)
     set(CMAKE_PREFIX_PATH "~/Qt5.2.0/5.2.0/clang_64/")
+else()
+    set(CMAKE_PREFIX_PATH "~/Qt/5.10.1/clang_64/")
 endif()
 
 # Find includes in corresponding build directories
