@@ -138,6 +138,9 @@ void MainWidget::open()
 {
     restoreGeometry(settings.value("mainWindowGeometry").toByteArray());
     show();
+    setWindowState( (windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
+    raise();  // for MacOS
+    activateWindow(); // for Windows
 }
 
 void MainWidget::runJSinPage(QString js)
