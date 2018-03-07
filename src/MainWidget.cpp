@@ -212,9 +212,13 @@ void MainWidget::setApiKey(const QString &apiKey) {
     settings.setValue(SETT_APIKEY, apiKey); // save apikey to settings
 }
 
+
 void MainWidget::setTimerName(const QString &timerName) {
-    MainWidget::timerName = timerName;
-    emit timerStatusChanged(true, timerName); // reenable task stopping
+    QFont x = QFont();
+    QFontMetrics metrix(x);
+    int width = 150; // pixels
+    MainWidget::timerName = metrix.elidedText(timerName, Qt::ElideRight, width);
+    emit timerStatusChanged(true, MainWidget::timerName); // reenable task stopping
 }
 
 void MainWidget::setIsTimerRunning(bool isTimerRunning) {
