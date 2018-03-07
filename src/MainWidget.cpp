@@ -135,15 +135,17 @@ void MainWidget::runJSinPage(QString js)
 
 void MainWidget::startTask()
 {
+    this->stopTask(); // stop the last timer
     if(!this->isVisible()){
         this->show();
     }
-    this->runJSinPage("$('#timer-task-picker').click();");
+    this->runJSinPage("if($('.btn-timer').text().trim().toLowerCase() == 'start timer') { $('.btn-timer').click(); }"); // start new timer
+//    this->runJSinPage("$('#timer-task-picker').click();"); // task picker toggle
 }
 
 void MainWidget::stopTask()
 {
-    this->runJSinPage("$('.btn-timer').click();");
+    this->runJSinPage("if($('.btn-timer').text().trim().toLowerCase() == 'stop timer') { $('.btn-timer').click(); }");
 }
 
 void MainWidget::checkIsTimerRunning()
