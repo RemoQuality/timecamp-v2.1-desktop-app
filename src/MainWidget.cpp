@@ -216,7 +216,7 @@ void MainWidget::setApiKey(const QString &apiKey) {
 void MainWidget::setTimerName(const QString &timerName) {
     QFont x = QFont();
     QFontMetrics metrix(x);
-    int width = 150; // pixels
+    int width = 100; // pixels
     MainWidget::timerName = metrix.elidedText(timerName, Qt::ElideRight, width);
     emit timerStatusChanged(true, MainWidget::timerName); // reenable task stopping
 }
