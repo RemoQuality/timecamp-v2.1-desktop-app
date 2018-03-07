@@ -9,6 +9,7 @@ class Autorun {
 public:
     static void enableAutorun();
     static void disableAutorun();
+    static bool checkAutorun();
 };
 
 

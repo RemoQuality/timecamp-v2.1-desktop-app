@@ -1,5 +1,6 @@
-#include "Autorun.h"
+#include <QDebug>
 
+#include "Autorun.h"
 #include "Settings.h"
 
 void Autorun::enableAutorun() {
@@ -15,5 +16,13 @@ void Autorun::disableAutorun() {
     QSettings settings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
     settings.remove(APPLICATION_NAME);
     settings.sync();
+#endif
+}
+
+bool Autorun::checkAutorun() {
+#ifdef _WIN32
+    QSettings settings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
+    settings.sync();
+    return settings.contains(APPLICATION_NAME);
 #endif
 }

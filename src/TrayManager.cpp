@@ -43,8 +43,10 @@ void TrayManager::setupTray(MainWidget *parent)
 
 void TrayManager::setupSettings()
 {
+    qDebug() << "Setting up settings";
     // set checkboxes
-    autoStartAct->setChecked(settings.value(SETT_AUTOSTART, false).toBool());
+    autoStartAct->setDisabled(false);
+    autoStartAct->setChecked(Autorun::checkAutorun());
     trackerAct->setChecked(settings.value(SETT_TRACK_PC_ACTIVITIES, false).toBool());
 
     // act on the saved settings
@@ -60,7 +62,7 @@ void TrayManager::updateStopMenu(bool canBeStopped, QString timerName)
 
 void TrayManager::autoStart(bool checked)
 {
-    settings.setValue(SETT_AUTOSTART, checked);
+    qDebug()<< "autostart: " << checked;
     if(checked){
         Autorun::enableAutorun();
     }else{
@@ -106,6 +108,7 @@ void TrayManager::createActions(QMenu *menu)
     connect(trackerAct, &QAction::triggered, this, &TrayManager::tracker);
 
     autoStartAct = new QAction(tr("Launch app on login"), this);
+    autoStartAct->setDisabled(true); // disable by default, till we login
     autoStartAct->setCheckable(true);
     connect(autoStartAct, &QAction::triggered, this, &TrayManager::autoStart);
 
@@ -128,6 +131,7 @@ void TrayManager::createActions(QMenu *menu)
 
 void TrayManager::loginLogout(bool loggedIn, QString tooltipText)
 {
+    qDebug() << "Login/Logout action";
     startTaskAct->setEnabled(loggedIn);
     stopTaskAct->setEnabled(loggedIn);
     trackerAct->setEnabled(loggedIn);
