@@ -62,7 +62,6 @@ void TrayManager::updateStopMenu(bool canBeStopped, QString timerName)
 
 void TrayManager::autoStart(bool checked)
 {
-    qDebug()<< "autostart: " << checked;
     if(checked){
         Autorun::enableAutorun();
     }else{
