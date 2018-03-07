@@ -35,6 +35,7 @@ void MainWidget::resizeEvent(QResizeEvent *event)
 {
     this->setUpdatesEnabled(false);
     QTWEView->resize(size()); // resize webview
+    settings.setValue("mainWindowGeometry", saveGeometry()); // save window position
     this->setUpdatesEnabled(true);
     QWidget::resizeEvent(event); // do the default "whatever happens on resize"
 }
