@@ -74,7 +74,8 @@ void MainWidget::setupWebview()
 
 //    pagePointer = m_pWebEngineView->page();
 
-    QTWEPage->load(QUrl("https://www.timecamp.com/dashboard"));
+    goToTimerPage(); // loads main app url
+//    QTWEPage->load(QUrl(APPLICATION_URL));
 //    QTWEPage->load(QUrl("http://request.urih.com/"));
 
     refreshBind = new QShortcut(QKeySequence::Refresh, this);
@@ -133,8 +134,29 @@ void MainWidget::runJSinPage(QString js)
     QTWEPage->runJavaScript(js);
 }
 
+bool MainWidget::checkIfOnTimerPage()
+{
+    QString urlPath = QTWEPage->url().toString();
+    if (urlPath.indexOf("app#/timesheets/timer") != -1) {
+        return true;
+    }
+    return false;
+}
+
+void MainWidget::goToTimerPage()
+{
+    if (!this->checkIfOnTimerPage()) {
+        QEventLoop loop;
+//        connect(QTWEPage, SIGNAL(loadFinished()), &loop, SLOT(quit()));
+        connect(QTWEPage, &QWebEnginePage::loadFinished, &loop, &QEventLoop::quit);
+        QTWEPage->load(QUrl(APPLICATION_URL));
+        loop.exec();
+    }
+}
+
 void MainWidget::startTask()
 {
+    goToTimerPage();
     this->stopTask(); // stop the last timer
     if(!this->isVisible()){
         this->show();
@@ -145,6 +167,7 @@ void MainWidget::startTask()
 
 void MainWidget::stopTask()
 {
+    goToTimerPage();
     this->runJSinPage("if($('.btn-timer').text().trim().toLowerCase() == 'stop timer') { $('.btn-timer').click(); }");
 }
 
@@ -170,7 +193,8 @@ void MainWidget::fetchAPIkey()
 
 void MainWidget::fetchTimerName()
 {
-    QTWEPage->runJavaScript("TC.TimeTracking.getTask(angular.element(document.body).injector().get('TimerService').timer.task_id).name",
+    QTWEPage->runJavaScript("var task = TC.TimeTracking.getTask(angular.element(document.body).injector().get('TimerService').timer.task_id);"
+                                "if(task!=null){task.name}",
     [this](const QVariant &v) {
 //        qDebug() << "Timer name: " << v.toString();
         setTimerName(v.toString());

@@ -71,6 +71,8 @@ private:
     void checkIsTimerRunning();
     void fetchAPIkey();
     void fetchTimerName();
+    bool checkIfOnTimerPage();
+    void goToTimerPage();
 
 
     void checkIfLoggedIn(QString title);

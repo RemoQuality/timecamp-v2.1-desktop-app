@@ -9,6 +9,7 @@
 #define APPLICATION_VERSION "2.0.0.0"
 
 #define WINDOW_NAME "TimeCamp"
+#define APPLICATION_URL "https://www.timecamp.com/dashboard"
 
 // db params
 #define DB_FILENAME "localdb.sqlite"
