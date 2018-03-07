@@ -136,8 +136,7 @@ void MainWidget::runJSinPage(QString js)
 
 bool MainWidget::checkIfOnTimerPage()
 {
-    QString urlPath = QTWEPage->url().toString();
-    if (urlPath.indexOf("app#/timesheets/timer") != -1) {
+    if (QTWEPage->url().toString().indexOf("app#/timesheets/timer") != -1) {
         return true;
     }
     return false;
