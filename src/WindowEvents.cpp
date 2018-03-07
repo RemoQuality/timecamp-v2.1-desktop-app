@@ -7,7 +7,7 @@ bool WindowEvents::wasIdleLongEnough()
     this->currentIdleTimestamp = getIdleTime();
 
 //    unsigned long diff = currentIdleTimestamp; // - lastIdleTimestamp;
-    qDebug() << "time diff: " << currentIdleTimestamp;
+//    qDebug() << "time diff: " << currentIdleTimestamp;
 
     // if last was "idle enough", and current is not "idle enough"
     // then we switched from idle to active, so we can save the change now
