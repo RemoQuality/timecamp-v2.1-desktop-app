@@ -17,6 +17,8 @@ MainWidget::MainWidget(QWidget *parent) :
     apiKey = "";
     timerName = "";
 
+    this->setMinimumSize(QSize(350, 500));
+
     restoreGeometry(settings.value("mainWindowGeometry").toByteArray()); // from QWidget; restore saved window position
 
 }
