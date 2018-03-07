@@ -159,11 +159,8 @@ bool MainWidget::checkIfOnTimerPage()
 void MainWidget::goToTimerPage()
 {
     if (!this->checkIfOnTimerPage()) {
-        QEventLoop loop;
-//        connect(QTWEPage, SIGNAL(loadFinished()), &loop, SLOT(quit()));
-        connect(QTWEPage, &QWebEnginePage::loadFinished, &loop, &QEventLoop::quit);
         QTWEPage->load(QUrl(APPLICATION_URL));
-        loop.exec();
+        this->webpageTitleChanged(QTWEPage->title());
     }
 }
 
