@@ -33,6 +33,14 @@ void MainWidget::init(){
     this->setupWebview(); // starts the embedded webpage
 }
 
+void MainWidget::moveEvent(QMoveEvent *event)
+{
+    this->setUpdatesEnabled(false);
+    settings.setValue("mainWindowGeometry", saveGeometry()); // save window position
+    this->setUpdatesEnabled(true);
+    QWidget::moveEvent(event); // do the default "whatever happens on move"
+}
+
 void MainWidget::resizeEvent(QResizeEvent *event)
 {
     this->setUpdatesEnabled(false);
