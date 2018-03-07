@@ -50,7 +50,7 @@ public slots:
 
     void webpageTitleChanged(QString title);
 
-
+    void wasTheWindowLeftOpened();
     void open();
     //void status();
     void startTask();

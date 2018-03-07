@@ -31,6 +31,7 @@ MainWidget::~MainWidget()
 void MainWidget::init(){
     this->setWindowTitle(WINDOW_NAME);
     this->setupWebview(); // starts the embedded webpage
+    this->wasTheWindowLeftOpened();
 }
 
 void MainWidget::moveEvent(QMoveEvent *event)
@@ -53,6 +54,7 @@ void MainWidget::resizeEvent(QResizeEvent *event)
 void MainWidget::closeEvent(QCloseEvent *event)
 {
     settings.setValue("mainWindowGeometry", saveGeometry()); // save window position
+    settings.setValue(SETT_WAS_WINDOW_LEFT_OPENED, false); // save if window was opened
     hide(); // hide our window when X was pressed
     event->ignore(); // don't do the default action (which usually is app exit)
 }
@@ -99,6 +101,13 @@ void MainWidget::setupWebview()
 
 
     connect(QTWEPage, &QWebEnginePage::titleChanged, this, &MainWidget::webpageTitleChanged);
+
+}
+void MainWidget::wasTheWindowLeftOpened()
+{
+    if(settings.value(SETT_WAS_WINDOW_LEFT_OPENED).toBool()){
+        this->open();
+    }
 }
 
 void MainWidget::webpageTitleChanged(QString title)
@@ -136,6 +145,7 @@ void MainWidget::checkIfLoggedIn(QString title)
 
 void MainWidget::open()
 {
+    settings.setValue(SETT_WAS_WINDOW_LEFT_OPENED, true); // save if window was opened
     restoreGeometry(settings.value("mainWindowGeometry").toByteArray());
     show();
     setWindowState( (windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
