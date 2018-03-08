@@ -11,6 +11,14 @@
 #define WINDOW_NAME "TimeCamp"
 #define APPLICATION_URL "https://www.timecamp.com/dashboard"
 
+#ifdef __linux__
+#define MAIN_ICON "~/Documents/timecamp-desktop/src/resources/programicon.ico"
+#elif _WIN32
+#define MAIN_ICON "D:\NewApp\TheGUI\src\resources\programicon.ico"
+#else
+#define MAIN_ICON "/Users/timecamp/Documents/timecamp-desktop/src/resources/programicon.ico"
+#endif
+
 // db params
 #define DB_FILENAME "localdb.sqlite"
 

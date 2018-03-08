@@ -4,9 +4,7 @@
 #include "TrayManager.h"
 #include "MainWidget.h"
 
-#ifdef  _WIN32
 #include "Autorun.h"
-#endif
 
 TrayManager &TrayManager::instance()
 {
@@ -34,12 +32,10 @@ void TrayManager::setupTray(MainWidget *parent)
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 
-
-    trayIcon->setIcon(mainWidget->windowIcon());
+    trayIcon->setIcon(QIcon(MAIN_ICON));
     trayIcon->setContextMenu(trayMenu);
     trayIcon->show();
 }
-
 
 void TrayManager::setupSettings()
 {
