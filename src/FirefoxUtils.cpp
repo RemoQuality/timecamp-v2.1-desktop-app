@@ -248,6 +248,9 @@ QString getCurrentURLFromFirefoxConfig(QString &jsonConfig) {
 
 //    qDebug() << "JSON file: ";
 //    qDebug() << jsonConfig;
+
+    return "";
+/*
     QJsonParseError error;
     auto json = QJsonDocument::fromJson(jsonConfig.toUtf8(), &error);
     if(error.error != QJsonParseError::NoError){
@@ -321,6 +324,7 @@ QString getCurrentURLFromFirefoxConfig(QString &jsonConfig) {
     QString result(urlJson.toString());
 
     return result;
+    */
 }
 
 
