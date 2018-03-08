@@ -26,17 +26,17 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(WIN32)
-	if ("${CMAKE_GENERATOR}" MATCHES "MinGW")
+    if ("${CMAKE_GENERATOR}" MATCHES "MinGW")
     set(CMAKE_PREFIX_PATH
-		"C:\\Qt\\5.10.0\\mingw53_32\\lib\\cmake" # what about mingw64?
-		# also, there's no QtWebEngine (no chromium) for MinGW, so we're stuck with MSVC on win32
-	)
-	elseif("${CMAKE_GENERATOR}" MATCHES "Visual Studio" OR "${CMAKE_GENERATOR}" MATCHES "NMake" OR "${CMAKE_GENERATOR}" MATCHES "Ninja")
+        "C:\\Qt\\5.10.0\\mingw53_32\\lib\\cmake" # what about mingw64?
+        # also, there's no QtWebEngine (no chromium) for MinGW, so we're stuck with MSVC on win32
+    )
+    elseif("${CMAKE_GENERATOR}" MATCHES "Visual Studio" OR "${CMAKE_GENERATOR}" MATCHES "NMake" OR "${CMAKE_GENERATOR}" MATCHES "Ninja")
     set(CMAKE_PREFIX_PATH
-		"C:\\Qt\\5.10.0\\msvc2017_64\\lib\\cmake"
-		"C:\\WinDDK\\7600.16385.1\\lib\\win7\\i386"
-	)
-	endif()
+        "C:\\Qt\\5.10.0\\msvc2017_64\\lib\\cmake"
+        "C:\\WinDDK\\7600.16385.1\\lib\\win7\\i386"
+    )
+    endif()
 elseif(UNIX AND NOT APPLE)
     set(CMAKE_PREFIX_PATH "~/Qt5.2.0/5.2.0/clang_64/")
 else()
@@ -61,49 +61,49 @@ endforeach()
 ADD_DEFINITIONS(-DUNICODE -D_UNICODE -DPSAPI_VERSION=1)
 
 list(APPEND SOURCE_FILES
-	"src/Settings.h" # a header without cpp file
-	"src/main.cpp"
+    "src/Settings.h" # a header without cpp file
+    "src/main.cpp"
     "src/DbManager.cpp"
-	"src/MainWidget.cpp"
-	"src/TCRequestInterceptor.cpp"
-	"src/Comms.cpp"
-	"src/AppData.cpp"
+    "src/MainWidget.cpp"
+    "src/TCRequestInterceptor.cpp"
+    "src/Comms.cpp"
+    "src/AppData.cpp"
     "src/Autorun.cpp"
     "src/FirefoxUtils.cpp"
     "src/WindowEventsManager.cpp"
     "src/TrayManager.cpp"
     "src/third-party/mozilla_lz4/lz4.c"
-	"src/WindowEvents.cpp" # a header without cpp file
+    "src/WindowEvents.cpp" # a header without cpp file
 )
 
 
 if(WIN32)
     list(APPEND SOURCE_FILES
-		"src/WindowEvents_W.cpp"
-		"src/ControlIterator/IControlIterator.cpp"
-		"src/ControlIterator/AccControlIterator.cpp"
-		"src/ControlIterator/UIAControlIterator.cpp"
-	)
+        "src/WindowEvents_W.cpp"
+        "src/ControlIterator/IControlIterator.cpp"
+        "src/ControlIterator/AccControlIterator.cpp"
+        "src/ControlIterator/UIAControlIterator.cpp"
+    )
 
     list(APPEND TC_LIBS
-		"oleacc.lib"
-		"psapi.lib"
-		"Iphlpapi.lib"
-		"OleAut32.lib"
-		"Ole32.lib"
-		"user32.lib"
-		"comsuppw.lib"
-	)
+        "oleacc.lib"
+        "psapi.lib"
+        "Iphlpapi.lib"
+        "OleAut32.lib"
+        "Ole32.lib"
+        "user32.lib"
+        "comsuppw.lib"
+    )
 endif()
 
 if(UNIX AND NOT APPLE)
     list(APPEND SOURCE_FILES
-		"src/WindowEvents_U.cpp"
-	)
+        "src/WindowEvents_U.cpp"
+    )
 
     list(APPEND TC_LIBS
-		"-lX11"
-	)
+        "-lX11"
+    )
 endif()
 
 if(APPLE)
@@ -135,7 +135,7 @@ add_executable(${PROJECT_NAME} ${OS_BUNDLE} # Expands to WIN32 or MACOS_BUNDLE d
 )
 
 if(WIN32)
-	# hide windows console...
+    # hide windows console...
     if ("${CMAKE_GENERATOR}" MATCHES "MinGW")
         target_compile_options(TimecampDesktop PUBLIC -Wl,--subsystem,windows -mwindows)
     elseif("${CMAKE_GENERATOR}" MATCHES "Visual Studio" OR "${CMAKE_GENERATOR}" MATCHES "NMake" OR "${CMAKE_GENERATOR}" MATCHES "Ninja")
