@@ -93,6 +93,17 @@ if(UNIX AND NOT APPLE)
 	)
 endif()
 
+if(APPLE)
+    list(APPEND TC_SOURCES
+                "src/WindowEvents_M.cpp"
+        )
+
+#    list(APPEND TC_LIBS
+#
+#        )
+endif()
+
+
 
 #if(CMAKE_BUILD_TYPE MATCHES Debug)
 #    file(GLOB POCO_LIBS "path/to/debug/libs/*.a")
