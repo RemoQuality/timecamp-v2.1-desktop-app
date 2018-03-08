@@ -1,6 +1,0 @@
-#ifndef RESOURCE_RC_INCLUDED
-#define RESOURCE_RC_INCLUDED
-
-IDI_ICON1   ICON DISCARDABLE "src/resources/programicon.ico"
-
-#endif

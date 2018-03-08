@@ -1,6 +1,29 @@
-cmake_minimum_required(VERSION 3.7)
-project(TheGUI)
+# Reference: http://qt-project.org/doc/qt-5.0/qtdoc/cmake-manual.html
+
+cmake_minimum_required(VERSION 3.0)
+
+# Add folder where are supportive functions
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+# Find includes in corresponding build directories
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+include(QtCommon) # cmake/QtCommon.cmake
+
+
+
+project(TimecampDesktop VERSION 1.0)
+
+# Set PROJECT_VERSION_PATCH and PROJECT_VERSION_TWEAK to 0 if not present, needed by add_project_meta
+fix_project_version()
+
+# Set additional project information
+set(COMPANY "Time Solutions")
+set(COPYRIGHT "Copyright (c) 2010-2018 Time Solutions. All rights reserved.")
+set(IDENTIFIER "com.TimeSolutions.TimecampDesktop")
+
+
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(WIN32)
 	if ("${CMAKE_GENERATOR}" MATCHES "MinGW")
@@ -20,16 +43,6 @@ else()
     set(CMAKE_PREFIX_PATH "~/Qt/5.10.1/clang_64/")
 endif()
 
-# Find includes in corresponding build directories
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-#include_directory(${CMAKE_CURRENT_SOURCE_DIR}) # the same?
-# Instruct CMake to run moc automatically when needed.
-#qt5_wrap_ui(UI_HEADERS MainWidget.ui)
-#qt5_add_resources(UI_RESOURCES bsed.qrc)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
 find_package(Qt5Network REQUIRED)
@@ -47,7 +60,7 @@ endforeach()
 
 ADD_DEFINITIONS(-DUNICODE -D_UNICODE -DPSAPI_VERSION=1)
 
-list(APPEND TC_SOURCES
+list(APPEND SOURCE_FILES
 	"src/Settings.h" # a header without cpp file
 	"src/main.cpp"
     "src/DbManager.cpp"
@@ -65,7 +78,7 @@ list(APPEND TC_SOURCES
 
 
 if(WIN32)
-    list(APPEND TC_SOURCES
+    list(APPEND SOURCE_FILES
 		"src/WindowEvents_W.cpp"
 		"src/ControlIterator/IControlIterator.cpp"
 		"src/ControlIterator/AccControlIterator.cpp"
@@ -84,7 +97,7 @@ if(WIN32)
 endif()
 
 if(UNIX AND NOT APPLE)
-    list(APPEND TC_SOURCES
+    list(APPEND SOURCE_FILES
 		"src/WindowEvents_U.cpp"
 	)
 
@@ -94,7 +107,7 @@ if(UNIX AND NOT APPLE)
 endif()
 
 if(APPLE)
-    list(APPEND TC_SOURCES
+    list(APPEND SOURCE_FILES
                 "src/WindowEvents_M.cpp"
         )
 
@@ -112,26 +125,31 @@ endif()
 #endif()
 
 
-if(WIN32)
-add_executable(TheGUI ${TC_SOURCES} ${UI_HEADERS} src/resources/icons.rc)
-else()
-    add_executable(TheGUI ${TC_SOURCES} ${UI_HEADERS})
-endif()
+add_project_meta(META_FILES_TO_INCLUDE)
+
+set(RESOURCE_FILES TimecampDesktop.qrc)
+
+
+add_executable(${PROJECT_NAME} ${OS_BUNDLE} # Expands to WIN32 or MACOS_BUNDLE depending on OS
+    ${SOURCE_FILES} ${META_FILES_TO_INCLUDE} ${RESOURCE_FILES}
+)
 
 if(WIN32)
 	# hide windows console...
     if ("${CMAKE_GENERATOR}" MATCHES "MinGW")
-        target_compile_options(TheGUI PUBLIC -Wl,--subsystem,windows -mwindows)
+        target_compile_options(TimecampDesktop PUBLIC -Wl,--subsystem,windows -mwindows)
     elseif("${CMAKE_GENERATOR}" MATCHES "Visual Studio" OR "${CMAKE_GENERATOR}" MATCHES "NMake" OR "${CMAKE_GENERATOR}" MATCHES "Ninja")
-        set_target_properties(TheGUI PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE")
-        set_target_properties(TheGUI PROPERTIES COMPILE_DEFINITIONS_DEBUG "_CONSOLE")
-        set_target_properties(TheGUI PROPERTIES LINK_FLAGS_RELWITHDEBINFO "/SUBSYSTEM:WINDOWS")
-        set_target_properties(TheGUI PROPERTIES COMPILE_DEFINITIONS_RELWITHDEBINFO "_CONSOLE")
-        set_target_properties(TheGUI PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
-        set_target_properties(TheGUI PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:WINDOWS")
+        set_target_properties(TimecampDesktop PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE")
+        set_target_properties(TimecampDesktop PROPERTIES COMPILE_DEFINITIONS_DEBUG "_CONSOLE")
+        set_target_properties(TimecampDesktop PROPERTIES LINK_FLAGS_RELWITHDEBINFO "/SUBSYSTEM:WINDOWS")
+        set_target_properties(TimecampDesktop PROPERTIES COMPILE_DEFINITIONS_RELWITHDEBINFO "_CONSOLE")
+        set_target_properties(TimecampDesktop PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
+        set_target_properties(TimecampDesktop PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:WINDOWS")
     endif()
+#elseif(APPLE)
+#    set_target_properties(TimecampDesktop PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist)
 endif()
 
-target_link_libraries(TheGUI ${TC_LIBS} ${Qt5Core_QTMAIN_LIBRARIES})
+target_link_libraries(TimecampDesktop ${TC_LIBS} ${Qt5Core_QTMAIN_LIBRARIES})
 
-qt5_use_modules(TheGUI Core Gui Network Widgets WebEngineWidgets Sql)
+qt5_use_modules(TimecampDesktop Core Gui Network Widgets WebEngineWidgets Sql)
