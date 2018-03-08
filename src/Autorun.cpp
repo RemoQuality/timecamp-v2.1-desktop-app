@@ -24,5 +24,7 @@ bool Autorun::checkAutorun() {
     QSettings settings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
     settings.sync();
     return settings.contains(APPLICATION_NAME);
+#else
+    return false;
 #endif
 }
