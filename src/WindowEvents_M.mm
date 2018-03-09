@@ -39,34 +39,41 @@ void WindowEvents_M::run()
 {
     qInfo("thread started");
 
-    QTimer *timer = new QTimer();
-    //connect(timer, SIGNAL(timeout()), this, SLOT(GetActiveApp()));
-    connect(timer, &QTimer::timeout, this, &WindowEvents_M::GetActiveApp);
-    timer->start(2*1000);
+//    QTimer *timer = new QTimer();
+//    connect(timer, SIGNAL(timeout()), this, SLOT(GetActiveApp()));
+//    connect(timer, &QTimer::timeout, this, &WindowEvents_M::GetActiveApp);
+//    timer->start(2*1000);
     while (!QThread::currentThread()->isInterruptionRequested()) {
         // empty loop, waiting for stopping the thread
+        this->GetActiveApp();
+        QThread::msleep(1*1000);
     }
-    timer->stop();
+//    timer->stop();
 
     qInfo("thread stopped");
 }
 
 void WindowEvents_M::GetActiveApp()
 {
-    appTitle = "";
-    processName = "";
-    additionalInfo = "";
+    QString appTitle = "";
+    QString processName = "";
+    QString additionalInfo = "";
 
     NSAutoreleasePool* pool = [NSAutoreleasePool new];
 
     NSString* procName = @"";
+    NSString* procName2 = @"";
     NSArray* runningApps = [[NSWorkspace sharedWorkspace] runningApplications];
+
 
     for (id currApp in runningApps)
     {
         /*
          Here we suppose that there is only one active app.
         */
+//        procName2 = [currApp localizedName];
+//        QString buff2 = QString::fromNSString(procName2);
+//        qDebug() << "Buffer: " << buff2;
         if ([currApp isActive])
         {
             procName = [currApp localizedName];
@@ -75,6 +82,7 @@ void WindowEvents_M::GetActiveApp()
     }
 
     QString buffer = QString::fromNSString(procName);
+//    qDebug() << "Buffer: " << buffer;
 
     if (!buffer.isEmpty())
     {
@@ -83,18 +91,31 @@ void WindowEvents_M::GetActiveApp()
 
     [pool drain];
 
+
+    /*
+    if(
+       (processName == "WinAppHelper" || processName == "fluidapp" || processName == "FluidApp" || (processName.isEmpty() && ([tmpName isEqualToString:@"java"] || [tmpName isEqualToString:@"WinAppHelper"] || [tmpName isEqualToString:@"winapphelper"] || [tmpName isEqualToString:@"(null)"] || [tmpName isEqualToString:@""]))
+       || ( [tmpName isEqualToString:@"FluidApp"] || [tmpName isEqualToString:@"fluidapp"] )
+       || ( [tmpName isEqualToString:@"prl_client"] || [tmpName isEqualToString:@"prl_client_app"] )
+        ))
+    {
+        processName = GetProcNameFromPath(); //todo: takes a lot of processor this Apple Script
+    }
+    */
+
     //Get Window Name or
-    GetProcWindowName();
+    appTitle = GetProcWindowName(processName);
 
     //Get URL from browsers
     processName = processName.toLower();
-    GetAdditionalInfo();
+    additionalInfo = GetAdditionalInfo(processName);
 
     logAppName(processName, appTitle, additionalInfo);
 }
 
-void WindowEvents_M::GetProcWindowName()
+QString WindowEvents_M::GetProcWindowName(QString processName)
 {
+    QString appTitle;
     NSAutoreleasePool* pool = [NSAutoreleasePool new];
     const char* tmpNameUtf8 = "";
     const char* windowNameUtf8 = "";
@@ -120,7 +141,9 @@ void WindowEvents_M::GetProcWindowName()
 
     // Run the AppleScript.
     returnDescriptor = [scriptObject executeAndReturnError: &errorDict];
-    //NSLog(@"DESCRIPTOR %@", returnDescriptor);
+//    NSLog(@"DESCRIPTOR %@", returnDescriptor);
+    NSLog(@"ERROR %@", errorDict);
+
     [scriptObject release];
     //DescType descriptorType = [returnDescriptor descriptorType];
     NSInteger howMany = [returnDescriptor numberOfItems];
@@ -130,7 +153,7 @@ void WindowEvents_M::GetProcWindowName()
         //NSLog(@"Script executed sucessfully.");
         if(kAENullEvent != [returnDescriptor descriptorType])
         {
-           if(processName =="" || processName == "(null)")
+           if(processName == "" || processName == "(null)")
             {
                 tmpName = [[[returnDescriptor descriptorAtIndex:1] descriptorForKeyword:'seld'] stringValue];
                 tmpNameUtf8 = [tmpName UTF8String];
@@ -138,79 +161,19 @@ void WindowEvents_M::GetProcWindowName()
                 //DEBUG_LOG("AXProcessName: " + processName);
             }
             windowName = [[returnDescriptor descriptorAtIndex:howMany] stringValue];
-            windowNameUtf8 = [windowName UTF8String];
-            appTitle = windowNameUtf8;
+//            windowNameUtf8 = [windowName UTF8String];
+            appTitle = QString::fromNSString(windowName);
             //DEBUG_LOG("TITLE: "+appTitle);
             //wxMessageBox(appTitle + " PROC:" + processName);
         }
         //else NSLog(@"AppleScript has no result.");
     }
-    else{ //if execution of script failed, we can erase ProcName
-        //NSLog(@"Script execution error: %@", [errorDict objectForKey: @"NSAppleScriptErrorMessage"]);
-        //pobierz ponownie nazwę procesu
-        {
-        NSAppleEventDescriptor  *returnDescriptor2;
-        NSAppleScript *scriptObject = [[NSAppleScript alloc] initWithSource:
-                                       @"tell application \"System Events\" \n \
-                                       set frontApp to first application process whose frontmost is true \n \
-                                       set frontAppName to name of frontApp \n \
-                                       end tell"];
-        // Run the AppleScript.
-        returnDescriptor2 = [scriptObject executeAndReturnError: &errorDict];
-        //NSLog(@"DESCRIPTOR %@", returnDescriptor);
-        [scriptObject release];
-        //NSInteger howMany = [returnDescriptor numberOfItems];
 
-        if([returnDescriptor2 descriptorType])
-        {
-            // The script execution succeeded.
-            //NSLog(@"Script executed sucessfully.");
-            if(kAENullEvent != [returnDescriptor2 descriptorType])
-            {
-                tmpName = [returnDescriptor2 stringValue];
-                tmpNameUtf8 = [tmpName UTF8String];
-                processName = tmpNameUtf8;
-
-                //wxMessageBox(processName);
-            }
-        }
-        }
-
-        {
-        //pobierz ponownie nazwę okna
-        NSAppleEventDescriptor  *returnDescriptor2;
-        NSAppleScript *scriptObject = [[NSAppleScript alloc] initWithSource:
-                                       @"tell application \"System Events\" to tell (process 1 where frontmost is true) \n \
-                                       set o to name of window 1 \n \
-                                       end tell"];
-        returnDescriptor2 = [scriptObject executeAndReturnError: &errorDict];
-        [scriptObject release];
-        if([returnDescriptor2 descriptorType])
-        {
-            if(kAENullEvent != [returnDescriptor2 descriptorType])
-            {
-                tmpName = [returnDescriptor2 stringValue];
-                tmpNameUtf8 = [tmpName UTF8String];
-                appTitle = tmpNameUtf8;
-                //wxMessageBox(appTitle);
-            }
-        }
-        }
-    }
-
-    if(
-       (processName == "WinAppHelper" || processName == "fluidapp" || processName == "FluidApp" || (processName.isEmpty() && ([tmpName isEqualToString:@"java"] || [tmpName isEqualToString:@"WinAppHelper"] || [tmpName isEqualToString:@"winapphelper"] || [tmpName isEqualToString:@"(null)"] || [tmpName isEqualToString:@""]))
-       || ( [tmpName isEqualToString:@"FluidApp"] || [tmpName isEqualToString:@"fluidapp"] )
-       || ( [tmpName isEqualToString:@"prl_client"] || [tmpName isEqualToString:@"prl_client_app"] )
-        ))
-    {
-        //wxMessageBox(processName);
-        GetProcNameFromPath(); //todo: takes a lot of processor this Apple Script
-    }
     [pool drain];
+    return appTitle;
 }
 
-void WindowEvents_M::GetProcNameFromPath(){
+QString WindowEvents_M::GetProcNameFromPath(QString processName){
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
     const char* procNameUtf8;
     NSString* procName;
@@ -260,10 +223,12 @@ void WindowEvents_M::GetProcNameFromPath(){
     }
     //else NSLog(@"Script execution error: %@", [errorDict objectForKey: @"NSAppleScriptErrorMessage"]);
     [pool drain];
+    return processName;
 }
 
-void WindowEvents_M::GetAdditionalInfo()
+QString WindowEvents_M::GetAdditionalInfo(QString processName)
 {
+    QString additionalInfo;
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
     bool executed = false;
     const char* addInfoUtf8;
@@ -322,7 +287,7 @@ void WindowEvents_M::GetAdditionalInfo()
         executed=false; //this should be false, because we don't have apple script object initialize here
     }
 
-    if(executed == true) //jesli skrypt wykonal sie, odczytujemy wynik
+    if(executed) //jesli skrypt wykonal sie, odczytujemy wynik
     {
         returnDescriptor = [scriptObject executeAndReturnError: &errorDict];
         //NSLog(@"DESCRIPT %@", returnDescriptor);
@@ -347,4 +312,5 @@ void WindowEvents_M::GetAdditionalInfo()
         //else NSLog(@"AppleScript has no result.");
     }
     [pool drain];
+    return additionalInfo;
 }
