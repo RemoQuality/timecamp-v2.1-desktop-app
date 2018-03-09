@@ -41,6 +41,7 @@ elseif(UNIX AND NOT APPLE)
     set(CMAKE_PREFIX_PATH "~/Qt5.2.0/5.2.0/clang_64/")
 else()
     set(CMAKE_PREFIX_PATH "~/Qt/5.10.1/clang_64/")
+    set(CMAKE_EXE_LINKER_FLAGS "-framework AppKit -framework IOKit -framework Foundation -framework CoreFoundation")
 endif()
 
 find_package(Qt5Core REQUIRED)
@@ -108,8 +109,9 @@ endif()
 
 if(APPLE)
     list(APPEND SOURCE_FILES
-                "src/WindowEvents_M.cpp"
+         "src/WindowEvents_M.mm"
         )
+    set_source_files_properties(src/WindowEvents_M.mm PROPERTIES COMPILE_FLAGS "-x objective-c++")
 
 #    list(APPEND TC_LIBS
 #
