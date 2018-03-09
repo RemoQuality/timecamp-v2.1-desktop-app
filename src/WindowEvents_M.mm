@@ -8,6 +8,7 @@
 
 #include <AppKit/NSApplication.h>
 #include <AppKit/NSWindow.h>
+#include <QTimer>
 
 #include "AppData.h"
 #include "FirefoxUtils.h"
@@ -25,7 +26,7 @@ void WindowEvents_M::logAppName(unsigned char* appName, unsigned char* windowNam
 
 void WindowEvents_M::logAppName(QString appName, QString windowName, QString additionalInfo)
 {
-//    qInfo("APP: %s | %s \n", appName.toLatin1().constData(), windowName.toLatin1().constData());
+    qInfo("APP: %s | %s \n", appName.toLatin1().constData(), windowName.toLatin1().constData());
     appName.replace(".exe", "");
 //    WindowDetails *details = new WindowDetails();
 //    QString additionalInfo = details->GetAdditionalInfo(appName, passedHwnd);
@@ -37,6 +38,15 @@ void WindowEvents_M::logAppName(QString appName, QString windowName, QString add
 void WindowEvents_M::run()
 {
     qInfo("thread started");
+
+    QTimer *timer = new QTimer();
+    //connect(timer, SIGNAL(timeout()), this, SLOT(GetActiveApp()));
+    connect(timer, &QTimer::timeout, this, &WindowEvents_M::GetActiveApp);
+    timer->start(2*1000);
+    while (!QThread::currentThread()->isInterruptionRequested()) {
+        // empty loop, waiting for stopping the thread
+    }
+    timer->stop();
 
     qInfo("thread stopped");
 }
@@ -80,7 +90,8 @@ void WindowEvents_M::GetActiveApp()
     processName = processName.toLower();
     GetAdditionalInfo();
 
-    logAppName(processName, appTitle, additionalInfo); }
+    logAppName(processName, appTitle, additionalInfo);
+}
 
 void WindowEvents_M::GetProcWindowName()
 {
