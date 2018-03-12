@@ -85,8 +85,8 @@ void TrayManager::iconActivated(QSystemTrayIcon::ActivationReason reason)
 
 void TrayManager::createActions(QMenu *menu)
 {
-    openAct = new QAction(tr("Open"), this);
-    openAct->setStatusTip(tr("Open browser"));
+    openAct = new QAction(tr("Open window"), this);
+    openAct->setStatusTip(tr("Opens TimeCamp interface"));
     connect(openAct, &QAction::triggered, mainWidget, &MainWidget::open);
 
     startTaskAct = new QAction(tr("Start timer"), this);
