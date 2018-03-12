@@ -23,6 +23,14 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
+    // OpenGL is a mess; lets just use software and hammer the CPU
+    // https://wiki.qt.io/QtWebEngine/Rendering
+    // http://lists.qt-project.org/pipermail/qtwebengine/2017-August/000462.html
+    // https://forum.qt.io/topic/82530/qt5-can-webgl-work-with-angle-on-windows-via-qtwebengine
+    // https://forum.qt.io/topic/51257/imx6-qtwebengine-black-surfaces/9
+
+    QCoreApplication::setAttribute(Qt::AA_UseSoftwareOpenGL);
+
     // standard Qt init
     QApplication app(argc, argv);
 
