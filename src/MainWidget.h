@@ -58,6 +58,9 @@ public slots:
     void stopTask();
     void quit();
 
+    void handleLoadStarted();
+    void handleLoadFinished(bool);
+
 private:
     Ui::MainWidget *ui;
     QSettings settings;

@@ -72,6 +72,9 @@ void MainWidget::setupWebview()
 {
     QTWEView = new TCWebEngineView(this);
     QTWEView->setContextMenuPolicy(Qt::NoContextMenu); // disable context menu in embedded webpage
+    connect(QTWEView, &QWebEngineView::loadStarted, this, &MainWidget::handleLoadStarted);
+    connect(QTWEView, &QWebEngineView::loadFinished, this, &MainWidget::handleLoadFinished);
+
 
     QTWEProfile = new QWebEngineProfile(APPLICATION_NAME, QTWEView); // set "profile" as appName
     QTWEProfile->setHttpUserAgent(CONN_USER_AGENT); // add useragent to this profile
@@ -104,6 +107,20 @@ void MainWidget::setupWebview()
     connect(QTWEPage, &QWebEnginePage::titleChanged, this, &MainWidget::webpageTitleChanged);
 
 }
+
+void MainWidget::handleLoadStarted()
+{
+    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+//    qDebug() << "cursor: load started";
+}
+
+void MainWidget::handleLoadFinished(bool ok)
+{
+    Q_UNUSED(ok);
+    QApplication::restoreOverrideCursor();
+//    qDebug() << "cursor: load finished";
+}
+
 void MainWidget::wasTheWindowLeftOpened()
 {
     if(settings.value(SETT_WAS_WINDOW_LEFT_OPENED).toBool()){
