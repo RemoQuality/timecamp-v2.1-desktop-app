@@ -17,6 +17,7 @@
 #include <QSettings>
 
 #include "TCRequestInterceptor.h"
+#include "TCWebEngineView.h"
 
 namespace Ui {
 class MainWidget;
@@ -63,7 +64,7 @@ private:
 
     TCRequestInterceptor *TCri;
 
-    QWebEngineView* QTWEView;
+    TCWebEngineView* QTWEView;
     QWebEngineProfile *QTWEProfile;
     QWebEnginePage *QTWEPage;
     QWebEngineSettings *QTWESettings;

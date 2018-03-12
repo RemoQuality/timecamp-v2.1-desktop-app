@@ -70,7 +70,7 @@ void MainWidget::twoSecTimerTimeout()
 
 void MainWidget::setupWebview()
 {
-    QTWEView = new QWebEngineView(this);
+    QTWEView = new TCWebEngineView(this);
     QTWEView->setContextMenuPolicy(Qt::NoContextMenu); // disable context menu in embedded webpage
 
     QTWEProfile = new QWebEngineProfile(APPLICATION_NAME, QTWEView); // set "profile" as appName
@@ -78,6 +78,7 @@ void MainWidget::setupWebview()
 
     QTWESettings = QTWEProfile->settings();
     QTWESettings->setAttribute(QWebEngineSettings::FullScreenSupportEnabled, true); // modify settings: enable Fullscreen
+    //QTWESettings->setAttribute(QWebEngineSettings::JavascriptCanOpenWindows, true);
 
     TCri = new TCRequestInterceptor();
     QTWEProfile->setRequestInterceptor(TCri);

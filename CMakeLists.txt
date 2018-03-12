@@ -67,6 +67,8 @@ list(APPEND SOURCE_FILES
     "src/DbManager.cpp"
     "src/MainWidget.cpp"
     "src/TCRequestInterceptor.cpp"
+    "src/TCNavigationInterceptor.cpp"
+    "src/TCWebEngineView.cpp"
     "src/Comms.cpp"
     "src/AppData.cpp"
     "src/Autorun.cpp"
