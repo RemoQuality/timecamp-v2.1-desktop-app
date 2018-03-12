@@ -34,6 +34,8 @@ private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason);
     void autoStart(bool checked);
     void tracker(bool checked);
+    void openCloseWindowText();
+
 
 private:
     QSystemTrayIcon *trayIcon;
