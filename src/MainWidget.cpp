@@ -56,6 +56,7 @@ void MainWidget::closeEvent(QCloseEvent *event)
     settings.setValue("mainWindowGeometry", saveGeometry()); // save window position
     settings.setValue(SETT_WAS_WINDOW_LEFT_OPENED, false); // save if window was opened
     hide(); // hide our window when X was pressed
+    emit windowStatusChanged(false);
     event->ignore(); // don't do the default action (which usually is app exit)
 }
 
@@ -169,6 +170,7 @@ void MainWidget::open()
     setWindowState( (windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
     raise();  // for MacOS
     activateWindow(); // for Windows
+    emit windowStatusChanged(true);
 }
 
 void MainWidget::runJSinPage(QString js)

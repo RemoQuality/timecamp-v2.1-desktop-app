@@ -83,13 +83,19 @@ void TrayManager::iconActivated(QSystemTrayIcon::ActivationReason reason)
     }
 }
 
-void TrayManager::openCloseWindowText() {
-    if (mainWidget->isActiveWindow()) {     // was active
-        mainWidget->close();                // so we close it
+void TrayManager::openCloseWindowText(bool isBeingOpened) {
+    if (!isBeingOpened) {                   // was active
         openAct->setText("Open window");    // and menu says "hey try to open it again"
     } else {
-        mainWidget->open();
         openAct->setText("Close window");
+    }
+}
+
+void TrayManager::openCloseWindowAction() {
+    if (openAct->text() == "Open window") {
+        mainWidget->open();
+    } else {
+        mainWidget->close();
     }
 }
 
@@ -98,7 +104,7 @@ void TrayManager::createActions(QMenu *menu)
     openAct = new QAction(tr("Open window"), this);
     openAct->setStatusTip(tr("Opens TimeCamp interface"));
 //    connect(openAct, &QAction::triggered, mainWidget, &MainWidget::open);
-    connect(openAct, &QAction::triggered, this, &TrayManager::openCloseWindowText);
+    connect(openAct, &QAction::triggered, this, &TrayManager::openCloseWindowAction);
 
     startTaskAct = new QAction(tr("Start timer"), this);
     startTaskAct->setStatusTip(tr("Go to task selection screen"));

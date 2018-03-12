@@ -39,6 +39,7 @@ signals:
     void pageStatusChanged(bool, QString);
     void timerStatusChanged(bool, QString);
     void checkIsIdle();
+    void windowStatusChanged(bool);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;

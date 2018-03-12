@@ -26,6 +26,7 @@ public:
 
     void updateStopMenu(bool, QString);
     void loginLogout(bool, QString);
+    void openCloseWindowText(bool);
 
 signals:
     void pcActivitiesValueChanged(bool);
@@ -34,7 +35,7 @@ private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason);
     void autoStart(bool checked);
     void tracker(bool checked);
-    void openCloseWindowText();
+    void openCloseWindowAction();
 
 
 private:
