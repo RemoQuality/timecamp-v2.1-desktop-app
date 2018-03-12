@@ -29,8 +29,13 @@ void TrayManager::setupTray(MainWidget *parent)
 
     trayIcon = new QSystemTrayIcon(this);
 
+    /*
+    // Unbind "tray icon activates window"
+     https://trello.com/c/qyCrTMfy/39-tray-kliknięcie-niech-zawsze-pokazuje-menu-otwieramy-przez-open-z-tego-menu
+
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+    */
 
     trayIcon->setIcon(QIcon(MAIN_ICON));
     trayIcon->setContextMenu(trayMenu);
