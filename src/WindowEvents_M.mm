@@ -26,7 +26,7 @@ void WindowEvents_M::logAppName(unsigned char* appName, unsigned char* windowNam
 
 void WindowEvents_M::logAppName(QString appName, QString windowName, QString additionalInfo)
 {
-    qInfo("APP: %s | %s \n", appName.toLatin1().constData(), windowName.toLatin1().constData());
+//    qInfo("APP: %s | %s \n", appName.toLatin1().constData(), windowName.toLatin1().constData());
     appName.replace(".exe", "");
 //    WindowDetails *details = new WindowDetails();
 //    QString additionalInfo = details->GetAdditionalInfo(appName, passedHwnd);
@@ -142,7 +142,7 @@ QString WindowEvents_M::GetProcWindowName(QString processName)
     // Run the AppleScript.
     returnDescriptor = [scriptObject executeAndReturnError: &errorDict];
 //    NSLog(@"DESCRIPTOR %@", returnDescriptor);
-    NSLog(@"ERROR %@", errorDict);
+//    NSLog(@"ERROR %@", errorDict);
 
     [scriptObject release];
     //DescType descriptorType = [returnDescriptor descriptorType];
