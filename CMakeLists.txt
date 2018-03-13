@@ -105,7 +105,7 @@ if(UNIX AND NOT APPLE)
     )
 
     list(APPEND TC_LIBS
-        "-lX11"
+        "-lX11 -lXss"
     )
 endif()
 
