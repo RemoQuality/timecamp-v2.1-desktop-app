@@ -15,8 +15,8 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>D:\NewApp\TheGUI\src\resources\programicon.ico</normaloff>
-       D:\NewApp\TheGUI\src\resources\programicon.ico
+    <normaloff>MAIN_ICON</normaloff>
+       MAIN_ICON
    </iconset>
   </property>
  </widget>
