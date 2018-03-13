@@ -1,16 +1,25 @@
+#include <QDebug>
+#include "Comms.h"
 #include "WindowEvents_U.h"
+
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/Xatom.h>
+#include <X11/extensions/scrnsaver.h>
 
 unsigned long WindowEvents_U::getIdleTime()
 {
     XScreenSaverInfo *info = XScreenSaverAllocInfo();
-    Display *display = XOpenDisplay(0);
+    Display *display;
 
-    if (display != 0) {
+    display = XOpenDisplay(NULL);
+
+    if (display == nullptr) {
+        qInfo() << "[WindowEvents_U::getIdleTime] GetIdleTime failed";
+    }else {
         XScreenSaverQueryInfo(display, DefaultRootWindow(display), info);
         XCloseDisplay(display);
         return info->idle;
-    } else {
-        qDebug() << "[WindowEvents_U::getIdleTime] GetIdleTime failed";
     }
 
     return 0;
@@ -29,10 +38,19 @@ std::string WindowEvents_U::execCommand(const char* cmd)
     return result;
 }
 
-void WindowEvents_U::logAppName(unsigned char* data)
+void WindowEvents_U::logAppName(unsigned char* appName, unsigned char* windowName)
 {
-    qInfo("%s\n", data);
+    //qInfo("APP: %s | %s \n", appName, windowName);
 }
+
+void WindowEvents_U::logAppName(QString appName, QString windowName)
+{
+    qInfo("APP: %s | %s \n", appName.toLatin1().constData(), windowName.toLatin1().constData());
+    appName.replace(".exe", "");
+    AppData *app = new AppData(appName, windowName, "");
+    Comms::instance().saveApp(app);
+}
+
 
 void WindowEvents_U::run()
 {
@@ -51,6 +69,7 @@ void WindowEvents_U::run()
     Atom NET_ACTIVE_WINDOW = XInternAtom(display, "_NET_ACTIVE_WINDOW", false);
     Atom NET_WM_NAME = XInternAtom(display, "_NET_WM_NAME", false);  // UTF-8
     Atom WM_NAME = XInternAtom(display, "WM_NAME", false);           // Legacy encoding
+    Atom NET_WM_PID = XInternAtom(display, "_NET_WM_PID", false);           // Legacy encoding
 
     root = XDefaultRootWindow(display);
 
@@ -64,7 +83,9 @@ void WindowEvents_U::run()
     unsigned long     nitems;
     unsigned long     bytes;
     long     *data;
-    unsigned char     *name_data;
+    unsigned char     *window_name;
+    unsigned char     *pid;
+    std::string app_name;
     int      status;
     long xwindowid_old;
     long xwindowid_curr;
@@ -115,13 +136,44 @@ void WindowEvents_U::run()
                     &actual_format,
                     &nitems,
                     &bytes,
-                    &name_data);
+                    &window_name);
 
                 if (status != Success) {
                     fprintf(stderr, "status = %d\n", status);
                     exit(1);
                 }
-                logAppName(name_data);
+
+                status = XGetWindowProperty(
+                    display,
+                    xwindowid_curr,
+                    NET_WM_PID,
+                    0,
+                    (~0L),
+                    False,
+                    AnyPropertyType,
+                    &actual_type,
+                    &actual_format,
+                    &nitems,
+                    &bytes,
+                    &pid);
+
+                if (status != Success) {
+                    fprintf(stderr, "status = %d\n", status);
+                    exit(1);
+                }
+                long* longarr = reinterpret_cast<long*>(pid);
+                long longpid = longarr[0];
+
+                std::string command = "";
+                command += "ps -q ";
+                command += QString::number(longpid).toStdString();
+                command += " -o comm=\"\"";
+
+//                qInfo() << QString::fromStdString(command);
+
+                app_name = execCommand(command.c_str());
+
+                logAppName(QString::fromStdString(app_name), QString::fromUtf8((char*)window_name));
             }
         }
     }
