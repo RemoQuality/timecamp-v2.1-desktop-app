@@ -74,6 +74,7 @@ void MainWidget::setupWebview()
     QTWEView = new TCWebEngineView(this);
     QTWEView->setContextMenuPolicy(Qt::NoContextMenu); // disable context menu in embedded webpage
     connect(QTWEView, &QWebEngineView::loadStarted, this, &MainWidget::handleLoadStarted);
+    connect(QTWEView, &QWebEngineView::loadProgress, this, &MainWidget::handleLoadProgress);
     connect(QTWEView, &QWebEngineView::loadFinished, this, &MainWidget::handleLoadFinished);
 
 
@@ -115,11 +116,19 @@ void MainWidget::handleLoadStarted()
 //    qDebug() << "cursor: load started";
 }
 
+void MainWidget::handleLoadProgress(int progress)
+{
+//    qDebug() << "cursor: load progress " << progress;
+    if(progress == 100){
+        QApplication::restoreOverrideCursor(); // pop from the cursor stack
+    }
+}
+
 void MainWidget::handleLoadFinished(bool ok)
 {
     Q_UNUSED(ok);
-    QApplication::restoreOverrideCursor();
-//    qDebug() << "cursor: load finished";
+    QApplication::restoreOverrideCursor(); // pop from the cursor stack
+//    qDebug() << "cursor: load finished " << ok;
 }
 
 void MainWidget::wasTheWindowLeftOpened()

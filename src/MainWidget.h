@@ -60,6 +60,7 @@ public slots:
     void quit();
 
     void handleLoadStarted();
+    void handleLoadProgress(int);
     void handleLoadFinished(bool);
 
 private:
