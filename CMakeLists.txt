@@ -112,8 +112,9 @@ endif()
 if(APPLE)
     list(APPEND SOURCE_FILES
          "src/WindowEvents_M.mm"
+         "src/Utils_M.mm"
         )
-    set_source_files_properties(src/WindowEvents_M.mm PROPERTIES COMPILE_FLAGS "-x objective-c++")
+    set_source_files_properties(src/*.mm PROPERTIES COMPILE_FLAGS "-x objective-c++")
 
 #    list(APPEND TC_LIBS
 #

@@ -4,6 +4,10 @@
 #include <ctime>
 #include <iomanip>
 
+#ifdef __APPLE__
+#include "Utils_M.h"
+#endif
+
 #include "Settings.h"
 #include "MainWidget.h"
 #include "Comms.h"
@@ -11,6 +15,17 @@
 #include "WindowEventsManager.h"
 #include "TrayManager.h"
 
+
+void firstRun() {
+    QSettings settings;
+
+    if(settings.value(SETT_IS_FIRST_RUN, true).toBool()) {
+#ifdef __APPLE__
+        enableAssistiveDevices();
+#endif
+    }
+    settings.setValue(SETT_IS_FIRST_RUN, false);
+}
 
 void myMessageHandler(QtMsgType type, const QMessageLogContext &, const QString & msg)
 {
@@ -52,7 +67,7 @@ int main(int argc, char *argv[])
     // install log handler
     qInstallMessageHandler(myMessageHandler);
 
-    // Caches are saved in %localappdata%/org_name/app_name
+    // Caches are saved in %localappdata%/org_name/APPLICATION_NAME
     // Eg. C:\Users\timecamp\AppData\Local\Time Solutions\TimeCamp Desktop
     // Settings are saved in registry: HKEY_CURRENT_USER\Software\Time Solutions\TimeCamp Desktop
 
@@ -75,6 +90,7 @@ int main(int argc, char *argv[])
 
     // standard Qt init
     QApplication app(argc, argv);
+    firstRun();
 
     QIcon appIcon = QIcon(MAIN_ICON);
 //    appIcon.addFile(":/Icons/res/AppIcon32.png");

@@ -8,6 +8,7 @@
 
 #include <AppKit/NSApplication.h>
 #include <AppKit/NSWindow.h>
+
 #include <QTimer>
 
 #include "AppData.h"
