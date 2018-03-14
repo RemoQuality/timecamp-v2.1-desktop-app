@@ -144,6 +144,7 @@ void MainWidget::webpageTitleChanged(QString title)
 //    qInfo(title.toLatin1().constData());
     checkIfLoggedIn(title);
     emit pageStatusChanged(loggedIn, title);
+    this->setWindowTitle(title); // https://trello.com/c/J8dCKeV2/43-niech-tytul-apki-desktopowej-sie-zmienia-
 }
 
 void MainWidget::webviewRefresh()
