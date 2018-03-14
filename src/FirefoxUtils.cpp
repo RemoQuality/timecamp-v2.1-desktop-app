@@ -23,6 +23,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonValue>
+#include <cstring>
 
 #include "third-party/mozilla_lz4/lz4.h"
 

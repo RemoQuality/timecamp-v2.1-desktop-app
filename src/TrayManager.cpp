@@ -109,14 +109,18 @@ void TrayManager::createActions(QMenu *menu)
     startTaskAct = new QAction(tr("Start timer"), this);
     startTaskAct->setStatusTip(tr("Go to task selection screen"));
     startTaskAct->setShortcut(Qt::CTRL + Qt::ALT + Qt::Key_N);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
     startTaskAct->setShortcutVisibleInContextMenu(true);
+#endif
     startTaskAct->setShortcutContext(Qt::ApplicationShortcut);
     connect(startTaskAct, &QAction::triggered, mainWidget, &MainWidget::startTask);
 
     stopTaskAct = new QAction(tr("Stop timer"), this);
     stopTaskAct->setStatusTip(tr("Stop currently running timer"));
     stopTaskAct->setShortcut(Qt::CTRL + Qt::ALT + Qt::Key_M);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
     stopTaskAct->setShortcutVisibleInContextMenu(true);
+#endif
     stopTaskAct->setShortcutContext(Qt::ApplicationShortcut);
     connect(stopTaskAct, &QAction::triggered, mainWidget, &MainWidget::stopTask);
 

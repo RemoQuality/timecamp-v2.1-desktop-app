@@ -38,7 +38,7 @@ if(WIN32)
     )
     endif()
 elseif(UNIX AND NOT APPLE)
-    set(CMAKE_PREFIX_PATH "~/Qt5.2.0/5.2.0/clang_64/")
+    set(CMAKE_PREFIX_PATH "~/Qt/5.9.3/gcc_64/")
 else()
     set(CMAKE_PREFIX_PATH "~/Qt/5.10.1/clang_64/")
     set(CMAKE_EXE_LINKER_FLAGS "-framework AppKit -framework IOKit -framework Foundation -framework CoreFoundation")
@@ -105,7 +105,7 @@ if(UNIX AND NOT APPLE)
     )
 
     list(APPEND TC_LIBS
-        "-lX11"
+        "-lX11 -lXss"
     )
 endif()
 
