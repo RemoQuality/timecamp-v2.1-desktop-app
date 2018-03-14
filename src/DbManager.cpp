@@ -18,7 +18,7 @@ DbManager::DbManager(QObject *parent)
 {
     qInfo() << "[DB] Starting DB manager!";
     m_db = QSqlDatabase::addDatabase("QSQLITE");
-    m_db.setDatabaseName(QStandardPaths::standardLocations(QStandardPaths::AppDataLocation).first() + "/" + DB_FILENAME);
+    m_db.setDatabaseName(QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first() + "/" + DB_FILENAME);
 
     if (!m_db.open())
     {

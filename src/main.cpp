@@ -1,5 +1,8 @@
 #include <QApplication>
 #include <QTimer>
+#include <QStandardPaths>
+#include <ctime>
+#include <iomanip>
 
 #include "Settings.h"
 #include "MainWidget.h"
@@ -8,8 +11,47 @@
 #include "WindowEventsManager.h"
 #include "TrayManager.h"
 
+
+void myMessageHandler(QtMsgType type, const QMessageLogContext &, const QString & msg)
+{
+    std::time_t stdtime = std::time(nullptr);
+//    std::cout << "UTC:       " << std::put_time(std::gmtime(&stdtime), "%H:%M:%S") << '\n';
+//    std::cout << "local:     " << std::put_time(std::localtime(&stdtime), "%H:%M:%S") << '\n';
+    char timestring[100];
+    std::strftime(timestring, sizeof(timestring), "%H:%M:%S", std::gmtime(&stdtime)); // UTC, localtime for local
+
+    QString txt;
+    txt += "[";
+    txt += timestring;
+    txt += "] ";
+    switch (type) {
+        case QtInfoMsg:
+            txt += QString("Info:\t%1").arg(msg);
+            break;
+        case QtDebugMsg:
+            txt += QString("Debug:\t%1").arg(msg);
+            break;
+        case QtWarningMsg:
+            txt += QString("Warning:\t%1").arg(msg);
+            break;
+        case QtCriticalMsg:
+            txt += QString("Critical:\t%1").arg(msg);
+            break;
+        case QtFatalMsg:
+            txt += QString("Fatal:\t%1").arg(msg);
+            break;
+    }
+    QFile outFile(QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first() + "/" + LOG_FILENAME);
+    outFile.open(QIODevice::WriteOnly | QIODevice::Append);
+    QTextStream ts(&outFile);
+    ts << txt << endl;
+}
+
 int main(int argc, char *argv[])
 {
+    // install log handler
+    qInstallMessageHandler(myMessageHandler);
+
     // Caches are saved in %localappdata%/org_name/app_name
     // Eg. C:\Users\timecamp\AppData\Local\Time Solutions\TimeCamp Desktop
     // Settings are saved in registry: HKEY_CURRENT_USER\Software\Time Solutions\TimeCamp Desktop
