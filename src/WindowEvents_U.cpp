@@ -38,17 +38,10 @@ std::string WindowEvents_U::execCommand(const char* cmd)
     return result;
 }
 
-void WindowEvents_U::logAppName(unsigned char* appName, unsigned char* windowName)
-{
-    //qInfo("APP: %s | %s \n", appName, windowName);
-}
-
 void WindowEvents_U::logAppName(QString appName, QString windowName)
 {
-    qInfo("APP: %s | %s \n", appName.toLatin1().constData(), windowName.toLatin1().constData());
-    appName.replace(".exe", "");
-    AppData *app = new AppData(appName, windowName, "");
-    Comms::instance().saveApp(app);
+//    qInfo("APP: %s | %s \n", appName.toLatin1().constData(), windowName.toLatin1().constData());
+    WindowEvents::logAppName(appName, windowName, "");
 }
 
 

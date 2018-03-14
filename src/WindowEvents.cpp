@@ -22,3 +22,10 @@ void WindowEvents::checkIdleStatus()
         Comms::instance().saveApp(app);
     }
 }
+
+void WindowEvents::logAppName(QString appName, QString windowName, QString additionalInfo)
+{
+    qDebug("APP: %s | %s \n", appName.toLatin1().constData(), windowName.toLatin1().constData());
+    AppData *app = new AppData(std::move(appName), std::move(windowName), std::move(additionalInfo));
+    Comms::instance().saveApp(app);
+}

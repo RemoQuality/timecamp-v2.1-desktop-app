@@ -27,7 +27,6 @@ public:
 
 protected:
     void run() override; // your thread implementation goes here
-    void logAppName(unsigned char* appName, unsigned char* windowName) override;
     unsigned long getIdleTime() override;
 
 private:

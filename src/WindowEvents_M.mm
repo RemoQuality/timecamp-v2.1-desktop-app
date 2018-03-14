@@ -18,23 +18,6 @@ unsigned long WindowEvents_M::getIdleTime()
     return 0;
 }
 
-void WindowEvents_M::logAppName(unsigned char* appName, unsigned char* windowName)
-{
-    qInfo("%s\n", appName);
-    qInfo("%s\n", windowName);
-}
-
-void WindowEvents_M::logAppName(QString appName, QString windowName, QString additionalInfo)
-{
-//    qInfo("APP: %s | %s \n", appName.toLatin1().constData(), windowName.toLatin1().constData());
-    appName.replace(".exe", "");
-//    WindowDetails *details = new WindowDetails();
-//    QString additionalInfo = details->GetAdditionalInfo(appName, passedHwnd);
-//    QString additionalInfo = "";
-    AppData *app = new AppData(appName, windowName, additionalInfo);
-    Comms::instance().saveApp(app);
-}
-
 void WindowEvents_M::run()
 {
     qInfo("thread started");
@@ -110,7 +93,7 @@ void WindowEvents_M::GetActiveApp()
     processName = processName.toLower();
     additionalInfo = GetAdditionalInfo(processName);
 
-    logAppName(processName, appTitle, additionalInfo);
+    WindowEvents::logAppName(processName, appTitle, additionalInfo);
 }
 
 QString WindowEvents_M::GetProcWindowName(QString processName)

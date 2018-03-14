@@ -11,8 +11,8 @@ public:
     void checkIdleStatus();
 protected:
     virtual void run() = 0;
-    virtual void logAppName(unsigned char* appName, unsigned char* windowName) = 0;
     virtual unsigned long getIdleTime() = 0;
+    void static logAppName(QString appName, QString windowName, QString additionalInfo);
 private:
     unsigned long lastIdleTimestamp = 0;
     unsigned long currentIdleTimestamp = 0;

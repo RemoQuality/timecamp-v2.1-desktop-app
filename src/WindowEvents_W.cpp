@@ -18,19 +18,13 @@ unsigned long WindowEvents_W::getIdleTime()
     return 0;
 }
 
-void WindowEvents_W::logAppName(unsigned char* appName, unsigned char* windowName)
-{
-    //qInfo("APP: %s | %s \n", appName, windowName);
-}
-
 void WindowEvents_W::logAppName(QString appName, QString windowName, HWND passedHwnd)
 {
 //    qInfo("APP: %s | %s \n", appName.toLatin1().constData(), windowName.toLatin1().constData());
     appName.replace(".exe", "");
     WindowDetails *details = new WindowDetails();
     QString additionalInfo = details->GetAdditionalInfo(appName, passedHwnd);
-    AppData *app = new AppData(appName, windowName, additionalInfo);
-    Comms::instance().saveApp(app);
+    WindowEvents::logAppName(appname, windowName, additionalInfo);
 }
 
 void WindowEvents_W::run()
