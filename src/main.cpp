@@ -14,12 +14,14 @@
 #include "WindowEvents.h"
 #include "WindowEventsManager.h"
 #include "TrayManager.h"
+#include "Autorun.h"
 
 
 void firstRun() {
     QSettings settings;
 
     if(settings.value(SETT_IS_FIRST_RUN, true).toBool()) {
+        Autorun::enableAutorun();
 #ifdef __APPLE__
         enableAssistiveDevices();
 #endif
