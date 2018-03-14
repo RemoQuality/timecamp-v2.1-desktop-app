@@ -24,7 +24,7 @@ void WindowEvents_W::logAppName(QString appName, QString windowName, HWND passed
     appName.replace(".exe", "");
     WindowDetails *details = new WindowDetails();
     QString additionalInfo = details->GetAdditionalInfo(appName, passedHwnd);
-    WindowEvents::logAppName(appname, windowName, additionalInfo);
+    WindowEvents::logAppName(appName, windowName, additionalInfo);
 }
 
 void WindowEvents_W::run()
