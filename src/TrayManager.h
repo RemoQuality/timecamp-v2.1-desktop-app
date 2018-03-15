@@ -36,6 +36,7 @@ private slots:
     void autoStart(bool checked);
     void tracker(bool checked);
     void openCloseWindowAction();
+    void contactSupport();
 
 
 private:
@@ -49,6 +50,7 @@ private:
     QAction *stopTaskAct;
     QAction *trackerAct;
     QAction *autoStartAct;
+    QAction *helpAct;
     QAction *quitAct;
 
     MainWidget *mainWidget;

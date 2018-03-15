@@ -1,5 +1,6 @@
 #include <QSystemTrayIcon>
 #include <QMessageBox>
+#include <QtGui/QDesktopServices>
 #include "Settings.h"
 #include "TrayManager.h"
 #include "MainWidget.h"
@@ -99,6 +100,11 @@ void TrayManager::openCloseWindowAction() {
     }
 }
 
+void TrayManager::contactSupport() {
+    QUrl mail("mailto:support@timecamp.com");
+    QDesktopServices::openUrl(mail);
+};
+
 void TrayManager::createActions(QMenu *menu)
 {
     openAct = new QAction(tr("Open window"), this);
@@ -133,6 +139,10 @@ void TrayManager::createActions(QMenu *menu)
     autoStartAct->setCheckable(true);
     connect(autoStartAct, &QAction::triggered, this, &TrayManager::autoStart);
 
+    helpAct = new QAction(tr("Contact support"), this);
+    helpAct->setStatusTip(tr("Need help? Talk to one of our support gurus"));
+    connect(helpAct, &QAction::triggered, this, &TrayManager::contactSupport);
+
     quitAct = new QAction(tr("Quit"), this);
     quitAct->setStatusTip(tr("Close the app"));
     connect(quitAct, &QAction::triggered, mainWidget, &MainWidget::quit);
@@ -146,6 +156,8 @@ void TrayManager::createActions(QMenu *menu)
     menu->addAction(trackerAct);
     menu->addSeparator();
     menu->addAction(autoStartAct);
+    menu->addSeparator();
+    menu->addAction(helpAct);
     menu->addSeparator();
     menu->addAction(quitAct);
 }
