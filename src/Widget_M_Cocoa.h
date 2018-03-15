@@ -9,7 +9,7 @@
 #include <AppKit/NSStatusItem.h>
 #include <Foundation/Foundation.h>
 
-#import "Widget_m.h"
+#import "Widget_M.h"
 
 @interface Widget_M_Cocoa : NSObject
 {

@@ -64,6 +64,7 @@ void TrayManager::setupSettings()
     // act on the saved settings
     this->autoStart(autoStartAct->isChecked());
     this->tracker(trackerAct->isChecked());
+    this->widgetToggl(widgetAct->isChecked());
 }
 
 void TrayManager::updateStopMenu(bool canBeStopped, QString timerName)
@@ -193,6 +194,18 @@ void TrayManager::loginLogout(bool loggedIn, QString tooltipText)
     stopTaskAct->setEnabled(loggedIn);
     trackerAct->setEnabled(loggedIn);
     trayIcon->setToolTip(tooltipText);
+
+    if(stopTaskAct->isEnabled()){ // if timer is running
+        QString maybeTime = tooltipText.mid(0,8); // first 8 chars: 12:23:45
+        bool ok;
+        maybeTime.mid(0,2).toInt(&ok, 10); // take first two and try to make it int; if failed then it's not time
+        if(ok) {
+            widget->setTaskTitle(maybeTime);
+        }else{
+            widget->setTaskTitle("No timer");
+        }
+    }
+
     if (loggedIn) {
         this->setupSettings();
     } else {

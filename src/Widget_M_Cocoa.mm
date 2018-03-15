@@ -9,7 +9,7 @@
     if (self)
     {
         widget = [[[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength] retain]; //90 to optymalny rozmiar
-        [widget setTitle:@"00:00:00"];
+        [widget setTitle:@"No timer"];
         // This goes where you set up the status item
 //        [widget setTarget:self];
 //        [widget setAction:@selector(TaskClicked:)];
@@ -85,7 +85,7 @@
     [taskTitleWithFont appendAttributedString:taskTitle2];
     */
 
-    [widget setAttributedTitle:taskTitleWithFont];
+    [widget setAttributedTitle:taskTitle2];
 }
 
 - (void) ShowMe
