@@ -30,8 +30,8 @@ if(WIN32)
     if ("${CMAKE_GENERATOR}" MATCHES "MinGW")
     set(CMAKE_PREFIX_PATH
         "C:\\Qt\\5.10.0\\mingw53_32\\lib\\cmake" # what about mingw64?
-        # also, there's no QtWebEngine (no chromium) for MinGW, so we're stuck with MSVC on win32
     )
+    message( FATAL_ERROR "There's no QtWebEngine (no chromium) for MinGW, you have to use MSVC on win32")
     elseif("${CMAKE_GENERATOR}" MATCHES "Visual Studio" OR "${CMAKE_GENERATOR}" MATCHES "NMake" OR "${CMAKE_GENERATOR}" MATCHES "Ninja")
     set(CMAKE_PREFIX_PATH
         "C:\\Qt\\5.10.0\\msvc2017_64\\lib\\cmake"
