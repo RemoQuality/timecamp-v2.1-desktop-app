@@ -128,7 +128,7 @@ void TrayManager::createActions(QMenu *menu)
     trackerAct->setCheckable(true);
     connect(trackerAct, &QAction::triggered, this, &TrayManager::tracker);
 
-    autoStartAct = new QAction(tr("Launch app on login"), this);
+    autoStartAct = new QAction(tr("Start with computer"), this);
     autoStartAct->setDisabled(true); // disable by default, till we login
     autoStartAct->setCheckable(true);
     connect(autoStartAct, &QAction::triggered, this, &TrayManager::autoStart);
