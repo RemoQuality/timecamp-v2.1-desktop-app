@@ -37,8 +37,13 @@ void TrayManager::setupTray(MainWidget *parent)
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
     */
-
+#ifndef __APPLE__
     trayIcon->setIcon(QIcon(MAIN_ICON));
+#else
+    QIcon macOSIcon(":/Icons/res/AppIcon_Dark.png");
+    macOSIcon.setIsMask(true);
+    trayIcon->setIcon(macOSIcon);
+#endif
     trayIcon->setContextMenu(trayMenu);
     trayIcon->show();
 }

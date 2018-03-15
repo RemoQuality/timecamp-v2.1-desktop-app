@@ -4,5 +4,6 @@
         <file>res/AppIcon128.png</file>
         <file>res/AppIcon.ico</file>
         <file>res/AppIcon.icns</file>
+        <file>res/AppIcon_Dark.png</file>
     </qresource>
 </RCC>
