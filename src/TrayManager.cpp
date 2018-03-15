@@ -46,6 +46,10 @@ void TrayManager::setupTray(MainWidget *parent)
 #endif
     trayIcon->setContextMenu(trayMenu);
     trayIcon->show();
+
+#ifdef __APPLE__
+    widget = new Widget_M();
+#endif
 }
 
 void TrayManager::setupSettings()
@@ -55,6 +59,7 @@ void TrayManager::setupSettings()
     autoStartAct->setDisabled(false);
     autoStartAct->setChecked(Autorun::checkAutorun());
     trackerAct->setChecked(settings.value(SETT_TRACK_PC_ACTIVITIES, false).toBool());
+    widgetAct->setChecked(settings.value(SETT_SHOW_WIDGET, false).toBool());
 
     // act on the saved settings
     this->autoStart(autoStartAct->isChecked());
@@ -80,6 +85,16 @@ void TrayManager::tracker(bool checked)
 {
     settings.setValue(SETT_TRACK_PC_ACTIVITIES, checked);
     emit pcActivitiesValueChanged(checked);
+}
+
+void TrayManager::widgetToggl(bool checked)
+{
+    settings.setValue(SETT_SHOW_WIDGET, checked);
+    if(checked){
+        widget->showMe();
+    }else{
+        widget->hideMe();
+    }
 }
 
 void TrayManager::iconActivated(QSystemTrayIcon::ActivationReason reason)
@@ -139,6 +154,10 @@ void TrayManager::createActions(QMenu *menu)
     trackerAct->setCheckable(true);
     connect(trackerAct, &QAction::triggered, this, &TrayManager::tracker);
 
+    widgetAct = new QAction(tr("Toggle time widget"), this);
+    widgetAct->setCheckable(true);
+    connect(widgetAct, &QAction::triggered, this, &TrayManager::widgetToggl);
+
     autoStartAct = new QAction(tr("Start with computer"), this);
     autoStartAct->setDisabled(true); // disable by default, till we login
     autoStartAct->setCheckable(true);
@@ -159,8 +178,8 @@ void TrayManager::createActions(QMenu *menu)
     menu->addAction(stopTaskAct);
     menu->addSeparator();
     menu->addAction(trackerAct);
-    menu->addSeparator();
     menu->addAction(autoStartAct);
+    menu->addAction(widgetAct);
     menu->addSeparator();
     menu->addAction(helpAct);
     menu->addSeparator();

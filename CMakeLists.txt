@@ -77,7 +77,8 @@ list(APPEND SOURCE_FILES
     "src/WindowEventsManager.cpp"
     "src/TrayManager.cpp"
     "src/third-party/mozilla_lz4/lz4.c"
-    "src/WindowEvents.cpp" # a header without cpp file
+    "src/WindowEvents.cpp"
+    "src/Widget.cpp"
 )
 
 
@@ -114,6 +115,8 @@ if(APPLE)
     list(APPEND SOURCE_FILES
          "src/WindowEvents_M.mm"
          "src/Utils_M.mm"
+         "src/Widget_M.mm"
+         "src/Widget_M_Cocoa.mm"
         )
     set_source_files_properties(src/*.mm PROPERTIES COMPILE_FLAGS "-x objective-c++")
 

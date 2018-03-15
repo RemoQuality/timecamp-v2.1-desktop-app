@@ -8,11 +8,18 @@
 #include <QMessageBox>
 #include <QSettings>
 
+#include "Widget.h"
+
+#ifdef __APPLE__
+#include "Widget_M.h"
+#else
+#endif
+
 class MainWidget;
 
 class TrayManager: public QObject
 {
-Q_OBJECT
+    Q_OBJECT
     Q_DISABLE_COPY(TrayManager)
 
 public:
@@ -35,6 +42,7 @@ private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason);
     void autoStart(bool checked);
     void tracker(bool checked);
+    void widgetToggl(bool checked);
     void openCloseWindowAction();
     void contactSupport();
 
@@ -50,10 +58,13 @@ private:
     QAction *stopTaskAct;
     QAction *trackerAct;
     QAction *autoStartAct;
+    QAction *widgetAct;
     QAction *helpAct;
     QAction *quitAct;
 
     MainWidget *mainWidget;
+
+    Widget *widget;
 };
 
 
