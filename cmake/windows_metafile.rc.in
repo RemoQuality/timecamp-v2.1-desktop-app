@@ -21,7 +21,7 @@ BEGIN
             VALUE "LegalCopyright", "@COPYRIGHT@"
             VALUE "InternalName", "@PROJECT_NAME@"
             VALUE "OriginalFilename", "@PROJECT_NAME@.exe"
-            VALUE "ProductName", "@PROJECT_NAME@"
+            VALUE "ProductName", "@PRODUCT_NAME@"
             VALUE "ProductVersion", "@PROJECT_VERSION@"
         END
     END

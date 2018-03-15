@@ -11,15 +11,16 @@ include(QtCommon) # cmake/QtCommon.cmake
 
 
 
-project(TimecampDesktop VERSION 1.0)
+project(TimecampDesktop VERSION 1.0.1)
 
 # Set PROJECT_VERSION_PATCH and PROJECT_VERSION_TWEAK to 0 if not present, needed by add_project_meta
 fix_project_version()
 
 # Set additional project information
+set(PRODUCT_NAME "Timecamp Desktop") # the nice visible name
 set(COMPANY "Time Solutions")
 set(COPYRIGHT "Copyright (c) 2010-2018 Time Solutions. All rights reserved.")
-set(IDENTIFIER "com.TimeSolutions.TimecampDesktop")
+set(IDENTIFIER "com.TimeSolutions.${PROJECT_NAME}")
 
 
 set(CMAKE_CXX_STANDARD 17)
