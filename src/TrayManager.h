@@ -12,6 +12,7 @@
 
 #ifdef __APPLE__
 #include "Widget_M.h"
+#define _WIDGET_EXISTS_
 #else
 #endif
 
@@ -42,9 +43,11 @@ public slots:
     void iconActivated(QSystemTrayIcon::ActivationReason);
     void autoStart(bool checked);
     void tracker(bool checked);
-    void widgetToggl(bool checked);
     void openCloseWindowAction();
     void contactSupport();
+#ifdef _WIDGET_EXISTS_
+    void widgetToggl(bool checked);
+#endif
 
 
 private:
@@ -64,7 +67,9 @@ private:
 
     MainWidget *mainWidget;
 
+#ifdef _WIDGET_EXISTS_
     Widget *widget;
+#endif
 };
 
 
