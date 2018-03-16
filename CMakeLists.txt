@@ -42,7 +42,7 @@ elseif(UNIX AND NOT APPLE)
     set(CMAKE_PREFIX_PATH "~/Qt/5.10.1/gcc_64/")
 else()
     set(CMAKE_PREFIX_PATH "~/Qt/5.10.1/clang_64/")
-    set(CMAKE_EXE_LINKER_FLAGS "-framework AppKit -framework IOKit -framework Foundation -framework CoreFoundation")
+    set(CMAKE_EXE_LINKER_FLAGS "-framework Carbon -framework AppKit -framework IOKit -framework Foundation -framework CoreFoundation")
 endif()
 
 find_package(Qt5Core REQUIRED)
@@ -51,6 +51,9 @@ find_package(Qt5Network REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5WebEngineWidgets REQUIRED)
 find_package(Qt5Sql REQUIRED)
+if(UNIX AND NOT APPLE)
+find_package(qt5x11extras REQUIRED)
+endif()
 
 foreach(plugin ${Qt5Sql_PLUGINS})
     get_target_property(_loc ${plugin} LOCATION)
@@ -60,7 +63,7 @@ foreach(plugin ${Qt5Sql_PLUGINS})
 #    endif()
 endforeach()
 
-ADD_DEFINITIONS(-DUNICODE -D_UNICODE -DPSAPI_VERSION=1)
+ADD_DEFINITIONS(-DUNICODE -D_UNICODE -DPSAPI_VERSION=1 -DQHOTKEY_LIB -DQHOTKEY_LIB_BUILD)
 
 list(APPEND SOURCE_FILES
     "src/Settings.h" # a header without cpp file
@@ -125,7 +128,27 @@ if(APPLE)
 #        )
 endif()
 
+# QHotkey
+set(QHOTKEY_PATH "vendor/de/skycoder42/qhotkey/QHotkey")
+list(APPEND SOURCE_FILES
+"${QHOTKEY_PATH}/QHotkey"
+"${QHOTKEY_PATH}/qhotkey.cpp"
+"${QHOTKEY_PATH}/qhotkey_p.h"
+)
 
+if(WIN32)
+    list(APPEND SOURCE_FILES
+    "${QHOTKEY_PATH}/qhotkey_win.cpp"
+    )
+elseif(UNIX AND NOT APPLE)
+    list(APPEND SOURCE_FILES
+    "${QHOTKEY_PATH}/qhotkey_x11.cpp"
+    )
+elseif(APPLE)
+    list(APPEND SOURCE_FILES
+    "${QHOTKEY_PATH}/qhotkey_mac.cpp"
+    )
+endif()
 
 #if(CMAKE_BUILD_TYPE MATCHES Debug)
 #    file(GLOB POCO_LIBS "path/to/debug/libs/*.a")
@@ -161,4 +184,8 @@ endif()
 
 target_link_libraries(TimecampDesktop ${TC_LIBS} ${Qt5Core_QTMAIN_LIBRARIES})
 
+if(UNIX AND NOT APPLE)
+qt5_use_modules(TimecampDesktop Core Gui Network Widgets WebEngineWidgets Sql x11extras)
+else()
 qt5_use_modules(TimecampDesktop Core Gui Network Widgets WebEngineWidgets Sql)
+endif()

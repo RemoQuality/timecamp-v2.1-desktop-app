@@ -1,6 +1,7 @@
 #include <QSystemTrayIcon>
 #include <QMessageBox>
-#include <QtGui/QDesktopServices>
+#include <QDesktopServices>
+
 #include "Settings.h"
 #include "TrayManager.h"
 #include "MainWidget.h"
@@ -130,12 +131,16 @@ void TrayManager::createActions(QMenu *menu)
 {
     openAct = new QAction(tr("Open window"), this);
     openAct->setStatusTip(tr("Opens TimeCamp interface"));
+    openAct->setShortcut(QKeySequence("ctrl+alt+/"));
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
+    openAct->setShortcutVisibleInContextMenu(true);
+#endif
 //    connect(openAct, &QAction::triggered, mainWidget, &MainWidget::open);
     connect(openAct, &QAction::triggered, this, &TrayManager::openCloseWindowAction);
 
     startTaskAct = new QAction(tr("Start timer"), this);
     startTaskAct->setStatusTip(tr("Go to task selection screen"));
-    startTaskAct->setShortcut(Qt::CTRL + Qt::ALT + Qt::Key_N);
+    startTaskAct->setShortcut(QKeySequence("ctrl+alt+N"));
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
     startTaskAct->setShortcutVisibleInContextMenu(true);
 #endif
@@ -144,7 +149,7 @@ void TrayManager::createActions(QMenu *menu)
 
     stopTaskAct = new QAction(tr("Stop timer"), this);
     stopTaskAct->setStatusTip(tr("Stop currently running timer"));
-    stopTaskAct->setShortcut(Qt::CTRL + Qt::ALT + Qt::Key_M);
+    stopTaskAct->setShortcut(QKeySequence("ctrl+alt+M"));
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
     stopTaskAct->setShortcutVisibleInContextMenu(true);
 #endif

@@ -16,6 +16,8 @@
 #include "TrayManager.h"
 #include "Autorun.h"
 
+#include "vendor/de/skycoder42/qhotkey/QHotkey/qhotkey.h"
+
 
 void firstRun() {
     QSettings settings;
@@ -130,6 +132,15 @@ int main(int argc, char *argv[])
     // above timeout triggers func that emits checkIsIdle when logged in
     QObject::connect(&mainWidget, &MainWidget::checkIsIdle, windowEventsManager->getCaptureEventsThread(), &WindowEvents::checkIdleStatus); // Qt5
     twoSecondTimer->start(2 * 1000);
+
+    auto hotkeyNewTimer = new QHotkey(QKeySequence("ctrl+alt+N"), true, &app);
+    QObject::connect(hotkeyNewTimer, &QHotkey::activated, &mainWidget, &MainWidget::startTask);
+
+    auto hotkeyStopTimer = new QHotkey(QKeySequence("ctrl+alt+M"), true, &app);
+    QObject::connect(hotkeyStopTimer, &QHotkey::activated, &mainWidget, &MainWidget::stopTask);
+
+    auto hotkeyOpenWindow = new QHotkey(QKeySequence("ctrl+alt+/"), true, &app);
+    QObject::connect(hotkeyOpenWindow, &QHotkey::activated, trayManager, &TrayManager::openCloseWindowAction);
 
     return app.exec();
 }

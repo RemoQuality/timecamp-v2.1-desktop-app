@@ -38,7 +38,7 @@ public:
 signals:
     void pcActivitiesValueChanged(bool);
 
-private slots:
+public slots:
     void iconActivated(QSystemTrayIcon::ActivationReason);
     void autoStart(bool checked);
     void tracker(bool checked);
