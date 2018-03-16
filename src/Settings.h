@@ -12,6 +12,7 @@
 #define APPLICATION_URL "https://www.timecamp.com/dashboard"
 
 #define MAIN_ICON ":/Icons/res/AppIcon.ico"
+#define MAIN_BG ":/Icons/res/AppIcon128.png"
 
 // db params
 #define DB_FILENAME "localdb.sqlite"

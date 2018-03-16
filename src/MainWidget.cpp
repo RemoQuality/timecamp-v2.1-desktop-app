@@ -11,6 +11,12 @@ MainWidget::MainWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    QPixmap bkgnd(MAIN_BG);
+    bkgnd = bkgnd.scaled(this->size(), Qt::IgnoreAspectRatio);
+    QPalette palette;
+    palette.setBrush(QPalette::Background, bkgnd);
+    this->setPalette(palette);
+
     // set some defaults
     loggedIn = false;
     timerIsRunning = false;
