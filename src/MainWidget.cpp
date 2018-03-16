@@ -209,7 +209,7 @@ void MainWidget::goToTimerPage()
     }
 }
 
-void MainWidget::goToAwayPage() {
+void MainWidget::goToAwayPage() {^
     if(!this->isVisible()){
         this->show();
     }
