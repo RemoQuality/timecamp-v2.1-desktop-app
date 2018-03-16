@@ -26,7 +26,6 @@ MainWidget::MainWidget(QWidget *parent) :
     this->setMinimumSize(QSize(350, 500));
 
     restoreGeometry(settings.value("mainWindowGeometry").toByteArray()); // from QWidget; restore saved window position
-
 }
 
 MainWidget::~MainWidget()
@@ -208,6 +207,10 @@ void MainWidget::goToTimerPage()
         QTWEPage->load(QUrl(APPLICATION_URL));
         this->webpageTitleChanged(QTWEPage->title());
     }
+}
+
+void MainWidget::goToAwayPage() {
+    QTWEPage->load(QUrl(OFFLINE_URL));
 }
 
 void MainWidget::startTask()

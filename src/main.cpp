@@ -124,6 +124,7 @@ int main(int argc, char *argv[])
     QObject::connect(syncDBtimer, &QTimer::timeout, comms, &Comms::timedUpdates); // Qt5
     syncDBtimer->start(30 * 1000); // sync DB every 30s
 
+    QObject::connect(windowEventsManager, &WindowEventsManager::openAwayTimeManagement, &mainWidget, &MainWidget::goToAwayPage);
 
     // 2 sec timer for updating submenu and other features
     auto *twoSecondTimer = new QTimer();

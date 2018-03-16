@@ -62,6 +62,7 @@ public slots:
     void handleLoadStarted();
     void handleLoadProgress(int);
     void handleLoadFinished(bool);
+    void goToAwayPage();
 
 private:
     Ui::MainWidget *ui;
@@ -96,7 +97,6 @@ private:
     void setApiKey(const QString &apiKey);
     void setTimerName(const QString &timerName);
     void setIsTimerRunning(bool isTimerRunning);
-
 };
 
 #endif // MAINWIDGET_H

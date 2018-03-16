@@ -15,8 +15,12 @@ public:
     virtual ~WindowEventsManager(){}
     WindowEvents *getCaptureEventsThread() const;
 
+signals:
+    void openAwayTimeManagement();
+
 public slots:
     void startOrStopThread(bool startOrStop);
+    void noLongerAway(unsigned long);
 
 private:
     WindowEvents *captureEventsThread;

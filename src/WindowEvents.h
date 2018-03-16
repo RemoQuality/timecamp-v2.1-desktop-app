@@ -6,9 +6,14 @@
 
 class WindowEvents : public QThread
 {
+Q_OBJECT
 public:
     bool wasIdleLongEnough();
     void checkIdleStatus();
+
+signals:
+    void noLongerAway(unsigned long);
+
 protected:
     virtual void run() = 0;
     virtual unsigned long getIdleTime() = 0;

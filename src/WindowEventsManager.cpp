@@ -1,3 +1,4 @@
+#include <QMessageBox>
 #include "WindowEventsManager.h"
 
 #ifdef __linux__
@@ -25,6 +26,25 @@ WindowEventsManager::WindowEventsManager(QObject *parent)
 #else
     captureEventsThread = new WindowEvents_M();
 #endif
+    QObject::connect(captureEventsThread, &WindowEvents::noLongerAway, this, &WindowEventsManager::noLongerAway);
+}
+
+void WindowEventsManager::noLongerAway(unsigned long)
+{
+    QMessageBox msgBox;
+    msgBox.setText("You've been away from computer.");
+    msgBox.setInformativeText("Do you want to open away time management?");
+    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Close);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+    int ret = msgBox.exec();
+    switch (ret) {
+        case QMessageBox::Ok:
+            emit openAwayTimeManagement();
+            break;
+        case QMessageBox::Close:
+        default:
+            break;
+    }
 }
 
 void WindowEventsManager::startOrStopThread(bool start)
