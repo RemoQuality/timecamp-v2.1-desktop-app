@@ -37,6 +37,7 @@ void WindowEventsManager::noLongerAway(unsigned long)
     msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Close);
     msgBox.setDefaultButton(QMessageBox::Ok);
     int ret = msgBox.exec();
+    emit updateAfterAwayTime();
     switch (ret) {
         case QMessageBox::Ok:
             emit openAwayTimeManagement();

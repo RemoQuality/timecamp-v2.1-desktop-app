@@ -124,7 +124,10 @@ int main(int argc, char *argv[])
     QObject::connect(syncDBtimer, &QTimer::timeout, comms, &Comms::timedUpdates); // Qt5
     syncDBtimer->start(30 * 1000); // sync DB every 30s
 
+    // Away time bindings
+    QObject::connect(windowEventsManager, &WindowEventsManager::updateAfterAwayTime, comms, &Comms::timedUpdates);
     QObject::connect(windowEventsManager, &WindowEventsManager::openAwayTimeManagement, &mainWidget, &MainWidget::goToAwayPage);
+
 
     // 2 sec timer for updating submenu and other features
     auto *twoSecondTimer = new QTimer();
@@ -133,6 +136,7 @@ int main(int argc, char *argv[])
     // above timeout triggers func that emits checkIsIdle when logged in
     QObject::connect(&mainWidget, &MainWidget::checkIsIdle, windowEventsManager->getCaptureEventsThread(), &WindowEvents::checkIdleStatus); // Qt5
     twoSecondTimer->start(2 * 1000);
+
 
     auto hotkeyNewTimer = new QHotkey(QKeySequence("ctrl+alt+N"), true, &app);
     QObject::connect(hotkeyNewTimer, &QHotkey::activated, &mainWidget, &MainWidget::startTask);

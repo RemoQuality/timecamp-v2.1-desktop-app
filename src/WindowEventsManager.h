@@ -16,6 +16,7 @@ public:
     WindowEvents *getCaptureEventsThread() const;
 
 signals:
+    void updateAfterAwayTime();
     void openAwayTimeManagement();
 
 public slots:

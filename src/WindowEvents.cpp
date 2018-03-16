@@ -21,8 +21,7 @@ void WindowEvents::checkIdleStatus()
     lastIdleTimestamp = currentIdleTimestamp;
     bool wasPreviousIdle = lastIdleTimestamp > 10 * 1000;
     if (wasIdleLongEnough()) {
-        AppData *app = new AppData("IDLE", "IDLE", "");
-        Comms::instance().saveApp(app);
+        this->logAppName("IDLE", "IDLE", "");
     } else if (wasPreviousIdle) {
         // was idle but is not anymore
         emit noLongerAway(lastIdleTimestamp);
