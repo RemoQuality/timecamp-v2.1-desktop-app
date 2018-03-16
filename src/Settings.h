@@ -9,7 +9,7 @@
 #define APPLICATION_VERSION "2.0.0.0"
 
 #define WINDOW_NAME "TimeCamp"
-#define APPLICATION_URL "https://www.timecamp.com/dashboard"
+#define APPLICATION_URL "https://www.timecamp.com/app#/timesheets/timer"
 
 #define MAIN_ICON ":/Icons/res/AppIcon.ico"
 #define MAIN_BG ":/Icons/res/AppIcon128.png"
