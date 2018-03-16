@@ -122,7 +122,7 @@ void TrayManager::openCloseWindowAction() {
 }
 
 void TrayManager::contactSupport() {
-    QUrl mail("mailto:support@timecamp.com");
+    QUrl mail("https://www.timecamp.com/kb/contact/");
     QDesktopServices::openUrl(mail);
 };
 
