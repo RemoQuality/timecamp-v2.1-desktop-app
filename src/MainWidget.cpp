@@ -210,6 +210,9 @@ void MainWidget::goToTimerPage()
 }
 
 void MainWidget::goToAwayPage() {
+    if(!this->isVisible()){
+        this->show();
+    }
     QTWEPage->load(QUrl(OFFLINE_URL));
 }
 
