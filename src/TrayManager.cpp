@@ -60,12 +60,13 @@ void TrayManager::setupSettings()
     autoStartAct->setDisabled(false);
     autoStartAct->setChecked(Autorun::checkAutorun());
     trackerAct->setChecked(settings.value(SETT_TRACK_PC_ACTIVITIES, false).toBool());
+#ifdef _WIDGET_EXISTS_
     widgetAct->setChecked(settings.value(SETT_SHOW_WIDGET, false).toBool());
-
+    this->widgetToggl(widgetAct->isChecked());
+#endif
     // act on the saved settings
     this->autoStart(autoStartAct->isChecked());
     this->tracker(trackerAct->isChecked());
-    this->widgetToggl(widgetAct->isChecked());
 }
 
 void TrayManager::updateStopMenu(bool canBeStopped, QString timerName)
@@ -89,6 +90,7 @@ void TrayManager::tracker(bool checked)
     emit pcActivitiesValueChanged(checked);
 }
 
+#ifdef _WIDGET_EXISTS_
 void TrayManager::widgetToggl(bool checked)
 {
     settings.setValue(SETT_SHOW_WIDGET, checked);
@@ -98,6 +100,7 @@ void TrayManager::widgetToggl(bool checked)
         widget->hideMe();
     }
 }
+#endif
 
 void TrayManager::iconActivated(QSystemTrayIcon::ActivationReason reason)
 {
@@ -160,9 +163,11 @@ void TrayManager::createActions(QMenu *menu)
     trackerAct->setCheckable(true);
     connect(trackerAct, &QAction::triggered, this, &TrayManager::tracker);
 
+#ifdef _WIDGET_EXISTS_
     widgetAct = new QAction(tr("Toggle time widget"), this);
     widgetAct->setCheckable(true);
     connect(widgetAct, &QAction::triggered, this, &TrayManager::widgetToggl);
+#endif
 
     autoStartAct = new QAction(tr("Start with computer"), this);
     autoStartAct->setDisabled(true); // disable by default, till we login
@@ -185,7 +190,9 @@ void TrayManager::createActions(QMenu *menu)
     menu->addSeparator();
     menu->addAction(trackerAct);
     menu->addAction(autoStartAct);
+#ifdef _WIDGET_EXISTS_
     menu->addAction(widgetAct);
+#endif
     menu->addSeparator();
     menu->addAction(helpAct);
     menu->addSeparator();
@@ -200,6 +207,7 @@ void TrayManager::loginLogout(bool loggedIn, QString tooltipText)
     trackerAct->setEnabled(loggedIn);
     trayIcon->setToolTip(tooltipText);
 
+#ifdef _WIDGET_EXISTS_
     if(stopTaskAct->isEnabled()){ // if timer is running
         QString maybeTime = tooltipText.mid(0,8); // first 8 chars: 12:23:45
         bool ok;
@@ -210,6 +218,7 @@ void TrayManager::loginLogout(bool loggedIn, QString tooltipText)
             widget->setTaskTitle("No timer");
         }
     }
+#endif
 
     if (loggedIn) {
         this->setupSettings();
