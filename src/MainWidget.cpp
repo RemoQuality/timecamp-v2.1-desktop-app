@@ -213,6 +213,7 @@ void MainWidget::goToAwayPage() {
     if(!this->isVisible()){
         this->show();
     }
+    emit windowStatusChanged(true);
     QTWEPage->load(QUrl(OFFLINE_URL));
 }
 
@@ -223,6 +224,7 @@ void MainWidget::startTask()
     if(!this->isVisible()){
         this->show();
     }
+    emit windowStatusChanged(true);
     this->runJSinPage("if($('.btn-timer').text().trim().toLowerCase() == 'start timer') { $('.btn-timer').click(); }"); // start new timer
 //    this->runJSinPage("$('#timer-task-picker').click();"); // task picker toggle
 }
