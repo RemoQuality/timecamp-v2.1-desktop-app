@@ -164,7 +164,7 @@ void TrayManager::createActions(QMenu *menu)
     connect(trackerAct, &QAction::triggered, this, &TrayManager::tracker);
 
 #ifdef _WIDGET_EXISTS_
-    widgetAct = new QAction(tr("Toggle time widget"), this);
+    widgetAct = new QAction(tr("Time widget"), this);
     widgetAct->setCheckable(true);
     connect(widgetAct, &QAction::triggered, this, &TrayManager::widgetToggl);
 #endif
