@@ -19,7 +19,7 @@ void Autorun::enableAutorun() {
             "        <key>RunAtLoad</key>\n"
             "        <true/>\n"
             "        <key>Label</key>\n"
-            "        <string>TimecampDesktop</string>\n"
+            "        <string>Timecamp Desktop</string>\n"
             "        <key>ProgramArguments</key>\n"
             "        <array>\n"
             "            <string>/Applications/TimecampDesktop.app/Contents/MacOS/TimecampDesktop</string>\n"
