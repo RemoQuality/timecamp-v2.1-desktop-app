@@ -33,9 +33,9 @@ void WindowEventsManager::noLongerAway(unsigned long)
 {
     QMessageBox msgBox;
     msgBox.setText("You've been away from computer.");
-    msgBox.setInformativeText("Do you want to open away time management?");
-    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Close);
-    msgBox.setDefaultButton(QMessageBox::Ok);
+    msgBox.setInformativeText("Do you want to log away time activity?");
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::Yes);
     int ret = msgBox.exec();
     emit updateAfterAwayTime();
     switch (ret) {
