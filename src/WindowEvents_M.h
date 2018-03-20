@@ -15,7 +15,7 @@
 class WindowEvents_M : public WindowEvents {
 Q_OBJECT
 public:
-    QString GetProcWindowName(QString processName);
+    static QString GetProcWindowName(QString processName);
     QString GetProcNameFromPath(QString processName);
     QString GetAdditionalInfo(QString processName);
 

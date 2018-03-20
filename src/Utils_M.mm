@@ -10,8 +10,12 @@
 #include <QMessageBox>
 #include "Settings.h"
 
+#include "WindowEvents_M.h"
+
 void enableAssistiveDevices()
 {
+    QString callThisMethodOnceToAppearInMacOSPanel = WindowEvents_M::GetProcWindowName(APPLICATION_NAME);
+
     /* Enabling assistive devices for OSX. */
     SInt32 OSXversionMajor, OSXversionMinor;
     if (Gestalt(gestaltSystemVersionMajor, &OSXversionMajor) == noErr && Gestalt(gestaltSystemVersionMinor, &OSXversionMinor) == noErr)
