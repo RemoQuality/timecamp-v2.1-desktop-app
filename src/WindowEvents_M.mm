@@ -127,56 +127,48 @@ QString WindowEvents_M::GetProcWindowName(QString processName)
 {
     QString appTitle;
     NSAutoreleasePool* pool = [NSAutoreleasePool new];
-    const char* tmpNameUtf8 = "";
     const char* windowNameUtf8 = "";
-    NSString* tmpName = @"";
     NSString* windowName = @"";
     NSDictionary* errorDict;
     NSAppleEventDescriptor* returnDescriptor = NULL;
 
     NSAppleScript* scriptObject = [[NSAppleScript alloc] initWithSource:
-                                   @"global frontApp, frontAppName, windowTitle \n \
+                                   @"global frontApp, frontAppName, windowTitle, fileURL \n \
                                    set windowTitle to \"\" \n \
+                                   set fileURL to \"\" \n \
                                    tell application \"System Events\" \n \
-                                   set frontApp to first application process whose frontmost is true \n \
-                                   set frontAppName to name of frontApp \n \
-                                   tell process frontAppName \n \
-                                   tell (1st window whose value of attribute \"AXMain\" is true) \n \
-                                   set fileURL to value of attribute \"AXDocument\" \n \
-                                   set windowTitle to value of attribute \"AXTitle\" \n \
+                                       set frontApp to first application process whose frontmost is true \n \
+                                       set frontAppName to name of frontApp \n \
+                                       tell process frontAppName \n \
+                                           if exists (1st window whose value of attribute \"AXMain\" is true) then \n \
+                                               tell (1st window whose value of attribute \"AXMain\" is true) \n \
+                                                   if exists (attribute \"AXDocument\") then \n \
+                                                       set fileURL to value of attribute \"AXDocument\" \n \
+                                                   end if \n \
+                                                   if exists (attribute \"AXTitle\") then \n \
+                                                       set windowTitle to value of attribute \"AXTitle\" \n \
+                                                   end if \n \
+                                               end tell \n \
+                                           end if \n \
+                                       end tell \n \
                                    end tell \n \
-                                   end tell \n \
-                                   end tell \n \
-                                   return {frontApp, windowTitle}"]; //return {frontApp, frontAppName, windowTitle}"];
+                                   return {frontAppName, windowTitle}"]; //return {frontApp, frontAppName, windowTitle}"];
 
     // Run the AppleScript.
     returnDescriptor = [scriptObject executeAndReturnError: &errorDict];
 //    NSLog(@"DESCRIPTOR %@", returnDescriptor);
-//    NSLog(@"ERROR %@", errorDict);
+//    NSLog(@"ERROR %@", errorDict); // warning, THROWS ERRORS! breaks app!!!
 
     [scriptObject release];
-    //DescType descriptorType = [returnDescriptor descriptorType];
     NSInteger howMany = [returnDescriptor numberOfItems];
 
     if([returnDescriptor descriptorType])
     {
-        //NSLog(@"Script executed sucessfully.");
         if(kAENullEvent != [returnDescriptor descriptorType])
         {
-           if(processName == "" || processName == "(null)")
-            {
-                tmpName = [[[returnDescriptor descriptorAtIndex:1] descriptorForKeyword:'seld'] stringValue];
-                tmpNameUtf8 = [tmpName UTF8String];
-                processName = tmpNameUtf8;
-                //DEBUG_LOG("AXProcessName: " + processName);
-            }
             windowName = [[returnDescriptor descriptorAtIndex:howMany] stringValue];
-//            windowNameUtf8 = [windowName UTF8String];
             appTitle = QString::fromNSString(windowName);
-            //DEBUG_LOG("TITLE: "+appTitle);
-            //wxMessageBox(appTitle + " PROC:" + processName);
         }
-        //else NSLog(@"AppleScript has no result.");
     }
 
     [pool drain];

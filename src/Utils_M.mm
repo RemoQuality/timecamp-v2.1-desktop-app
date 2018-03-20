@@ -10,21 +10,21 @@
 #include <QMessageBox>
 #include "Settings.h"
 
-#include "WindowEvents_M.h"
-
 void enableAssistiveDevices()
 {
-    QString callThisMethodOnceToAppearInMacOSPanel = WindowEvents_M::GetProcWindowName(APPLICATION_NAME);
-
     /* Enabling assistive devices for OSX. */
     SInt32 OSXversionMajor, OSXversionMinor;
     if (Gestalt(gestaltSystemVersionMajor, &OSXversionMajor) == noErr && Gestalt(gestaltSystemVersionMinor, &OSXversionMinor) == noErr)
     {
         if (OSXversionMajor > 10 || (OSXversionMajor == 10 && OSXversionMinor >= 9))
         {
-                /* Here we call QString() just to be able use "+" operator for more than one const wchar_t* */
-                QString message(QString() + APPLICATION_NAME + " requires enabled access for Accessibility to work properly. Please enable Accessibility option for " + APPLICATION_NAME + ".");
 
+            // https://stackoverflow.com/questions/17693408/enable-access-for-assistive-devices-programmatically-on-10-9
+            NSDictionary *options = @{(id)kAXTrustedCheckOptionPrompt: @NO};
+            BOOL accessibilityEnabled = AXIsProcessTrustedWithOptions((CFDictionaryRef)options);
+
+            if(!accessibilityEnabled){
+                QString message(QString() + APPLICATION_NAME + " requires enabled access for Accessibility to work properly. Please enable Accessibility option for " + APPLICATION_NAME + ".");
                 QMessageBox::information(nullptr, APPLICATION_NAME, message);
 
                 NSDictionary* errorDict;
@@ -39,6 +39,7 @@ void enableAssistiveDevices()
                 // Run the AppleScript.
                 returnDescriptor = [scriptObject executeAndReturnError: &errorDict];
                 [scriptObject release];
+            }
         }
         else
         {
