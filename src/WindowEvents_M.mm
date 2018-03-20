@@ -117,8 +117,9 @@ void WindowEvents_M::GetActiveApp()
     appTitle = GetProcWindowName(processName);
 
     //Get URL from browsers
-    processName = processName.toLower();
-    additionalInfo = GetAdditionalInfo(processName);
+//    processName = processName.toLower();
+    additionalInfo = GetAdditionalInfo(processName.toLower());
+//    qDebug() << "additional info: " << additionalInfo;
 
     WindowEvents::logAppName(processName, appTitle, additionalInfo);
 }
@@ -239,7 +240,10 @@ QString WindowEvents_M::GetAdditionalInfo(QString processName)
     NSAppleEventDescriptor  *returnDescriptor;
     NSAppleScript *scriptObject;
 
-    if(processName == "google chrome" || processName =="google chrome canary")
+    // gist for some browsers:
+    // https://gist.github.com/vitorgalvao/5392178
+
+    if(processName == "google chrome" || processName == "google chrome canary" || processName == "chromium" || processName == "vivaldi")
     {
         QString* pom2 = new QString("tell application \"" + processName + "\" \n \
                                       get URL of active tab of first window \n \
@@ -263,14 +267,18 @@ QString WindowEvents_M::GetAdditionalInfo(QString processName)
 
         delete pom2;
     }
-    else if(processName=="safari")
+    else if(processName=="safari" || processName == "safari technology preview" || processName == "webkit")
     {
-        scriptObject = [[NSAppleScript alloc] initWithSource:
-                        @"tell application \"Safari\" \n \
+        QString* pom2 = new QString("tell application \"" + processName + "\" \n \
                         get URL of current tab of window 1 \n \
-                        end tell"];
+                        end tell");
+
+        NSString* pom = pom2->toNSString();
+
+        scriptObject = [[NSAppleScript alloc] initWithSource:pom];
         executed = true;
 
+        delete pom2;
     }
     else if(processName=="opera")
     {
