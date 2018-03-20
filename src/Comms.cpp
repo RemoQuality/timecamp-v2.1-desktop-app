@@ -48,17 +48,18 @@ void Comms::saveApp(AppData *app)
         return;
     }
 
-    bool needsReporting = false;
-    if (app->getAppName() != &lastApp->getAppName()) {
-        needsReporting = true;
-    }
-    if (app->getWindowName() != &lastApp->getWindowName()) {
-        needsReporting = true;
-    }
-
     if (app->getAdditionalInfo() != "") {
         app->setAppName("Internet");
     }
+
+    bool needsReporting = false;
+    if (0 != QString::compare(app->getAppName(), lastApp->getAppName())) {
+        needsReporting = true;
+    }
+    if (0 != QString::compare(app->getWindowName(), lastApp->getWindowName())) {
+        needsReporting = true;
+    }
+
 //    qDebug() << "Needs reporting: " << needsReporting;
 
     if (needsReporting) {
