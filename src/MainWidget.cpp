@@ -96,12 +96,6 @@ void MainWidget::setupWebview()
     QTWEPage = new QWebEnginePage(QTWEProfile, QTWEView);
     QTWEView->setPage(QTWEPage);
 
-//    pagePointer = m_pWebEngineView->page();
-
-    goToTimerPage(); // loads main app url
-//    QTWEPage->load(QUrl(APPLICATION_URL));
-//    QTWEPage->load(QUrl("http://request.urih.com/"));
-
     refreshBind = new QShortcut(QKeySequence::Refresh, this);
     refreshBind->setContext(Qt::ApplicationShortcut);
     connect(refreshBind, &QShortcut::activated, this, &MainWidget::webviewRefresh);
@@ -109,6 +103,12 @@ void MainWidget::setupWebview()
     fullscreenBind = new QShortcut(QKeySequence::FullScreen, this);
     fullscreenBind->setContext(Qt::ApplicationShortcut);
     connect(fullscreenBind, &QShortcut::activated, this, &MainWidget::webviewFullscreen);
+
+//    pagePointer = m_pWebEngineView->page();
+
+    goToTimerPage(); // loads main app url
+//    QTWEPage->load(QUrl(APPLICATION_URL));
+//    QTWEPage->load(QUrl("http://request.urih.com/"));
 
 
     connect(QTWEPage, &QWebEnginePage::titleChanged, this, &MainWidget::webpageTitleChanged);
