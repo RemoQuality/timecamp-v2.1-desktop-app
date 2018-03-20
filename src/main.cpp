@@ -107,7 +107,6 @@ int main(int argc, char *argv[])
 
     // create main widget
     MainWidget mainWidget;
-    mainWidget.init();
 
     // create tray manager
     auto *trayManager = new TrayManager();
@@ -115,14 +114,12 @@ int main(int argc, char *argv[])
     QObject::connect(&mainWidget, &MainWidget::timerStatusChanged, trayManager, &TrayManager::updateStopMenu);
     QObject::connect(&mainWidget, &MainWidget::windowStatusChanged, trayManager, &TrayManager::openCloseWindowText);
     QObject::connect(trayManager, &TrayManager::pcActivitiesValueChanged, windowEventsManager, &WindowEventsManager::startOrStopThread);
-    trayManager->setupTray(&mainWidget);
 
     // send updates from DB to server
     auto *comms = new Comms();
     auto *syncDBtimer = new QTimer();
     //QObject::connect(timer, SIGNAL(timeout()), &Comms::instance(), SLOT(timedUpdates())); // Qt4
     QObject::connect(syncDBtimer, &QTimer::timeout, comms, &Comms::timedUpdates); // Qt5
-    syncDBtimer->start(30 * 1000); // sync DB every 30s
 
     // Away time bindings
     QObject::connect(windowEventsManager, &WindowEventsManager::updateAfterAwayTime, comms, &Comms::timedUpdates);
@@ -135,7 +132,6 @@ int main(int argc, char *argv[])
     QObject::connect(twoSecondTimer, &QTimer::timeout, &mainWidget, &MainWidget::twoSecTimerTimeout); // Qt5
     // above timeout triggers func that emits checkIsIdle when logged in
     QObject::connect(&mainWidget, &MainWidget::checkIsIdle, windowEventsManager->getCaptureEventsThread(), &WindowEvents::checkIdleStatus); // Qt5
-    twoSecondTimer->start(2 * 1000);
 
 
     auto hotkeyNewTimer = new QHotkey(QKeySequence("ctrl+alt+N"), true, &app);
@@ -146,6 +142,14 @@ int main(int argc, char *argv[])
 
     auto hotkeyOpenWindow = new QHotkey(QKeySequence("ctrl+alt+/"), true, &app);
     QObject::connect(hotkeyOpenWindow, &QHotkey::activated, trayManager, &TrayManager::openCloseWindowAction);
+
+    // everything connected via QObject, now heavy lifting
+    trayManager->setupTray(&mainWidget);
+    mainWidget.init();
+
+    // now timers
+    syncDBtimer->start(30 * 1000); // sync DB every 30s
+    twoSecondTimer->start(2 * 1000);
 
     return app.exec();
 }
