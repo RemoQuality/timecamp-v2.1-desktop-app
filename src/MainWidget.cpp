@@ -204,7 +204,23 @@ bool MainWidget::checkIfOnTimerPage()
 void MainWidget::goToTimerPage()
 {
     if (!this->checkIfOnTimerPage()) {
+        QEventLoop loop;
+        QMetaObject::Connection conn1 = QObject::connect(QTWEPage, &QWebEnginePage::loadFinished, &loop, &QEventLoop::quit);
+        QMetaObject::Connection conn2 = QObject::connect(QTWEPage, &QWebEnginePage::loadProgress,
+                                                         [this, &loop]( const int &newValue ) {
+                                                             qDebug() << "Load progress: " << newValue;
+                                                             if(newValue == 100) {
+                                                                 QThread::msleep(128);
+                                                                 loop.quit();
+                                                             }
+                                                         }
+        );
         QTWEPage->load(QUrl(APPLICATION_URL));
+        loop.exec();
+        QThread::msleep(128);
+        QObject::disconnect(conn1);
+        QObject::disconnect(conn2);
+
         this->webpageTitleChanged(QTWEPage->title());
     }
 }
