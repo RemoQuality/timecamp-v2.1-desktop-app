@@ -217,9 +217,9 @@ void MainWidget::goToTimerPage()
         );
         QTWEPage->load(QUrl(APPLICATION_URL));
         loop.exec();
-        QThread::msleep(128);
         QObject::disconnect(conn1);
         QObject::disconnect(conn2);
+        QThread::msleep(128);
 
         this->webpageTitleChanged(QTWEPage->title());
     }
