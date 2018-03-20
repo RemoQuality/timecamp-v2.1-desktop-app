@@ -215,7 +215,7 @@ void TrayManager::loginLogout(bool loggedIn, QString tooltipText)
         if(ok) {
             widget->setTaskTitle(maybeTime);
         }else{
-            widget->setTaskTitle("No timer");
+            widget->setTaskTitle(NO_TIMER_TEXT);
         }
     }
 #endif

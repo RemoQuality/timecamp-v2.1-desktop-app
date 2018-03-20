@@ -1,4 +1,5 @@
 #import "Widget_M_Cocoa.h"
+#import "Settings.h"
 
 @implementation Widget_M_Cocoa
 
@@ -9,7 +10,7 @@
     if (self)
     {
         widget = [[[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength] retain]; //90 to optymalny rozmiar
-        [widget setTitle:@"No timer"];
+        [widget setTitle:@NO_TIMER_TEXT];
         // This goes where you set up the status item
 //        [widget setTarget:self];
 //        [widget setAction:@selector(TaskClicked:)];

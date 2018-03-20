@@ -12,6 +12,8 @@
 #define APPLICATION_URL "https://www.timecamp.com/app#/timesheets/timer"
 #define OFFLINE_URL "https://www.timecamp.com/helper/setdate/today/offline/"
 
+#define NO_TIMER_TEXT "0:00"
+
 #define MAIN_ICON ":/Icons/res/AppIcon.ico"
 #define MAIN_BG ":/Icons/res/AppIcon128.png"
 
