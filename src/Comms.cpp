@@ -69,6 +69,7 @@ void Comms::saveApp(AppData *app)
 
         app->setStart(now);
         lastApp = app; // update app reference
+//        qDebug("SAVE: %s | %s \n", lastApp->getAppName().toLatin1().constData(), lastApp->getWindowName().toLatin1().constData());
     }
 }
 
