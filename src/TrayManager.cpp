@@ -26,10 +26,10 @@ void TrayManager::setupTray(MainWidget *parent)
         QMessageBox::critical(mainWidget,":(","Ninja Mode is not available on this computer. Try again later :P");
     }
 
-    trayMenu = new QMenu();
+    trayMenu = new QMenu(parent);
     createActions(trayMenu);
 
-    trayIcon = new QSystemTrayIcon(this);
+    trayIcon = new QSystemTrayIcon(parent);
 
     /*
     // Unbind "tray icon activates window"
