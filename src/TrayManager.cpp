@@ -174,7 +174,7 @@ void TrayManager::createActions(QMenu *menu)
     autoStartAct->setCheckable(true);
     connect(autoStartAct, &QAction::triggered, this, &TrayManager::autoStart);
 
-    helpAct = new QAction(tr("Help & support"), this);
+    helpAct = new QAction(tr("Help && support"), this);
     helpAct->setStatusTip(tr("Need help? Talk to one of our support gurus"));
     connect(helpAct, &QAction::triggered, this, &TrayManager::contactSupport);
 
