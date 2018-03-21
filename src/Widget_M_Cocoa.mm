@@ -34,7 +34,7 @@
 - (void) SetText: (QString) text
 {
     widgetText = text.toNSString();
-    [widget.button setTitle:widgetText];
+//    [widget.button setTitle:widgetText];
 
 //    NSMutableAttributedString* taskTitleWithFont = nil;
 //    NSFont* bold = [NSFont fontWithName:@"Lucida Grande Bold" size:14];
