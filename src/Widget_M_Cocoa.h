@@ -4,6 +4,7 @@
 #pragma once
 
 #include <QString>
+#include <QMenu>
 
 #include <AppKit/AppKit.h>
 #include <AppKit/NSStatusItem.h>
@@ -14,10 +15,13 @@
 @interface Widget_M_Cocoa : NSObject
 {
     NSStatusItem* widget;
+    NSString *widgetText;
 }
 
 - (id) init;
-- (void) SetTaskTitle: (QString) title;
+- (void) SetText: (QString) text;
+- (void) SetMenu: (QMenu*) menu;
+- (void) SetImage: (NSImage*) nsimage;
 - (void) HideMe;
 - (void) ShowMe;
 - (bool) IsHidden;

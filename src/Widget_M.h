@@ -5,10 +5,14 @@
 
 #include "Widget.h"
 
+#include <QtMac>
+
 class Widget_M : public Widget
 {
 public:
-    void setTaskTitle(QString title) override;
+    void setText(QString title) override;
+    void setMenu(QMenu* menu) override;
+    void setIcon(QIcon icon) override;
     void showMe() override;
     void hideMe() override;
     bool isHidden() override;

@@ -29,6 +29,7 @@ void TrayManager::setupTray(MainWidget *parent)
     trayMenu = new QMenu(parent);
     createActions(trayMenu);
 
+#ifndef __APPLE__
     trayIcon = new QSystemTrayIcon(parent);
 
     /*
@@ -38,18 +39,19 @@ void TrayManager::setupTray(MainWidget *parent)
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
     */
-#ifndef __APPLE__
     trayIcon->setIcon(QIcon(MAIN_ICON));
-#else
-    QIcon macOSIcon(":/Icons/res/AppIcon_Dark.png");
-    macOSIcon.setIsMask(true);
-    trayIcon->setIcon(macOSIcon);
-#endif
     trayIcon->setContextMenu(trayMenu);
     trayIcon->show();
+#endif
 
 #ifdef __APPLE__
+    QIcon macOSIcon(":/Icons/res/AppIcon_Dark.png");
+    macOSIcon.setIsMask(true);
+//    trayIcon->setIcon(macOSIcon);
     widget = new Widget_M();
+    widget->setMenu(trayMenu);
+    widget->setIcon(macOSIcon);
+    widget->setText(""); // at the start there should be no timer text
 #endif
 }
 
@@ -205,7 +207,9 @@ void TrayManager::loginLogout(bool loggedIn, QString tooltipText)
     startTaskAct->setEnabled(loggedIn);
     stopTaskAct->setEnabled(loggedIn);
     trackerAct->setEnabled(loggedIn);
+#ifndef __APPLE__
     trayIcon->setToolTip(tooltipText);
+#endif
 
 #ifdef _WIDGET_EXISTS_
     if(stopTaskAct->isEnabled()){ // if timer is running
@@ -213,9 +217,9 @@ void TrayManager::loginLogout(bool loggedIn, QString tooltipText)
         bool ok;
         maybeTime.mid(0,2).toInt(&ok, 10); // take first two and try to make it int; if failed then it's not time
         if(ok) {
-            widget->setTaskTitle(maybeTime);
+            widget->setText(maybeTime);
         }else{
-            widget->setTaskTitle(NO_TIMER_TEXT);
+            widget->setText(NO_TIMER_TEXT);
         }
     }
 #endif

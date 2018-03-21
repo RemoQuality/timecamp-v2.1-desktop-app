@@ -51,8 +51,16 @@ find_package(Qt5Network REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5WebEngineWidgets REQUIRED)
 find_package(Qt5Sql REQUIRED)
+
 if(UNIX AND NOT APPLE)
-find_package(qt5x11extras REQUIRED)
+    find_package(qt5x11extras REQUIRED)
+    message("x11 extras loaded")
+elseif(APPLE)
+    find_package(qt5macextras REQUIRED)
+    message("Mac extras loaded")
+elseif(WIN32)
+    find_package(qt5winextras REQUIRED)
+    message("Win extras loaded")
 endif()
 
 foreach(plugin ${Qt5Sql_PLUGINS})
@@ -123,9 +131,9 @@ if(APPLE)
         )
     set_source_files_properties(src/*.mm PROPERTIES COMPILE_FLAGS "-x objective-c++")
 
-#    list(APPEND TC_LIBS
-#
-#        )
+    list(APPEND TC_LIBS
+            Qt5::MacExtras
+        )
 endif()
 
 # QHotkey
@@ -185,7 +193,12 @@ endif()
 target_link_libraries(${PROJECT_NAME} ${TC_LIBS} ${Qt5Core_QTMAIN_LIBRARIES})
 
 if(UNIX AND NOT APPLE)
-qt5_use_modules(${PROJECT_NAME} Core Gui Network Widgets WebEngineWidgets Sql x11extras)
+    qt5_use_modules(${PROJECT_NAME} Core Gui Network Widgets WebEngineWidgets Sql x11extras)
+elseif(APPLE)
+    qt5_use_modules(${PROJECT_NAME} Core Gui Network Widgets WebEngineWidgets Sql macextras)
+    message("Mac extras used")
+elseif(WIN32)
+    qt5_use_modules(${PROJECT_NAME} Core Gui Network Widgets WebEngineWidgets Sql winextras)
 else()
-qt5_use_modules(${PROJECT_NAME} Core Gui Network Widgets WebEngineWidgets Sql)
+    qt5_use_modules(${PROJECT_NAME} Core Gui Network Widgets WebEngineWidgets Sql)
 endif()

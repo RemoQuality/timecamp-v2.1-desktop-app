@@ -2,11 +2,14 @@
 #define TIMECAMPDESKTOP_WIDGET_H
 
 #include <QString>
+#include <QMenu>
 
 class Widget
 {
 public:
-    virtual void setTaskTitle(QString title) = 0;
+    virtual void setText(QString) = 0;
+    virtual void setMenu(QMenu*) = 0;
+    virtual void setIcon(QIcon) = 0;
     virtual void showMe() = 0;
     virtual void hideMe() = 0;
     virtual bool isHidden() = 0;
