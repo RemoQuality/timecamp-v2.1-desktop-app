@@ -53,6 +53,7 @@ void TrayManager::setupTray(MainWidget *parent)
     widget->setIcon(macOSIcon);
     widget->setText(""); // at the start there should be no timer text
 #endif
+    this->setupSettings();
 }
 
 void TrayManager::setupSettings()
@@ -207,8 +208,14 @@ void TrayManager::loginLogout(bool loggedIn, QString tooltipText)
     startTaskAct->setEnabled(loggedIn);
     stopTaskAct->setEnabled(loggedIn);
     trackerAct->setEnabled(loggedIn);
+#ifdef _WIDGET_EXISTS_
+    widgetAct->setEnabled(loggedIn);
+    if(!loggedIn){
+        widget->hideMe();
+    }
+#endif
 #ifndef __APPLE__
-    trayIcon->setToolTip(tooltipText);
+    trayIcon->setToolTip(tooltipText); // we don't use trayIcon on macOS
 #endif
 
 #ifdef _WIDGET_EXISTS_
@@ -225,8 +232,8 @@ void TrayManager::loginLogout(bool loggedIn, QString tooltipText)
 #endif
 
     if (loggedIn) {
-        this->setupSettings();
+        this->setupSettings(); // make context menu settings, again (after we logged in)
     } else {
-        emit pcActivitiesValueChanged(false); // don't track PC activities
+        emit pcActivitiesValueChanged(false); // don't track PC activities when not logged in, despite the setting
     }
 }
