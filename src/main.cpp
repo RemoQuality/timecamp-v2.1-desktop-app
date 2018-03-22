@@ -92,6 +92,9 @@ int main(int argc, char *argv[])
 
     QCoreApplication::setAttribute(Qt::AA_UseSoftwareOpenGL);
 
+    // prevent our app from closing
+    QGuiApplication::setQuitOnLastWindowClosed(false);
+
     // standard Qt init
     QApplication app(argc, argv);
     firstRun();
