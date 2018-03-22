@@ -257,7 +257,10 @@ void WindowEvents_W::ShutdownWindowsHook(HWINEVENTHOOK g_hook, HWINEVENTHOOK wna
 
 bool WindowDetails::startsWithGoodProtocol(QString checkedStr)
 {
-    if (checkedStr.midRef(0, 7) == "http://" || checkedStr.midRef(0, 8) == "https://" || checkedStr.midRef(0, 6) == "ftp://" || checkedStr.midRef(0, 7) == "file://") {
+    if (checkedStr.midRef(0, 7) == QLatin1String("http://")
+        || checkedStr.midRef(0, 8) == QLatin1String("https://")
+        || checkedStr.midRef(0, 6) == QLatin1String("ftp://")
+        || checkedStr.midRef(0, 7) == QLatin1String("file://")) {
         return true;
     }
     return false;
@@ -271,7 +274,7 @@ bool WindowDetails::standardAccCallback(IControlItem *node, void *userData)
 
     if (startsWithGoodProtocol(value)) {
         qDebug() << "[VAL] " << value;
-        if (*pStr == "" || *pStr == "0" || *pStr == "<unknown>") {
+        if (*pStr->isEmpty() || *pStr == QLatin1String("0") || *pStr == QLatin1String("<unknown>")) {
             *pStr = value;
             return false;
         }
@@ -283,7 +286,7 @@ bool WindowDetails::standardAccCallback(IControlItem *node, void *userData)
 bool WindowDetails::chromeAccCallback(IControlItem *node, void *userData)
 {
     QString value = QString::fromStdWString(node->getValue());
-    if (value != "" && value != "0" && value != "<unknown>") {
+    if (!value.isEmpty() && value != QLatin1String("0") && value != QLatin1String("<unknown>")) {
 //        qDebug() << "[WForegroundApp::chromeAccCallback] Got IControlItem node value = " << value;
         qDebug() << "[VAL] " << value;
 
@@ -304,7 +307,7 @@ bool WindowDetails::operaAccCallback(IControlItem *node, void *userData)
 {
     QString *pStr = (QString *) userData;
     QString value = QString::fromStdWString(node->getValue());
-    if (value != "" && value != "0" && value != "<unknown>") {
+    if (!value.isEmpty() && value != QLatin1String("0") && value != QLatin1String("<unknown>")) {
 //        qDebug() << "[WForegroundApp::operaAccCallback] Got IControlItem node value = " << value;
         qDebug() << "[VAL] " << value;
 
