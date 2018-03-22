@@ -9,7 +9,6 @@
 #include <sstream>
 
 #include "WindowEvents.h"
-#include "Comms.h"
 
 
 class WindowEvents_M : public WindowEvents {

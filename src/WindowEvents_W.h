@@ -11,7 +11,6 @@
 #include <comutil.h>
 #include <UIAutomation.h>
 
-#include "Comms.h"
 #include "src/ControlIterator/IControlIterator.h"
 
 typedef struct {
