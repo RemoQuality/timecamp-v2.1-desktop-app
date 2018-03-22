@@ -39,11 +39,13 @@ void WindowEventsManager::noLongerAway(unsigned long)
     int ret = msgBox.exec();
     emit updateAfterAwayTime();
     switch (ret) {
-        case QMessageBox::Ok:
+        case QMessageBox::Yes:
+            qDebug() << "AwayPopup QMessageBox::Yes";
             emit openAwayTimeManagement();
             break;
-        case QMessageBox::Close:
+        case QMessageBox::No:
         default:
+            qDebug() << "AwayPopup QMessageBox::No";
             break;
     }
 }
