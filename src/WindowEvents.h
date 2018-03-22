@@ -2,6 +2,7 @@
 #define WINDOWEVENTS_H
 
 #include <QThread>
+#include <QDebug>
 #include "AppData.h"
 
 class WindowEvents : public QThread

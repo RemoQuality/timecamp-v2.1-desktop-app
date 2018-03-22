@@ -1,4 +1,3 @@
-#include <QDebug>
 #include "WindowEvents_U.h"
 
 #include <X11/Xlib.h>

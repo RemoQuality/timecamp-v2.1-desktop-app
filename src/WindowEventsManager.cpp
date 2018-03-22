@@ -1,4 +1,5 @@
 #include <QMessageBox>
+#include <QDebug>
 #include "WindowEventsManager.h"
 
 #ifdef __linux__
