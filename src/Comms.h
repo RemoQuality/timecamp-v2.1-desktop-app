@@ -19,9 +19,12 @@ public:
 
     void saveApp(AppData *app);
     void sendAppData(QList<AppData*> *appList);
+
     qint64 getCurrentTime() const;
     void setCurrentTime(qint64 current_time);
     void timedUpdates();
+
+    bool isApiKeyOK();
 
 private:
     AppData *lastApp;

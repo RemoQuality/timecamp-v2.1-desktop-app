@@ -75,14 +75,22 @@ void Comms::saveApp(AppData *app)
     }
 }
 
+bool Comms::isApiKeyOK()
+{
+    if (apiKey.isEmpty()) {
+        qInfo() << "[EMPTY API KEY !!!]";
+        return false;
+    }
+    return true;
+}
+
 void Comms::sendAppData(QList<AppData*> *appList)
 {
 
     // read api key from settings
     apiKey = settings.value(SETT_APIKEY).toString();
 
-    if (apiKey.isEmpty()) {
-        qInfo() << "[EMPTY API KEY !!!]";
+    if (!isApiKeyOK()) {
         return;
     }
 
