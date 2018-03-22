@@ -143,7 +143,8 @@ void Comms::sendAppData(QList<AppData*> *appList)
 
     QNetworkAccessManager *m_qnam = new QNetworkAccessManager();
     m_qnam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
-    connect(m_qnam, SIGNAL(finished(QNetworkReply *)), this, SLOT(serviceRequestFinished(QNetworkReply *)));
+//    connect(m_qnam, SIGNAL(finished(QNetworkReply *)), this, SLOT(serviceRequestFinished(QNetworkReply *)));
+    connect(m_qnam, &QNetworkAccessManager::finished, this, &Comms::serviceRequestFinished);
 
 
 //    qDebug() << "JSON String: " << jsonString;
