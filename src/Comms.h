@@ -19,6 +19,8 @@ public:
 
     void saveApp(AppData *app);
     void sendAppData(QList<AppData*> *appList);
+    void getUserInfo();
+    void getSettings();
 
     qint64 getCurrentTime() const;
     void setCurrentTime(qint64 current_time);
@@ -32,11 +34,15 @@ private:
     qint64 lastSync;
     qint64 currentTime;
     QString apiKey;
+    int user_id;
+    int root_group_id;
+    int primary_group_id;
 
 signals:
 
 public slots:
-    void serviceRequestFinished(QNetworkReply* reply);
+    void appDataReply(QNetworkReply *reply);
+    void userInfoReply(QNetworkReply *reply);
 };
 
 #endif // COMMS_H

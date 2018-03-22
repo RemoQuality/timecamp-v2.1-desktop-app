@@ -10,6 +10,8 @@
 #include <QUrlQuery>
 #include <QEventLoop>
 #include <QTimer>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 Comms &Comms::instance()
 {
@@ -86,7 +88,6 @@ bool Comms::isApiKeyOK()
 
 void Comms::sendAppData(QList<AppData*> *appList)
 {
-
     // read api key from settings
     apiKey = settings.value(SETT_APIKEY).toString();
 
@@ -152,8 +153,8 @@ void Comms::sendAppData(QList<AppData*> *appList)
 
     QNetworkAccessManager *m_qnam = new QNetworkAccessManager();
     m_qnam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
-//    connect(m_qnam, SIGNAL(finished(QNetworkReply *)), this, SLOT(serviceRequestFinished(QNetworkReply *)));
-    connect(m_qnam, &QNetworkAccessManager::finished, this, &Comms::serviceRequestFinished);
+//    connect(m_qnam, SIGNAL(finished(QNetworkReply *)), this, SLOT(appDataReply(QNetworkReply *)));
+    connect(m_qnam, &QNetworkAccessManager::finished, this, &Comms::appDataReply);
 
 
 //    qDebug() << "JSON String: " << jsonString;
@@ -162,11 +163,11 @@ void Comms::sendAppData(QList<AppData*> *appList)
     QNetworkReply *reply = m_qnam->post(request, jsonString);
 
     QEventLoop loop;
-    connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
     loop.exec();
 }
 
-void Comms::serviceRequestFinished(QNetworkReply *reply)
+void Comms::appDataReply(QNetworkReply *reply)
 {
     QByteArray buffer = reply->readAll();
     qDebug() << "Response: " << buffer;
@@ -184,4 +185,50 @@ qint64 Comms::getCurrentTime() const
 void Comms::setCurrentTime(qint64 current_time)
 {
     Comms::currentTime = current_time;
+}
+
+void Comms::getUserInfo()
+{
+    // read api key from settings
+    apiKey = settings.value(SETT_APIKEY).toString();
+
+    if (!isApiKeyOK()) {
+        return;
+    }
+
+    QUrl serviceURL("https://www.timecamp.com/third_party/api/user/api_token/" + apiKey + "/format/json");
+    QNetworkRequest request(serviceURL);
+    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+
+    // set up connection parameters
+    // identify as our app
+    request.setRawHeader("User-Agent", CONN_USER_AGENT);
+    request.setRawHeader(CONN_CUSTOM_HEADER_NAME, CONN_CUSTOM_HEADER_VALUE);
+
+    QNetworkAccessManager *m_qnam = new QNetworkAccessManager();
+    m_qnam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
+    connect(m_qnam, &QNetworkAccessManager::finished, this, &Comms::userInfoReply);
+
+    QNetworkReply *reply = m_qnam->get(request);
+
+    QEventLoop loop;
+    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+}
+
+void Comms::userInfoReply(QNetworkReply *reply)
+{
+    QByteArray buffer = reply->readAll();
+    qDebug() << "Response: " << buffer;
+
+    QJsonDocument itemDoc = QJsonDocument::fromJson(buffer);
+    QJsonObject rootObject = itemDoc.object();
+
+    user_id = rootObject.value("user_id").toString().toInt();
+    qDebug() << "User ID: " << user_id;
+}
+
+void Comms::getSettings()
+{
+
 }
