@@ -18,6 +18,7 @@ protected:
     virtual void run() = 0;
     virtual unsigned long getIdleTime() = 0;
     void static logAppName(QString appName, QString windowName, QString additionalInfo);
+    bool isIdle = false;
 private:
     unsigned long lastIdleTimestamp = 0;
     unsigned long currentIdleTimestamp = 0;

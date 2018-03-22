@@ -55,7 +55,9 @@ void WindowEvents_M::run()
 //    timer->start(2*1000);
     while (!QThread::currentThread()->isInterruptionRequested()) {
         // empty loop, waiting for stopping the thread
-        this->GetActiveApp();
+        if(!isIdle) {
+            this->GetActiveApp();
+        }
         QThread::msleep(1*1000);
     }
 //    timer->stop();
