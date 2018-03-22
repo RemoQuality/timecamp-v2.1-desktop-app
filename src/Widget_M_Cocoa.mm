@@ -11,9 +11,10 @@
     {
         widget = [[[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength] retain]; //90 to optymalny rozmiar
 
+        widgetText = @"";
         [widget setHighlightMode:YES];
         [widget setEnabled:YES];
-        [widget setTitle:@NO_TIMER_TEXT];
+        [widget setTitle:widgetText];
         // This goes where you set up the status item
 //        [widget setTarget:self];
 //        [widget setAction:@selector(TaskClicked:)];
@@ -71,13 +72,13 @@
 
 - (void) ShowMe
 {
-    [widget.button setTitle:widgetText];
+    [widget setTitle:widgetText];
 //    [widget setLength:NSVariableStatusItemLength];
 }
 
 - (void) HideMe
 {
-    [widget.button setTitle:@""];
+    [widget setTitle:@""];
 //    [widget setLength:0];
 }
 
