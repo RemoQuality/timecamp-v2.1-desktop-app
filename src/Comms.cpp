@@ -20,6 +20,7 @@ Comms &Comms::instance()
 Comms::Comms(QObject *parent)
     : QObject(parent)
 {
+    apiKey = settings.value(SETT_APIKEY).toString();
 }
 
 void Comms::timedUpdates()
@@ -78,10 +79,10 @@ void Comms::sendAppData(QList<AppData*> *appList)
 {
 
     // read api key from settings
-    QString apiKey = settings.value(SETT_APIKEY).toString();
+    apiKey = settings.value(SETT_APIKEY).toString();
 
-    if (apiKey == "") {
-        qDebug() << "[EMPTY API KEY !!!]";
+    if (apiKey.isEmpty()) {
+        qInfo() << "[EMPTY API KEY !!!]";
         return;
     }
 

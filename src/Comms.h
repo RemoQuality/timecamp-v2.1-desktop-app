@@ -28,6 +28,7 @@ private:
     QSettings settings;
     qint64 lastSync;
     qint64 currentTime;
+    QString apiKey;
 
 signals:
 
