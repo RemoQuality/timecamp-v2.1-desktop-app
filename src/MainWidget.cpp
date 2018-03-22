@@ -20,7 +20,6 @@ MainWidget::MainWidget(QWidget *parent) :
     // set some defaults
     loggedIn = false;
     timerIsRunning = false;
-    apiKey = "";
     timerName = "";
 
     this->setMinimumSize(QSize(350, 500));
@@ -117,7 +116,7 @@ void MainWidget::setupWebview()
 
 void MainWidget::handleLoadStarted()
 {
-    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+    QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 //    qDebug() << "cursor: load started";
 }
 
@@ -125,14 +124,14 @@ void MainWidget::handleLoadProgress(int progress)
 {
 //    qDebug() << "cursor: load progress " << progress;
     if(progress == 100){
-        QApplication::restoreOverrideCursor(); // pop from the cursor stack
+        QGuiApplication::restoreOverrideCursor(); // pop from the cursor stack
     }
 }
 
 void MainWidget::handleLoadFinished(bool ok)
 {
     Q_UNUSED(ok);
-    QApplication::restoreOverrideCursor(); // pop from the cursor stack
+    QGuiApplication::restoreOverrideCursor(); // pop from the cursor stack
 //    qDebug() << "cursor: load finished " << ok;
 }
 
@@ -262,7 +261,6 @@ void MainWidget::checkIsTimerRunning()
 
 void MainWidget::fetchAPIkey()
 {
-    QString apiKey = "";
 //    QTWEPage->runJavaScript("await window.apiService.getToken()",
     QTWEPage->runJavaScript("window.apiService.getToken().$$state.value",
     [this](const QVariant &v) {
@@ -284,11 +282,10 @@ void MainWidget::fetchTimerName()
 
 void MainWidget::quit()
 {
-    QApplication::quit();
+    QGuiApplication::quit();
 }
 
 void MainWidget::setApiKey(const QString &apiKey) {
-    MainWidget::apiKey = apiKey;
     settings.setValue(SETT_APIKEY, apiKey); // save apikey to settings
 }
 

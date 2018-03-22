@@ -90,7 +90,6 @@ private:
     QShortcut *fullscreenBind;
 
     bool loggedIn;
-    QString apiKey;
     QString timerName;
     bool timerIsRunning;
 
