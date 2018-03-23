@@ -98,11 +98,13 @@ void Comms::sendAppData(QList<AppData*> *appList)
         return;
     }
 
+    bool canSendActivityInfo = !settings.value(QString("SETT_WEB_") + QString("dontCollectComputerActivity")).toBool();
+    bool canSendWindowTitles = settings.value(QString("SETT_WEB_") + QString("collectWindowTitles")).toBool();
+
     QUrlQuery params;
     params.addQueryItem("api_token", apiKey);
 
     int count = 0;
-    QString computer_activities = "computer_activities";
 
     for (AppData *app: *appList) {
 //    qDebug() << "[NOTIFY OF APP]";
@@ -114,20 +116,32 @@ void Comms::sendAppData(QList<AppData*> *appList)
 //    qDebug() << "getEnd: " << app->getEnd();
 
         if(app->getAppName() != "IDLE" && app->getWindowName() != "IDLE") {
-            params.addQueryItem(computer_activities + "[" + QString::number(count) + "][application_name]", app->getAppName());
-            params.addQueryItem(computer_activities + "[" + QString::number(count) + "][window_title]", app->getWindowName());
-            if (app->getAdditionalInfo() != "") {
-                params.addQueryItem(computer_activities + "[" + QString::number(count) + "][website_domain]", app->getDomainFromAdditionalInfo());
+            QString base_str = QString("computer_activities") + QString("[") + QString::number(count) + QString("]");
+
+            if(!canSendActivityInfo) {
+                params.addQueryItem(base_str + QString("[application_name]"), app->getAppName());
+                if(canSendWindowTitles) {
+                    params.addQueryItem(base_str + QString("[window_title]"), app->getWindowName());
+
+                    // "Web Browser App" when appName is Internet but no domain
+                    if (app->getAdditionalInfo() != "") {
+                        params.addQueryItem(base_str + QString("[website_domain]"), app->getDomainFromAdditionalInfo());
+                    }
+                } else {
+                    params.addQueryItem(base_str + QString("[window_title]"), "");
+                }
+            } else { // can't send activity info, collect_computer_activities == 0
+                params.addQueryItem(base_str + QString("[application_name]"), "computer activity");
+                params.addQueryItem(base_str + QString("[window_title]"), "");
             }
-            // "Web Browser App" when appName is Internet but no domain
 
             QString start_time = QDateTime::fromMSecsSinceEpoch(app->getStart()).toString(Qt::ISODate).replace("T", " ");
+            params.addQueryItem(base_str + QString("[start_time]"), start_time);
 //            qDebug() << "converted start_time: " << start_time;
-            params.addQueryItem(computer_activities + "[" + QString::number(count) + "][start_time]", start_time);
 
             QString end_time = QDateTime::fromMSecsSinceEpoch(app->getEnd()).toString(Qt::ISODate).replace("T", " ");
+            params.addQueryItem(base_str + QString("[end_time]"), end_time);
 //            qDebug() << "converted end_time: " << end_time;
-            params.addQueryItem(QString(computer_activities + "[" + QString::number(count) + "][end_time]"), end_time);
             count++;
         }
     }
@@ -235,9 +249,9 @@ void Comms::userInfoReply(QNetworkReply *reply)
     settings.setValue("SETT_ROOT_GROUP_ID", root_group_id);
     settings.setValue("SETT_PRIMARY_GROUP_ID", primary_group_id);
     settings.sync();
-    qDebug() << "SETT user_id: " << settings.value("SETT_USER_ID").toInt();
-    qDebug() << "SETT root_group_id: " << settings.value("SETT_ROOT_GROUP_ID").toInt();
-    qDebug() << "SETT primary_group_id: " << settings.value("SETT_PRIMARY_GROUP_ID").toInt();
+    qInfo() << "SETT user_id: " << settings.value("SETT_USER_ID").toInt();
+    qInfo() << "SETT root_group_id: " << settings.value("SETT_ROOT_GROUP_ID").toInt();
+    qInfo() << "SETT primary_group_id: " << settings.value("SETT_PRIMARY_GROUP_ID").toInt();
 }
 
 void Comms::getSettings()
@@ -270,9 +284,9 @@ void Comms::getSettings()
     params.addQueryItem("name[]", "offlineallow"); // // bool: is the offlinecustom Array set
     params.addQueryItem("name[]", "offlinecustom"); // Array(String): names of activities for "away popup"
 
+    params.addQueryItem("name[]", "dontCollectComputerActivity"); // bool: BOOL_COLLECT_COMPUTER_ACTIVITIES if true, send only "computer activity"
     params.addQueryItem("name[]", "collectWindowTitles"); // bool: save windowTitles?
     params.addQueryItem("name[]", "logOnlyActivitiesWithTasks"); // bool: tracking only when task selected
-    params.addQueryItem("name[]", "dontCollectComputerActivity"); // bool: send only "active" or "nonactive"
     params.addQueryItem("name[]", "form_scheduler"); // bool: "Allow users to log overtime activities"
     params.addQueryItem("name[]", "make_screenshots"); // bool: take screenshots?
 
@@ -324,7 +338,9 @@ void Comms::settingsReply(QNetworkReply *reply) {
     }
     settings.sync();
 
-    qDebug() << "SETT idletime: " << settings.value(QString("SETT_WEB_") + QString("idletime")).toInt();
-    qDebug() << "SETT logoffline: " << settings.value(QString("SETT_WEB_") + QString("logoffline")).toBool();
-    qDebug() << "SETT logofflinemin: " << settings.value(QString("SETT_WEB_") + QString("logofflinemin")).toInt();
+    qInfo() << "SETT idletime: " << settings.value(QString("SETT_WEB_") + QString("idletime")).toInt();
+    qInfo() << "SETT logoffline: " << settings.value(QString("SETT_WEB_") + QString("logoffline")).toBool();
+    qInfo() << "SETT logofflinemin: " << settings.value(QString("SETT_WEB_") + QString("logofflinemin")).toInt();
+    qInfo() << "SETT dontCollectComputerActivity: " << settings.value(QString("SETT_WEB_") + QString("dontCollectComputerActivity")).toBool();
+    qInfo() << "SETT collectWindowTitles: " << settings.value(QString("SETT_WEB_") + QString("collectWindowTitles")).toBool();
 }
