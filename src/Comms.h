@@ -43,6 +43,7 @@ signals:
 public slots:
     void appDataReply(QNetworkReply *reply);
     void userInfoReply(QNetworkReply *reply);
+    void settingsReply(QNetworkReply *reply);
 };
 
 #endif // COMMS_H
