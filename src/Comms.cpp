@@ -165,9 +165,9 @@ void Comms::sendAppData(QList<AppData*> *appList)
 // Use QNetworkReply * QNetworkAccessManager::post(const QNetworkRequest & request, const QByteArray & data); to send your request. Qt will rearrange everything correctly.
     QNetworkReply *reply = m_qnam->post(request, jsonString);
 
-    QEventLoop loop;
-    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-    loop.exec();
+//    QEventLoop loop;
+//    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+//    loop.exec();
 }
 
 void Comms::appDataReply(QNetworkReply *reply)
@@ -214,9 +214,9 @@ void Comms::getUserInfo()
 
     QNetworkReply *reply = m_qnam->get(request);
 
-    QEventLoop loop;
-    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-    loop.exec();
+//    QEventLoop loop;
+//    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+//    loop.exec();
 }
 
 void Comms::userInfoReply(QNetworkReply *reply)
@@ -235,6 +235,9 @@ void Comms::userInfoReply(QNetworkReply *reply)
     settings.setValue("SETT_ROOT_GROUP_ID", root_group_id);
     settings.setValue("SETT_PRIMARY_GROUP_ID", primary_group_id);
     settings.sync();
+    qDebug() << "SETT user_id: " << settings.value("SETT_USER_ID").toInt();
+    qDebug() << "SETT root_group_id: " << settings.value("SETT_ROOT_GROUP_ID").toInt();
+    qDebug() << "SETT primary_group_id: " << settings.value("SETT_PRIMARY_GROUP_ID").toInt();
 }
 
 void Comms::getSettings()
@@ -303,9 +306,9 @@ void Comms::getSettings()
 
     QNetworkReply *reply = m_qnam->get(request);
 
-    QEventLoop loop;
-    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-    loop.exec();
+//    QEventLoop loop;
+//    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+//    loop.exec();
 }
 
 void Comms::settingsReply(QNetworkReply *reply) {
