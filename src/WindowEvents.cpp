@@ -2,7 +2,7 @@
 #include "Comms.h"
 #include "Settings.h"
 
-bool WindowEvents::wasIdleLongEnough()
+bool WindowEvents::wasIdleLongEnoughToStopTracking()
 {
 //    this->lastIdleTimestamp = this->currentIdleTimestamp;
     this->currentIdleTimestamp = getIdleTime();
@@ -12,21 +12,30 @@ bool WindowEvents::wasIdleLongEnough()
 
     // if last was "idle enough", and current is not "idle enough"
     // then we switched from idle to active, so we can save the change now
-    return currentIdleTimestamp > 10*1000; // && currentIdleTimestamp < 10 * 1000;
+    return currentIdleTimestamp > switchToIdleTimeAfterMS; // && currentIdleTimestamp < 10 * 1000;
 
 }
 
 void WindowEvents::checkIdleStatus()
 {
+    QSettings settings;
+    switchToIdleTimeAfterMS = settings.value(QString("SETT_WEB_") + QString("idletime")).toUInt() * 60 * 1000;
+    showAwayPopupAfterMS = settings.value(QString("SETT_WEB_") + QString("logofflinemin")).toUInt() * 60 * 1000;
+    shouldShowAwayPopup = settings.value(QString("SETT_WEB_") + QString("logoffline")).toBool();
+
     lastIdleTimestamp = currentIdleTimestamp;
-    bool wasPreviousIdle = lastIdleTimestamp > 10 * 1000;
-    if (wasIdleLongEnough()) {
+    bool wasPreviousIdle = lastIdleTimestamp > switchToIdleTimeAfterMS;
+    bool wasIdleLongEnoughToShowAwayPopup = lastIdleTimestamp > showAwayPopupAfterMS;
+
+    if (wasIdleLongEnoughToStopTracking()) {
         this->logAppName("IDLE", "IDLE", ""); // firstly log "IDLE" app, while not being idle
         isIdle = true; // then set the idle bit, so we don't set the app anymore
     } else if (wasPreviousIdle) {
         // was idle but is not anymore
-        emit noLongerAway(lastIdleTimestamp);
         isIdle = false;
+        if(shouldShowAwayPopup && wasIdleLongEnoughToShowAwayPopup) {
+            emit noLongerAway(lastIdleTimestamp);
+        }
     }
 }
 

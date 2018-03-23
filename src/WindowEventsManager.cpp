@@ -36,7 +36,7 @@ WindowEventsManager::WindowEventsManager(QObject *parent)
     QObject::connect(captureEventsThread, &WindowEvents::noLongerAway, this, &WindowEventsManager::noLongerAway);
 }
 
-void WindowEventsManager::noLongerAway(unsigned long)
+void WindowEventsManager::noLongerAway(unsigned long howLongWasAwayMS)
 {
     QMessageBox msgBox;
     msgBox.setIconPixmap(QPixmap(MAIN_ICON).scaledToWidth(96));

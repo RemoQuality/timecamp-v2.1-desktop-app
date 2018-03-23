@@ -314,8 +314,12 @@ void Comms::settingsReply(QNetworkReply *reply) {
     QJsonArray rootArray = itemDoc.array();
     for (QJsonValueRef val: rootArray) {
         QJsonObject obj = val.toObject();
-        qDebug() << obj.value("name").toString() << ": " << obj.value("value").toString();
+//        qDebug() << obj.value("name").toString() << ": " << obj.value("value").toString();
         settings.setValue(QString("SETT_WEB_") + obj.value("name").toString(), obj.value("value").toString()); // save web settings to our settingsstore
     }
     settings.sync();
+
+    qDebug() << "SETT idletime: " << settings.value(QString("SETT_WEB_") + QString("idletime")).toInt();
+    qDebug() << "SETT logoffline: " << settings.value(QString("SETT_WEB_") + QString("logoffline")).toBool();
+    qDebug() << "SETT logofflinemin: " << settings.value(QString("SETT_WEB_") + QString("logofflinemin")).toInt();
 }
