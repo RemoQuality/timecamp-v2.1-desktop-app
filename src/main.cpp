@@ -147,8 +147,9 @@ int main(int argc, char *argv[])
     QObject::connect(hotkeyOpenWindow, &QHotkey::activated, trayManager, &TrayManager::openCloseWindowAction);
 
     // everything connected via QObject, now heavy lifting
-    trayManager->setupTray(&mainWidget);
-    mainWidget.init();
+    trayManager->setupTray(&mainWidget); // create tray
+    mainWidget.init(); // init the WebView
+    Comms::instance().timedUpdates(); // fetch userInfo, userSettings, send apps since last update
 
     // now timers
     syncDBtimer->start(30 * 1000); // sync DB every 30s

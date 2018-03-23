@@ -40,6 +40,8 @@ void Comms::timedUpdates()
     if(appList.length() > 0){ // send only if there is anything
         sendAppData(&appList);
     }
+    getUserInfo();
+    getSettings();
 }
 
 void Comms::saveApp(AppData *app)
