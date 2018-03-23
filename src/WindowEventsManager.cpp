@@ -1,6 +1,9 @@
 #include <QMessageBox>
 #include <QDebug>
+#include <QPixmap>
 #include "WindowEventsManager.h"
+#include "Settings.h"
+
 
 #ifdef __linux__
 #include "WindowEvents_U.h"
@@ -33,6 +36,7 @@ WindowEventsManager::WindowEventsManager(QObject *parent)
 void WindowEventsManager::noLongerAway(unsigned long)
 {
     QMessageBox msgBox;
+    msgBox.setIconPixmap(QPixmap(MAIN_ICON).scaledToWidth(96));
     msgBox.setText("You've been away from computer.");
     msgBox.setInformativeText("Do you want to log away time activity?");
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
