@@ -1,6 +1,9 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <QPixmap>
+#include <QCoreApplication>
+#include <QEventLoop>
+
 #include "WindowEventsManager.h"
 #include "Settings.h"
 
@@ -41,8 +44,33 @@ void WindowEventsManager::noLongerAway(unsigned long)
     msgBox.setInformativeText("Do you want to log away time activity?");
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     msgBox.setDefaultButton(QMessageBox::Yes);
-    int ret = msgBox.exec();
+
+    // push data to server so it can show the away time in offline tab
     emit updateAfterAwayTime();
+
+    // 128ms of events processing
+    QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents, 128);
+
+    // bring the Message to front
+    msgBox.show();
+    msgBox.setWindowState(Qt::WindowActive);
+    msgBox.raise();  // for MacOS
+    msgBox.activateWindow(); // for Windows
+
+    // int ret = msgBox.exec(); // get result
+
+    // use a new loop and process bg events
+    QEventLoop loop;
+    QMetaObject::Connection conn1 = QObject::connect(&msgBox, &QDialog::finished, &loop, &QEventLoop::quit);
+
+    // 128ms of events processing
+    QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents, 128);
+    loop.exec();
+    QObject::disconnect(conn1);
+
+    int ret = msgBox.result(); // get result
+
+    // handle returned valuefrom msgBox;
     switch (ret) {
         case QMessageBox::Yes:
             qDebug() << "AwayPopup QMessageBox::Yes";
