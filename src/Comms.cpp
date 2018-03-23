@@ -287,7 +287,6 @@ void Comms::getSettings()
     params.addQueryItem("name[]", "dontCollectComputerActivity"); // bool: BOOL_COLLECT_COMPUTER_ACTIVITIES if true, send only "computer activity"
     params.addQueryItem("name[]", "collectWindowTitles"); // bool: save windowTitles?
     params.addQueryItem("name[]", "logOnlyActivitiesWithTasks"); // bool: tracking only when task selected
-    params.addQueryItem("name[]", "form_scheduler"); // bool: "Allow users to log overtime activities"
     params.addQueryItem("name[]", "make_screenshots"); // bool: take screenshots?
 
     params.addQueryItem("name[]", "group_working_time_limit"); // Array(int): stop tracking after "daily hours limit"
@@ -297,6 +296,7 @@ void Comms::getSettings()
     params.addQueryItem("name[]", "turnoff_tt_after"); // int: auto tracking off, after X
 
     // probably server only:
+//    params.addQueryItem("name[]", "form_scheduler"); // bool: "Allow users to log overtime activities"
 //    params.addQueryItem("name[]", "unset_concurrent_apps"); // bool: "Dismiss computer activities overlapping other computer activities that are already logged"
 //    params.addQueryItem("name[]", "limited_offline"); // bool: "Do not allow adding away time activity before first and after last activity on a computer"
 //    params.addQueryItem("name[]", "disableDataSplit"); // bool: "can users split their away time breaks"
