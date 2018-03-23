@@ -3,6 +3,7 @@
 #include "ControlIterator/UIAControlIterator.h"
 #include "FirefoxUtils.h"
 #include <QElapsedTimer>
+#include <QUrl>
 
 unsigned long WindowEvents_W::getIdleTime()
 {
