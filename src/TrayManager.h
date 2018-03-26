@@ -10,7 +10,7 @@
 
 #include "Widget.h"
 
-#ifdef __APPLE__
+#ifdef Q_OS_MACOS
 #include "Widget_M.h"
 #define _WIDGET_EXISTS_
 #else

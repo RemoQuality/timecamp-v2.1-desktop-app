@@ -26,7 +26,7 @@ void Widget_M::setIcon(QString iconPath)
 //    pixmap.setMask(pixmap.createHeuristicMask());
     qreal commaRatio = ((QGuiApplication *) QCoreApplication::instance())->devicePixelRatio();
     long pixelRatio = std::lround(commaRatio);
-#ifdef __APPLE__
+#ifdef Q_OS_MACOS
     if (commaRatio > 1.0f) {
         pixelRatio = 2;
     }

@@ -4,7 +4,7 @@
 #include <ctime>
 #include <iomanip>
 
-#ifdef __APPLE__
+#ifdef Q_OS_MACOS
 #include "Utils_M.h"
 #endif
 
@@ -24,7 +24,7 @@ void firstRun() {
 
     if(settings.value(SETT_IS_FIRST_RUN, true).toBool()) {
         Autorun::enableAutorun();
-#ifdef __APPLE__
+#ifdef Q_OS_MACOS
         enableAssistiveDevices();
 #endif
     }

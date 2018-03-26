@@ -29,7 +29,7 @@ void TrayManager::setupTray(MainWidget *parent)
     trayMenu = new QMenu(parent);
     createActions(trayMenu);
 
-#ifndef __APPLE__
+#ifndef Q_OS_MACOS
     trayIcon = new QSystemTrayIcon(parent);
 
     /*
@@ -44,7 +44,7 @@ void TrayManager::setupTray(MainWidget *parent)
     trayIcon->show();
 #endif
 
-#ifdef __APPLE__
+#ifdef Q_OS_MACOS
     widget = new Widget_M();
     widget->setMenu(trayMenu);
     widget->setIcon(":/Icons/res/AppIcon_Dark2.png");
@@ -211,7 +211,7 @@ void TrayManager::loginLogout(bool loggedIn, QString tooltipText)
         widget->hideMe();
     }
 #endif
-#ifndef __APPLE__
+#ifndef Q_OS_MACOS
     trayIcon->setToolTip(tooltipText); // we don't use trayIcon on macOS
 #endif
 
