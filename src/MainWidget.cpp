@@ -25,7 +25,9 @@ MainWidget::MainWidget(QWidget *parent) :
     this->setMinimumSize(QSize(350, 500));
 
 #ifdef __APPLE__
-    this->setWindowFlags( Qt::Dialog | Qt::WindowTitleHint );
+    this->setWindowFlags( Qt::Dialog | Qt::WindowTitleHint | Qt::WindowStaysOnTopHint );
+#else
+    this->setWindowFlags( Qt::WindowStaysOnTopHint );
 #endif
 
     restoreGeometry(settings.value("mainWindowGeometry").toByteArray()); // from QWidget; restore saved window position
