@@ -137,7 +137,7 @@ void MainWidget::handleLoadFinished(bool ok)
 
 void MainWidget::wasTheWindowLeftOpened()
 {
-    if(settings.value(SETT_WAS_WINDOW_LEFT_OPENED).toBool()){
+    if(settings.value(SETT_WAS_WINDOW_LEFT_OPENED, true).toBool()){
         this->open();
     }
 }
