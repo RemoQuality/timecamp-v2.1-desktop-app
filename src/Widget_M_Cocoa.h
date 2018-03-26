@@ -16,6 +16,12 @@
 {
     NSStatusItem* widget;
     NSString *widgetText;
+
+    NSFont* stdFont;
+    NSDictionary* attributesStd;
+    NSAttributedString *attributedWidgetEmpty;
+    NSAttributedString *attributedWidgetText;
+    bool isHidden;
 }
 
 - (id) init;
