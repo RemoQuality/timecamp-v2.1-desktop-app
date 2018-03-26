@@ -155,6 +155,7 @@ void MainWidget::webviewRefresh()
 {
     qDebug("[NEW_TC]: page refresh");
     this->setUpdatesEnabled(false);
+    QTWEPage->setUrl(QUrl(APPLICATION_URL));
     QTWEPage->triggerAction(QWebEnginePage::ReloadAndBypassCache);
     this->setUpdatesEnabled(true);
 }
