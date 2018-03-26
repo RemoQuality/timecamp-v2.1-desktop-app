@@ -129,7 +129,7 @@ void TrayManager::openCloseWindowAction() {
 }
 
 void TrayManager::contactSupport() {
-    QUrl mail("https://www.timecamp.com/kb/contact/");
+    QUrl mail("https://www.timecamp.com/kb/contact/?utm_source=timecamp_desktop");
     QDesktopServices::openUrl(mail);
 };
 
