@@ -76,6 +76,7 @@ private:
     QWebEngineSettings *QTWESettings;
 
     void runJSinPage(QString js);
+    void forceLoadUrl(QString url);
     void checkIsTimerRunning();
     void fetchAPIkey();
     void fetchTimerName();

@@ -1,3 +1,4 @@
+#include <QEventLoop>
 #include "MainWidget.h"
 #include "ui_MainWidget.h"
 
@@ -161,8 +162,11 @@ void MainWidget::webviewRefresh()
 {
     qDebug("[NEW_TC]: page refresh");
     this->setUpdatesEnabled(false);
-    QTWEPage->setUrl(QUrl(APPLICATION_URL));
-    QTWEPage->triggerAction(QWebEnginePage::ReloadAndBypassCache);
+    this->runJSinPage("localStorage.clear()");
+    QTWEProfile->clearAllVisitedLinks();
+    QTWEProfile->clearHttpCache();
+    this->goToTimerPage();
+    this->forceLoadUrl(APPLICATION_URL);
     this->setUpdatesEnabled(true);
 }
 
@@ -198,6 +202,11 @@ void MainWidget::open()
 void MainWidget::runJSinPage(QString js)
 {
     QTWEPage->runJavaScript(js);
+}
+
+void MainWidget::forceLoadUrl(QString url)
+{
+    this->runJSinPage("window.location='" + url + "'");
 }
 
 bool MainWidget::checkIfOnTimerPage()
