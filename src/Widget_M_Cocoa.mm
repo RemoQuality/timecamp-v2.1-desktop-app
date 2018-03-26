@@ -17,6 +17,8 @@
         [widget setTitle:@""];
 
         stdFont = [NSFont fontWithName:@"Courier" size:16];
+        if ([NSFont respondsToSelector:@selector(monospacedDigitSystemFontOfSize:weight:)])
+            stdFont = [NSFont monospacedDigitSystemFontOfSize:14 weight:NSFontWeightRegular];
         attributesStd = [NSDictionary dictionaryWithObjectsAndKeys:stdFont, NSFontAttributeName, nil];
 
         attributedWidgetText = [[NSAttributedString alloc] initWithString:widgetText attributes:attributesStd];
