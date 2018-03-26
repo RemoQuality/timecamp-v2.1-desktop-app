@@ -4,7 +4,7 @@
 #include "Settings.h"
 
 void Autorun::enableAutorun() {
-#ifdef _WIN32
+#ifdef Q_OS_WIN
     QSettings settings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
     settings.setValue(APPLICATION_NAME, QDir::toNativeSeparators(QCoreApplication::applicationFilePath()));
     settings.sync();
@@ -39,7 +39,7 @@ void Autorun::enableAutorun() {
 }
 
 void Autorun::disableAutorun() {
-#ifdef _WIN32
+#ifdef Q_OS_WIN
     QSettings settings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
     settings.remove(APPLICATION_NAME);
     settings.sync();
@@ -54,7 +54,7 @@ void Autorun::disableAutorun() {
 }
 
 bool Autorun::checkAutorun() {
-#ifdef _WIN32
+#ifdef Q_OS_WIN
     QSettings settings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
     settings.sync();
     return settings.contains(APPLICATION_NAME);
