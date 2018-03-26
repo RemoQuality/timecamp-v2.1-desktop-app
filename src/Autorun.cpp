@@ -8,7 +8,7 @@ void Autorun::enableAutorun() {
     QSettings settings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
     settings.setValue(APPLICATION_NAME, QDir::toNativeSeparators(QCoreApplication::applicationFilePath()));
     settings.sync();
-#elif __linux__
+#elif Q_OS_LINUX
     //
 #else // macOS
     QString plistFile = ""
@@ -43,7 +43,7 @@ void Autorun::disableAutorun() {
     QSettings settings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
     settings.remove(APPLICATION_NAME);
     settings.sync();
-#elif __linux__
+#elif Q_OS_LINUX
     //
 #else // macOS
     QString filename = QDir::homePath() + "/Library/LaunchAgents/TimecampDesktop.autorun.plist";
@@ -58,7 +58,7 @@ bool Autorun::checkAutorun() {
     QSettings settings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
     settings.sync();
     return settings.contains(APPLICATION_NAME);
-#elif __linux__
+#elif Q_OS_LINUX
     return false;
 #else // macOS
     QString filename = QDir::homePath() + "/Library/LaunchAgents/TimecampDesktop.autorun.plist";

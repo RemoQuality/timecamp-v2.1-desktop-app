@@ -8,7 +8,7 @@
 #include "Settings.h"
 
 
-#ifdef __linux__
+#ifdef Q_OS_LINUX
 #include "WindowEvents_U.h"
 #elif Q_OS_WIN
 #include "WindowEvents_W.h"
@@ -26,7 +26,7 @@ WindowEventsManager &WindowEventsManager::instance()
 WindowEventsManager::WindowEventsManager(QObject *parent)
     : QObject(parent)
 {
-#ifdef __linux__
+#ifdef Q_OS_LINUX
     captureEventsThread = new WindowEvents_U();
 #elif Q_OS_WIN
     captureEventsThread = new WindowEvents_W();

@@ -164,7 +164,7 @@ QString parseJsonlz4RecoveryFilePath(const QString& recoveryFilePath)
 
 QString getFirefoxConfigFilePath()
 {
-#ifdef __linux__
+#ifdef Q_OS_LINUX
     QString homeDir = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first();
     QString firefoxPath = homeDir + "/.mozilla/firefox";
 #elif Q_OS_WIN
