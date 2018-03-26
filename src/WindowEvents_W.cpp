@@ -3,6 +3,7 @@
 #include "ControlIterator/UIAControlIterator.h"
 #include "FirefoxUtils.h"
 #include <QElapsedTimer>
+#include <QUrl>
 
 unsigned long WindowEvents_W::getIdleTime()
 {
@@ -274,7 +275,7 @@ bool WindowDetails::standardAccCallback(IControlItem *node, void *userData)
 
     if (startsWithGoodProtocol(value)) {
         qDebug() << "[VAL] " << value;
-        if (*pStr->isEmpty() || *pStr == QLatin1String("0") || *pStr == QLatin1String("<unknown>")) {
+        if (pStr->isEmpty() || *pStr == QLatin1String("0") || *pStr == QLatin1String("<unknown>")) {
             *pStr = value;
             return false;
         }
