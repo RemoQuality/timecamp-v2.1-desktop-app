@@ -15,7 +15,7 @@
 #define NO_TIMER_TEXT "0:00"
 
 #define MAIN_ICON ":/Icons/res/AppIcon.ico"
-#define MAIN_BG ":/Icons/res/AppIcon128.png"
+#define MAIN_BG ":/Icons/res/AppIcon.icns"
 
 // db params
 #define DB_FILENAME "localdb.sqlite"

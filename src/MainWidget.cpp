@@ -12,10 +12,13 @@ MainWidget::MainWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
+//    this->setAttribute(Qt::WA_TranslucentBackground);
+//    this->setAutoFillBackground(true);
+
     QPixmap bkgnd(MAIN_BG);
-    bkgnd = bkgnd.scaled(this->size(), Qt::IgnoreAspectRatio);
+//    bkgnd = bkgnd.scaled(this->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
     QPalette palette;
-    palette.setBrush(QPalette::Background, bkgnd);
+    palette.setBrush(QPalette::Window, bkgnd);
     this->setPalette(palette);
 
     // set some defaults
@@ -84,6 +87,8 @@ void MainWidget::setupWebview()
 {
     QTWEView = new TCWebEngineView(this);
     QTWEView->setContextMenuPolicy(Qt::NoContextMenu); // disable context menu in embedded webpage
+    QTWEView->setAttribute(Qt::WA_TranslucentBackground);
+    QTWEView->setStyleSheet("background:transparent");
     connect(QTWEView, &QWebEngineView::loadStarted, this, &MainWidget::handleLoadStarted);
     connect(QTWEView, &QWebEngineView::loadProgress, this, &MainWidget::handleLoadProgress);
     connect(QTWEView, &QWebEngineView::loadFinished, this, &MainWidget::handleLoadFinished);
@@ -100,6 +105,7 @@ void MainWidget::setupWebview()
     QTWEProfile->setRequestInterceptor(TCri);
 
     QTWEPage = new QWebEnginePage(QTWEProfile, QTWEView);
+    QTWEPage->setBackgroundColor(Qt::transparent);
     QTWEView->setPage(QTWEPage);
 
     refreshBind = new QShortcut(QKeySequence::Refresh, this);
@@ -190,6 +196,7 @@ void MainWidget::checkIfLoggedIn(QString title)
 void MainWidget::open()
 {
     settings.setValue(SETT_WAS_WINDOW_LEFT_OPENED, true); // save if window was opened
+    settings.sync();
     restoreGeometry(settings.value("mainWindowGeometry").toByteArray());
     show();
     setWindowState( (windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
