@@ -24,6 +24,10 @@ MainWidget::MainWidget(QWidget *parent) :
 
     this->setMinimumSize(QSize(350, 500));
 
+#ifdef __APPLE__
+    this->setWindowFlags( Qt::Dialog | Qt::WindowTitleHint );
+#endif
+
     restoreGeometry(settings.value("mainWindowGeometry").toByteArray()); // from QWidget; restore saved window position
 }
 
@@ -185,6 +189,7 @@ void MainWidget::open()
     setWindowState( (windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
     raise();  // for MacOS
     activateWindow(); // for Windows
+    raise();  // for MacOS
     emit windowStatusChanged(true);
 }
 
