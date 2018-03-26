@@ -47,7 +47,7 @@ void TrayManager::setupTray(MainWidget *parent)
 #ifdef __APPLE__
     widget = new Widget_M();
     widget->setMenu(trayMenu);
-    widget->setIcon(":/Icons/res/AppIcon_Dark.png");
+    widget->setIcon(":/Icons/res/AppIcon_Dark2.png");
     widget->setText(""); // at the start there should be no timer text
 #endif
     this->setupSettings();

@@ -24,7 +24,13 @@ void Widget_M::setIcon(QString iconPath)
 {
     QPixmap pixmap = QPixmap(iconPath);
 //    pixmap.setMask(pixmap.createHeuristicMask());
-    int pixelRatio = std::lround(((QGuiApplication*)QCoreApplication::instance())->devicePixelRatio());
+    qreal commaRatio = ((QGuiApplication *) QCoreApplication::instance())->devicePixelRatio();
+    long pixelRatio = std::lround(commaRatio);
+#ifdef __APPLE__
+    if (commaRatio > 1.0f) {
+        pixelRatio = 2;
+    }
+#endif
     NSImage * nsimage = QtMac::toNSImage(pixmap.scaledToWidth(16 * pixelRatio, Qt::SmoothTransformation));
 
     [macWidget SetImage:nsimage];
