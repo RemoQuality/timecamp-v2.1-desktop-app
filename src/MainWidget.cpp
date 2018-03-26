@@ -243,9 +243,9 @@ void MainWidget::goToTimerPage()
 
 void MainWidget::goToAwayPage() {
     if(!this->isVisible()){
-        this->show();
+        this->open();
     }
-    emit windowStatusChanged(true);
+//    emit windowStatusChanged(true);
     QTWEPage->load(QUrl(OFFLINE_URL));
 }
 
