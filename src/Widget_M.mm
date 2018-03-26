@@ -2,6 +2,13 @@
 #include "Widget_M.h"
 #include "Widget_M_Cocoa.h"
 
+#include <QPixmap>
+#include <QWindow>
+#include <QCoreApplication>
+#include <QGuiApplication>
+#include <QDebug>
+#include <cmath>
+
 Widget_M::Widget_M()
 {
     macWidget = [[Widget_M_Cocoa alloc] init];
@@ -13,10 +20,13 @@ Widget_M::~Widget_M()
 }
 
 
-void Widget_M::setIcon(QIcon icon)
+void Widget_M::setIcon(QString iconPath)
 {
-    QPixmap pixmap = icon.pixmap(16, 16);
-    NSImage * nsimage = QtMac::toNSImage(pixmap);
+    QPixmap pixmap = QPixmap(iconPath);
+//    pixmap.setMask(pixmap.createHeuristicMask());
+    int pixelRatio = std::lround(((QGuiApplication*)QCoreApplication::instance())->devicePixelRatio());
+    NSImage * nsimage = QtMac::toNSImage(pixmap.scaledToWidth(16 * pixelRatio, Qt::SmoothTransformation));
+
     [macWidget SetImage:nsimage];
 }
 

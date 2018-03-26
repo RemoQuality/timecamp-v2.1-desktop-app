@@ -45,12 +45,9 @@ void TrayManager::setupTray(MainWidget *parent)
 #endif
 
 #ifdef __APPLE__
-    QIcon macOSIcon(":/Icons/res/AppIcon_Dark.png");
-    macOSIcon.setIsMask(true);
-//    trayIcon->setIcon(macOSIcon);
     widget = new Widget_M();
     widget->setMenu(trayMenu);
-    widget->setIcon(macOSIcon);
+    widget->setIcon(":/Icons/res/AppIcon_Dark.png");
     widget->setText(""); // at the start there should be no timer text
 #endif
     this->setupSettings();
