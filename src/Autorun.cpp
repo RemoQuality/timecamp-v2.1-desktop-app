@@ -22,7 +22,7 @@ void Autorun::enableAutorun() {
             "        <string>Timecamp Desktop</string>\n"
             "        <key>ProgramArguments</key>\n"
             "        <array>\n"
-            "            <string>/Applications/TimecampDesktop.app/Contents/MacOS/TimecampDesktop</string>\n"
+            "            <string>/Applications/Timecamp Desktop.app/Contents/MacOS/TimecampDesktop</string>\n"
             "        </array>\n"
             "    </dict>\n"
             "</plist>";
