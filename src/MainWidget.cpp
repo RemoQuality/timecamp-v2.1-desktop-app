@@ -254,9 +254,9 @@ void MainWidget::startTask()
     goToTimerPage();
     this->stopTask(); // stop the last timer
     if(!this->isVisible()){
-        this->show();
+        this->open();
     }
-    emit windowStatusChanged(true);
+//    emit windowStatusChanged(true);
     this->runJSinPage("if($('.btn-timer').text().trim().toLowerCase() == 'start timer') { $('.btn-timer').click(); }"); // start new timer
 //    this->runJSinPage("$('#timer-task-picker').click();"); // task picker toggle
 }
