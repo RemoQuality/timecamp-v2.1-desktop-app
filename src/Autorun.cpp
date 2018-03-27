@@ -6,6 +6,28 @@
 void Autorun::enableAutorun() {
 #ifdef Q_OS_LINUX
     //
+    QString desktopFile = ""
+            "[Desktop Entry]\n"
+            "Version=1.0\n"
+            "Comment=\"Timecamp Desktop 1.0\"\n"
+            "Type=Application\n"
+            "Name=JetBrains Toolbox\n"
+            "Exec=\"/usr/share/Time Solutions/Timecamp Desktop\"\n"
+            "Icon=\"/usr/share/Time Solutions/icon.png\"\n"
+            "StartupNotify=false\n"
+            "Terminal=false\n"
+            "Categories=Office;ProjectManagement;Monitor;Network;\n"
+    ;
+
+    QString filename = QDir::homePath() + "/.config/autostart/Timecamp Desktop.desktop";
+    if (!QFile::exists(filename)) {
+        QFile file(filename);
+        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            QTextStream stream(&file);
+            stream << desktopFile << endl;
+        }
+    }
+
 #elif defined(Q_OS_WIN)
     QSettings settings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
     settings.setValue(APPLICATION_NAME, QDir::toNativeSeparators(QCoreApplication::applicationFilePath()));
@@ -41,6 +63,10 @@ void Autorun::enableAutorun() {
 void Autorun::disableAutorun() {
 #ifdef Q_OS_LINUX
     //
+    QString filename = QDir::homePath() + "/.config/autostart/Timecamp Desktop.desktop";
+    if (QFile::exists(filename)) {
+        QFile::remove(filename);
+    }
 #elif defined(Q_OS_WIN)
     QSettings settings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
     settings.remove(APPLICATION_NAME);
@@ -55,7 +81,8 @@ void Autorun::disableAutorun() {
 
 bool Autorun::checkAutorun() {
 #ifdef Q_OS_LINUX
-    return false;
+    QString filename = QDir::homePath() + "/.config/autostart/Timecamp Desktop.desktop";
+    return QFile::exists(filename);
 #elif defined(Q_OS_WIN)
     QSettings settings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
     settings.sync();
