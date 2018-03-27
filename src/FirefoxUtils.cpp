@@ -167,7 +167,7 @@ QString getFirefoxConfigFilePath()
 #ifdef Q_OS_LINUX
     QString homeDir = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first();
     QString firefoxPath = homeDir + "/.mozilla/firefox";
-#elif Q_OS_WIN
+#elif defined(Q_OS_WIN)
     QString homeDir = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first();
     QString firefoxPath = homeDir + "/AppData/Roaming/Mozilla/Firefox/Profiles";
 #else

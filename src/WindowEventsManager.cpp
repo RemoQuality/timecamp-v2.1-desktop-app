@@ -10,7 +10,7 @@
 
 #ifdef Q_OS_LINUX
 #include "WindowEvents_U.h"
-#elif Q_OS_WIN
+#elif defined(Q_OS_WIN)
 #include "WindowEvents_W.h"
 #else
 #include "WindowEvents_M.h"
@@ -28,7 +28,7 @@ WindowEventsManager::WindowEventsManager(QObject *parent)
 {
 #ifdef Q_OS_LINUX
     captureEventsThread = new WindowEvents_U();
-#elif Q_OS_WIN
+#elif defined(Q_OS_WIN)
     captureEventsThread = new WindowEvents_W();
 #else
     captureEventsThread = new WindowEvents_M();
