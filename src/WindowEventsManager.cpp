@@ -39,6 +39,7 @@ WindowEventsManager::WindowEventsManager(QObject *parent)
 void WindowEventsManager::noLongerAway(unsigned long howLongWasAwayMS)
 {
     QMessageBox msgBox;
+    msgBox.setTextInteractionFlags(Qt::NoTextInteraction);
     msgBox.setIconPixmap(QPixmap(MAIN_ICON).scaledToWidth(96));
     msgBox.setText("You've been away from computer.");
     msgBox.setInformativeText("Do you want to log away time activity?");
