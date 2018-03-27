@@ -29,7 +29,7 @@ MainWidget::MainWidget(QWidget *parent) :
     this->setMinimumSize(QSize(350, 500));
 
 #ifdef Q_OS_MACOS
-    this->setWindowFlags( Qt::Dialog | Qt::WindowTitleHint | Qt::WindowStaysOnTopHint );
+    this->setWindowFlags( Qt::Sheet | Qt::WindowCloseButtonHint | Qt::WindowTitleHint | Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint );
 #else
     this->setWindowFlags( Qt::WindowStaysOnTopHint );
 #endif
