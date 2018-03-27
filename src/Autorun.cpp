@@ -11,7 +11,7 @@ void Autorun::enableAutorun() {
             "Version=1.0\n"
             "Comment=\"Timecamp Desktop 1.0\"\n"
             "Type=Application\n"
-            "Name=JetBrains Toolbox\n"
+            "Name=Timecamp Desktop\n"
             "Exec=\"/usr/share/Time Solutions/Timecamp Desktop\"\n"
             "Icon=\"/usr/share/Time Solutions/icon.png\"\n"
             "StartupNotify=false\n"
