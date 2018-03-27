@@ -24,6 +24,16 @@ set(IDENTIFIER "com.TimeSolutions.${PROJECT_NAME}")
 
 
 set(CMAKE_CXX_STANDARD 17)
+if("${CMAKE_CXX_COMPILER}" MATCHES "clang")
+    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5)
+        # clang < 5 has problems with CXX 17
+        # We had this error too: https://stackoverflow.com/questions/44262236/clang-4-build-error-on-functional-with-c1z
+        #
+        # Template argument deduction for class templates was fixed in clang 5
+        # Source: https://clang.llvm.org/cxx_status.html#cxx17
+        set(CMAKE_CXX_STANDARD 14)
+    endif()
+endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(WIN32)
