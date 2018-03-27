@@ -34,6 +34,8 @@ MainWidget::MainWidget(QWidget *parent) :
     this->setWindowFlags( Qt::WindowStaysOnTopHint );
 #endif
 
+    this->setAcceptDrops(false);
+
     restoreGeometry(settings.value("mainWindowGeometry").toByteArray()); // from QWidget; restore saved window position
 }
 
@@ -87,6 +89,7 @@ void MainWidget::setupWebview()
 {
     QTWEView = new TCWebEngineView(this);
     QTWEView->setContextMenuPolicy(Qt::NoContextMenu); // disable context menu in embedded webpage
+    QTWEView->setAcceptDrops(false);
     QTWEView->setAttribute(Qt::WA_TranslucentBackground);
     QTWEView->setStyleSheet("background:transparent");
     connect(QTWEView, &QWebEngineView::loadStarted, this, &MainWidget::handleLoadStarted);
