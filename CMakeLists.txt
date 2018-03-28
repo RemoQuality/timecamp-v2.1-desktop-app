@@ -1,6 +1,8 @@
 # Reference: http://qt-project.org/doc/qt-5.0/qtdoc/cmake-manual.html
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.1)
+# https://doc.qt.io/qt-5.10/cmake-manual.html
+# CMake 3.1.0 adds the right compiler flags for us, require it
 
 # Add folder where are supportive functions
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
