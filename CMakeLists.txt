@@ -10,7 +10,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 include(QtCommon) # cmake/QtCommon.cmake
 
 
-
 project(TimecampDesktop VERSION 1.0.1)
 
 # Set PROJECT_VERSION_PATCH and PROJECT_VERSION_TWEAK to 0 if not present, needed by add_project_meta
@@ -22,7 +21,6 @@ set(COMPANY "Time Solutions")
 set(COPYRIGHT "Copyright (c) 2010-2018 Time Solutions. All rights reserved.")
 set(IDENTIFIER "com.TimeSolutions.${PROJECT_NAME}")
 
-
 set(CMAKE_CXX_STANDARD 17)
 if("${CMAKE_CXX_COMPILER}" MATCHES "clang")
     if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5)
@@ -31,6 +29,14 @@ if("${CMAKE_CXX_COMPILER}" MATCHES "clang")
         #
         # Template argument deduction for class templates was fixed in clang 5
         # Source: https://clang.llvm.org/cxx_status.html#cxx17
+        set(CMAKE_CXX_STANDARD 14)
+    endif()
+endif()
+
+if("${CMAKE_CXX_COMPILER}" MATCHES "gcc")
+    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 7)
+        # gcc < 7 has problems with CXX 17
+        # Source: https://gcc.gnu.org/projects/cxx-status.html
         set(CMAKE_CXX_STANDARD 14)
     endif()
 endif()
