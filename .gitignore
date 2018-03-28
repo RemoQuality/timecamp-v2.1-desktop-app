@@ -6,5 +6,7 @@ deploy/
 CMakeLists.txt.user*
 CMakeSettings.json
 
+linuxdeployqt/
+
 .idea/
 .vs/
