@@ -156,15 +156,15 @@ void WindowEvents_U::run()
                 long longpid = longarr[0];
 
                 std::string command = "";
-                command += "ps -q ";
+                command += "ps ";
+                command += " -o comm= ";
                 command += QString::number(longpid).toStdString();
-                command += " -o comm=\"\"";
 
 //                qInfo() << QString::fromStdString(command);
 
                 app_name = execCommand(command.c_str());
 
-                logAppName(QString::fromStdString(app_name), QString::fromUtf8((char*)window_name));
+                logAppName(QString::fromStdString(app_name).trimmed(), QString::fromUtf8((char*)window_name));
             }
         }
     }
