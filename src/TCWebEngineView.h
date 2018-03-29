@@ -6,7 +6,7 @@
 
 class TCWebEngineView : public QWebEngineView
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
     explicit TCWebEngineView(QWidget *parent = nullptr);

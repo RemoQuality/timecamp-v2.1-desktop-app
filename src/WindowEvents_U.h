@@ -17,7 +17,7 @@ protected:
     void logAppName(QString appName, QString windowName);
 
 private:
-    static std::string execCommand(const char* cmd);
+    static std::string execCommand(const char *cmd);
 };
 
 #endif // WindowEvents_U_H

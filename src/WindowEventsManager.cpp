@@ -13,7 +13,9 @@
 #elif defined(Q_OS_WIN)
 #include "WindowEvents_W.h"
 #else
+
 #include "WindowEvents_M.h"
+
 #endif
 
 
@@ -23,8 +25,7 @@ WindowEventsManager &WindowEventsManager::instance()
     return _instance;
 }
 
-WindowEventsManager::WindowEventsManager(QObject *parent)
-    : QObject(parent)
+WindowEventsManager::WindowEventsManager(QObject *parent) : QObject(parent)
 {
 #ifdef Q_OS_LINUX
     captureEventsThread = new WindowEvents_U();
@@ -86,9 +87,9 @@ void WindowEventsManager::noLongerAway(unsigned long howLongWasAwayMS)
 
 void WindowEventsManager::startOrStopThread(bool start)
 {
-    if(start){
+    if (start) {
         this->startThread();
-    }else{
+    } else {
         this->stopThread();
     }
 }
@@ -101,9 +102,9 @@ void WindowEventsManager::startThread()
 void WindowEventsManager::stopThread()
 {
     captureEventsThread->requestInterruption(); // if it checks for isInterruptionRequested
-    if(captureEventsThread->isRunning()){
+    if (captureEventsThread->isRunning()) {
         captureEventsThread->exit(); // if it uses QEventLoop
-        if(captureEventsThread->isRunning()){
+        if (captureEventsThread->isRunning()) {
             captureEventsThread->terminate(); // force close
         }
     }

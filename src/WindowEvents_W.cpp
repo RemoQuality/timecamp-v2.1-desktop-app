@@ -55,9 +55,8 @@ BOOL WindowEvents_W::EnumChildAppHostWindowsCallback(HWND hWnd, LPARAM lp)
     return TRUE;
 }
 
-void WindowEvents_W::HandleWinNameEvent(HWINEVENTHOOK hook, DWORD event, HWND hwnd,
-                             LONG idObject, LONG idChild,
-                             DWORD dwEventThread, DWORD dwmsEventTime)
+void WindowEvents_W::HandleWinNameEvent(HWINEVENTHOOK hook, DWORD event, HWND hwnd, LONG idObject, LONG idChild,
+                                        DWORD dwEventThread, DWORD dwmsEventTime)
 {
     IAccessible *pAcc = nullptr;
     VARIANT varChild;
@@ -67,7 +66,7 @@ void WindowEvents_W::HandleWinNameEvent(HWINEVENTHOOK hook, DWORD event, HWND hw
 
         if ((hr == S_OK) && (pAcc != nullptr)) {
 
-            if(idObject == OBJID_TITLEBAR || idObject == OBJID_WINDOW){
+            if (idObject == OBJID_TITLEBAR || idObject == OBJID_WINDOW) {
 
                 BSTR bstrName; // window title (website name, etc)
                 pAcc->get_accName(varChild, &bstrName);
@@ -75,18 +74,18 @@ void WindowEvents_W::HandleWinNameEvent(HWINEVENTHOOK hook, DWORD event, HWND hw
                 TCHAR procName[255];
                 GetProcessName(hwnd, procName);
 
-                 QString procNameNorm;
-    #ifdef _UNICODE
-                 std::wstring tempName(&procName[0]);
-                 procNameNorm = QString::fromStdWString(tempName);
-    #else
-                 procNameNorm = QString::fromLatin1(procName);
-    #endif
+                QString procNameNorm;
+#ifdef _UNICODE
+                std::wstring tempName(&procName[0]);
+                procNameNorm = QString::fromStdWString(tempName);
+#else
+                procNameNorm = QString::fromLatin1(procName);
+#endif
 
-                 QString windowName2((QChar*)bstrName, SysStringLen(bstrName));
+                QString windowName2((QChar *) bstrName, SysStringLen(bstrName));
 
-    //            TCHAR windowName[255];
-    //            MultiByteToWideChar(CP_UTF8, 0, bstrName, SysStringLen(bstrName), windowName, 255);
+                //            TCHAR windowName[255];
+                //            MultiByteToWideChar(CP_UTF8, 0, bstrName, SysStringLen(bstrName), windowName, 255);
                 char *windowName;
                 windowName = _com_util::ConvertBSTRToString(bstrName);
 
@@ -103,9 +102,8 @@ void WindowEvents_W::HandleWinNameEvent(HWINEVENTHOOK hook, DWORD event, HWND hw
 }
 
 // Callback function that handles events.
-void WindowEvents_W::HandleWinEvent(HWINEVENTHOOK hook, DWORD event, HWND hwnd,
-                             LONG idObject, LONG idChild,
-                             DWORD dwEventThread, DWORD dwmsEventTime)
+void WindowEvents_W::HandleWinEvent(HWINEVENTHOOK hook, DWORD event, HWND hwnd, LONG idObject, LONG idChild,
+                                    DWORD dwEventThread, DWORD dwmsEventTime)
 {
     IAccessible *pAcc = nullptr;
     VARIANT varChild;
@@ -123,15 +121,15 @@ void WindowEvents_W::HandleWinEvent(HWINEVENTHOOK hook, DWORD event, HWND hwnd,
             TCHAR procName[255];
             GetProcessName(hwnd, procName);
 
-             QString procNameNorm;
+            QString procNameNorm;
 #ifdef _UNICODE
-             std::wstring tempName(&procName[0]);
-             procNameNorm = QString::fromStdWString(tempName);
+            std::wstring tempName(&procName[0]);
+            procNameNorm = QString::fromStdWString(tempName);
 #else
-             procNameNorm = QString::fromLatin1(procName);
+            procNameNorm = QString::fromLatin1(procName);
 #endif
 
-             QString windowName2((QChar*)bstrName, SysStringLen(bstrName));
+            QString windowName2((QChar *) bstrName, SysStringLen(bstrName));
 
 // broken
 //            TCHAR windowName[255];
@@ -142,7 +140,7 @@ void WindowEvents_W::HandleWinEvent(HWINEVENTHOOK hook, DWORD event, HWND hwnd,
 //            windowName = _com_util::ConvertBSTRToString(bstrName);
 
             if (SysStringLen(bstrName) > 0) {
-                 WindowEvents_W::logAppName(procNameNorm, windowName2, hwnd);
+                WindowEvents_W::logAppName(procNameNorm, windowName2, hwnd);
             }
 
             SysFreeString(bstrName);
@@ -177,8 +175,7 @@ void WindowEvents_W::GetProcessName(HWND hWnd, TCHAR *procName)
         GetWindowThreadProcessId(hWnd, &info.ownerpid);
         info.childpid = info.ownerpid;
 
-        EnumChildWindows(hWnd, reinterpret_cast<WNDENUMPROC>(WindowEvents_W::EnumChildAppHostWindowsCallback),
-                         (LPARAM) &info); // go through all windows and find the right child
+        EnumChildWindows(hWnd, reinterpret_cast<WNDENUMPROC>(WindowEvents_W::EnumChildAppHostWindowsCallback), (LPARAM) & info); // go through all windows and find the right child
 
         active_process = OpenProcess(PROCESS_QUERY_INFORMATION, false, info.childpid);
         if (active_process == nullptr) {
@@ -233,19 +230,17 @@ void WindowEvents_W::ParseProcessName(HANDLE hProcess, TCHAR *processName)
 void WindowEvents_W::InitializeWindowsHook(HWINEVENTHOOK g_hook, HWINEVENTHOOK wname_hook)
 {
     CoInitialize(nullptr);
-    g_hook = SetWinEventHook(
-            EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND,   // Range of events
-            nullptr,                                            // Handle to DLL
-            reinterpret_cast<WINEVENTPROC>(WindowEvents_W::HandleWinEvent),                                     // The callback
-            0, 0,                                               // Process and thread IDs of interest (0 = all)
-            WINEVENT_OUTOFCONTEXT);
+    g_hook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND,   // Range of events
+                             nullptr,                                            // Handle to DLL
+                             reinterpret_cast<WINEVENTPROC>(WindowEvents_W::HandleWinEvent),                                     // The callback
+                             0, 0,                                               // Process and thread IDs of interest (0 = all)
+                             WINEVENT_OUTOFCONTEXT);
 
-    wname_hook = SetWinEventHook(
-            EVENT_OBJECT_NAMECHANGE, EVENT_OBJECT_NAMECHANGE,   // Range of events
-            nullptr,                                            // Handle to DLL
-            reinterpret_cast<WINEVENTPROC>(WindowEvents_W::HandleWinNameEvent),                                 // The callback
-            0, 0,                                     // Process and thread IDs of interest (0 = all)
-            WINEVENT_OUTOFCONTEXT);
+    wname_hook = SetWinEventHook(EVENT_OBJECT_NAMECHANGE, EVENT_OBJECT_NAMECHANGE,   // Range of events
+                                 nullptr,                                            // Handle to DLL
+                                 reinterpret_cast<WINEVENTPROC>(WindowEvents_W::HandleWinNameEvent),                                 // The callback
+                                 0, 0,                                     // Process and thread IDs of interest (0 = all)
+                                 WINEVENT_OUTOFCONTEXT);
 }
 
 // Unhooks the event and shuts down COM.
@@ -258,10 +253,7 @@ void WindowEvents_W::ShutdownWindowsHook(HWINEVENTHOOK g_hook, HWINEVENTHOOK wna
 
 bool WindowDetails::startsWithGoodProtocol(QString checkedStr)
 {
-    if (checkedStr.midRef(0, 7) == QLatin1String("http://")
-        || checkedStr.midRef(0, 8) == QLatin1String("https://")
-        || checkedStr.midRef(0, 6) == QLatin1String("ftp://")
-        || checkedStr.midRef(0, 7) == QLatin1String("file://")) {
+    if (checkedStr.midRef(0, 7) == QLatin1String("http://") || checkedStr.midRef(0, 8) == QLatin1String("https://") || checkedStr.midRef(0, 6) == QLatin1String("ftp://") || checkedStr.midRef(0, 7) == QLatin1String("file://")) {
         return true;
     }
     return false;
@@ -293,7 +285,7 @@ bool WindowDetails::chromeAccCallback(IControlItem *node, void *userData)
 
         if (node->parent->getRole() == ROLE_SYSTEM_GROUPING && value.contains(URL_REGEX)) {
 //            qDebug("[WForegroundApp::chromeAccCallback] It is a valid URL, so we return it.");
-            if(!startsWithGoodProtocol(value)){
+            if (!startsWithGoodProtocol(value)) {
                 value = "http://" + value; // prepend http to it to fix URLs!
             }
             QString *pStr = (QString *) userData;
@@ -314,7 +306,7 @@ bool WindowDetails::operaAccCallback(IControlItem *node, void *userData)
 
         if (value.contains(URL_REGEX)) {
 //            qDebug("[WForegroundApp::operaAccCallback] It is a valid URL, so we return it.");
-            if(!startsWithGoodProtocol(value)){
+            if (!startsWithGoodProtocol(value)) {
                 value = "http://" + value; // prepend http to it to fix URLs!
             }
             *pStr = value;
@@ -327,40 +319,31 @@ bool WindowDetails::operaAccCallback(IControlItem *node, void *userData)
 
 WindowDetails::WindowDetails()
 {
-    URL_REGEX_STR = QString("^") +
-        QString("(?:") +
-        // protocol identifier
-        QString("(?:(?:https?|ftp)://)?") +
-        // user:pass authentication
-        QString("(?:\\S+(?::\\S*)?@)?") +
-        QString("(?:") +
-        // IP address exclusion
-        // private & local networks
-        // IP address dotted notation octets
-        // excludes loopback network 0.0.0.0
-        // excludes reserved space >= 224.0.0.0
-        // excludes network & broacast addresses
-        // (first & last IP address of each class)
-        QString("(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])") +
-        QString("(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}") +
-        QString("(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))") +
-        QString("|") +
-        // host name
-        QString("(?:(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)") +
-        // domain name
-        QString("(?:") +
-        QString("(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)*") +
-        // TLD identifier
-        QString("(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))") +
-        //Domain exceptions for single segment domains (without port numbers)
-        QString(")|(localhost)|(crm)|(replace_me)") +
-        QString(")") +
-        // port number
-        QString("(?::\\d{2,5})?") +
-        // resource path
-        QString("(?:/[^\\s]*)?") +
-        QString(")") +
-        QString("$");
+    URL_REGEX_STR = QString("^") + QString("(?:") +
+                    // protocol identifier
+                    QString("(?:(?:https?|ftp)://)?") +
+                    // user:pass authentication
+                    QString("(?:\\S+(?::\\S*)?@)?") + QString("(?:") +
+                    // IP address exclusion
+                    // private & local networks
+                    // IP address dotted notation octets
+                    // excludes loopback network 0.0.0.0
+                    // excludes reserved space >= 224.0.0.0
+                    // excludes network & broacast addresses
+                    // (first & last IP address of each class)
+                    QString("(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])") + QString("(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}") + QString("(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))") + QString("|") +
+                    // host name
+                    QString("(?:(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)") +
+                    // domain name
+                    QString("(?:") + QString("(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)*") +
+                    // TLD identifier
+                    QString("(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))") +
+                    //Domain exceptions for single segment domains (without port numbers)
+                    QString(")|(localhost)|(crm)|(replace_me)") + QString(")") +
+                    // port number
+                    QString("(?::\\d{2,5})?") +
+                    // resource path
+                    QString("(?:/[^\\s]*)?") + QString(")") + QString("$");
 
     URL_REGEX = QRegExp(URL_REGEX_STR);
 }
@@ -458,8 +441,8 @@ void WindowDetails::setURL_REGEX(const QRegExp &URL_REGEX)
     WindowDetails::URL_REGEX = URL_REGEX;
 }
 
-
-HRESULT FirefoxURL::GetControlCondition(IUIAutomation *automation, const long controlType, IUIAutomationCondition** controlCondition)
+HRESULT FirefoxURL::GetControlCondition(IUIAutomation *automation, const long controlType,
+                                        IUIAutomationCondition **controlCondition)
 {
     VARIANT propVar;
     propVar.vt = VT_I4;
@@ -471,121 +454,77 @@ std::wstring FirefoxURL::GetFirefoxURL(HWND hwnd)
 {
     IUIAutomation *_automation;
     HRESULT hr = CoInitialize(NULL);
-    if (FAILED(hr))
-    {
+    if (FAILED(hr)) {
         wprintf(L"CoInitialize failed, HR:0x%08x\n", hr);
-    }
-    else
-    {
-        hr = CoCreateInstance(__uuidof(CUIAutomation), NULL, CLSCTX_INPROC_SERVER,
-                              __uuidof(IUIAutomation), (void**)&_automation);
-        if (FAILED(hr))
-        {
+    } else {
+        hr = CoCreateInstance(__uuidof(CUIAutomation), NULL, CLSCTX_INPROC_SERVER, __uuidof(IUIAutomation), (void **) &_automation);
+        if (FAILED(hr)) {
             wprintf(L"Failed to create a CUIAutomation, HR: 0x%08x\n", hr);
-        }
-        else
-        {
+        } else {
             IUIAutomationElement *firefoxElement = NULL;
             hr = _automation->ElementFromHandle(hwnd, &firefoxElement);
-            if (FAILED(hr))
-            {
+            if (FAILED(hr)) {
                 wprintf(L"Failed to ElementFromHandle, HR: 0x%08x\n\n", hr);
-            }
-            else
-            {
-                IUIAutomationCondition* toolbarCondition;
+            } else {
+                IUIAutomationCondition *toolbarCondition;
                 hr = GetControlCondition(_automation, UIA_ToolBarControlTypeId, &toolbarCondition);
-                if (FAILED(hr))
-                {
+                if (FAILED(hr)) {
                     wprintf(L"Failed to get toolbar condition, HR: 0x%08x\n\n", hr);
-                }
-                else
-                {
+                } else {
                     IUIAutomationElementArray *toolbars = NULL;
                     hr = firefoxElement->FindAll(TreeScope_Children, toolbarCondition, &toolbars);
-                    if (FAILED(hr))
-                    {
+                    if (FAILED(hr)) {
                         wprintf(L"Failed to get Firefox toolbars, HR: 0x%08x\n\n", hr);
-                    }
-                    else
-                    {
+                    } else {
                         int length = 0;
                         hr = toolbars->get_Length(&length);
-                        if (FAILED(hr))
-                        {
+                        if (FAILED(hr)) {
                             wprintf(L"Failed to get Firefox toolbars length, HR: 0x%08x\n\n", hr);
-                        }
-                        else
-                        {
-                            if (length >= 3)
-                            {
+                        } else {
+                            if (length >= 3) {
                                 IUIAutomationElement *toolbarElement = NULL;
-                                hr = toolbars->GetElement(2,&toolbarElement);
-                                if (FAILED(hr))
-                                {
+                                hr = toolbars->GetElement(2, &toolbarElement);
+                                if (FAILED(hr)) {
                                     wprintf(L"Failed to get address toolbar, HR: 0x%08x\n\n", hr);
-                                }
-                                else
-                                {
-                                    IUIAutomationCondition* comboCondition;
+                                } else {
+                                    IUIAutomationCondition *comboCondition;
                                     hr = GetControlCondition(_automation, UIA_ComboBoxControlTypeId, &comboCondition);
-                                    if (FAILED(hr))
-                                    {
+                                    if (FAILED(hr)) {
                                         wprintf(L"Failed to get comboBox condition, HR: 0x%08x\n\n", hr);
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         IUIAutomationElement *comboElement = NULL;
                                         hr = toolbarElement->FindFirst(TreeScope_Children, comboCondition, &comboElement);
-                                        if (FAILED(hr))
-                                        {
+                                        if (FAILED(hr)) {
                                             wprintf(L"Failed to get comboBox of address toolbar, HR: 0x%08x\n\n", hr);
-                                        }
-                                        else
-                                        {
-                                            IUIAutomationCondition* editCondition;
+                                        } else {
+                                            IUIAutomationCondition *editCondition;
                                             VARIANT propVar;
                                             propVar.vt = VT_I4;
                                             propVar.lVal = UIA_EditControlTypeId;
                                             hr = _automation->CreatePropertyCondition(UIA_ControlTypePropertyId, propVar, &editCondition);
-                                            if (FAILED(hr))
-                                            {
+                                            if (FAILED(hr)) {
                                                 wprintf(L"Failed to get edit condition, HR: 0x%08x\n\n", hr);
-                                            }
-                                            else
-                                            {
+                                            } else {
                                                 IUIAutomationElement *urlElement = NULL;
                                                 hr = comboElement->FindFirst(TreeScope_Children, editCondition, &urlElement);
-                                                if (FAILED(hr))
-                                                {
+                                                if (FAILED(hr)) {
                                                     wprintf(L"Failed to get edit of address toolbar, HR: 0x%08x\n\n", hr);
-                                                }
-                                                else
-                                                {
-                                                    IUnknown* patternInter = NULL;
+                                                } else {
+                                                    IUnknown *patternInter = NULL;
                                                     hr = urlElement->GetCurrentPattern(UIA_ValuePatternId, &patternInter);
-                                                    if (FAILED(hr))
-                                                    {
+                                                    if (FAILED(hr)) {
                                                         wprintf(L"Failed to get value pattern interface, HR: 0x%08x\n\n", hr);
-                                                    }
-                                                    else
-                                                    {
-                                                        IUIAutomationValuePattern* valuePattern = NULL;
-                                                        hr = patternInter->QueryInterface(IID_IUIAutomationValuePattern, (void **)&valuePattern);
-                                                        if (FAILED(hr))
-                                                        {
+                                                    } else {
+                                                        IUIAutomationValuePattern *valuePattern = NULL;
+                                                        hr = patternInter->QueryInterface(IID_IUIAutomationValuePattern, (void **) &valuePattern);
+                                                        if (FAILED(hr)) {
                                                             wprintf(L"Failed to get value pattern, HR: 0x%08x\n\n", hr);
-                                                        }
-                                                        else
-                                                        {
+                                                        } else {
                                                             BSTR url;
                                                             hr = valuePattern->get_CurrentValue(&url);
-                                                            if (FAILED(hr))
-                                                            {
+                                                            if (FAILED(hr)) {
                                                                 wprintf(L"Failed to get url value, HR: 0x%08x\n\n", hr);
-                                                            }
-                                                            else
-                                                            {
+                                                            } else {
                                                                 return std::wstring(url, SysStringLen(url));
                                                             }
                                                             valuePattern->Release();
@@ -602,8 +541,7 @@ std::wstring FirefoxURL::GetFirefoxURL(HWND hwnd)
                                     }
                                     toolbarElement->Release();
                                 }
-                            }
-                            else wprintf(L"Too less Firefox's toolbars, %d\n\n", length);
+                            } else { wprintf(L"Too less Firefox's toolbars, %d\n\n", length); }
                             toolbars->Release();
                         }
                     }

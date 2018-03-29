@@ -11,7 +11,8 @@
 #include "WindowEvents.h"
 
 
-class WindowEvents_M : public WindowEvents {
+class WindowEvents_M : public WindowEvents
+{
 Q_OBJECT
 public:
     static QString GetProcWindowName(QString processName);

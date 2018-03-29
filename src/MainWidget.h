@@ -19,13 +19,14 @@
 #include "TCRequestInterceptor.h"
 #include "TCWebEngineView.h"
 
-namespace Ui {
-class MainWidget;
+namespace Ui
+{
+    class MainWidget;
 }
 
 class MainWidget : public QWidget
 {
-    Q_OBJECT
+Q_OBJECT
     Q_DISABLE_COPY(MainWidget)
 
 public:
@@ -70,7 +71,7 @@ private:
 
     TCRequestInterceptor *TCri;
 
-    TCWebEngineView* QTWEView;
+    TCWebEngineView *QTWEView;
     QWebEngineProfile *QTWEProfile;
     QWebEnginePage *QTWEPage;
     QWebEngineSettings *QTWESettings;
@@ -82,7 +83,6 @@ private:
     void fetchTimerName();
     bool checkIfOnTimerPage();
     void goToTimerPage();
-
 
     void checkIfLoggedIn(QString title);
     void setupWebview();

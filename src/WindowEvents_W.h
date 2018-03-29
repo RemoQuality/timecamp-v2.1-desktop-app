@@ -13,7 +13,8 @@
 
 #include "src/ControlIterator/IControlIterator.h"
 
-typedef struct {
+typedef struct
+{
     DWORD ownerpid;
     DWORD childpid;
 } windowinfo;
@@ -33,12 +34,12 @@ private:
     HWINEVENTHOOK g_hook;
     MSG Komunikat;
 
-    static void HandleWinEvent(HWINEVENTHOOK hook, DWORD event, HWND hwnd,
-                        LONG idObject, LONG idChild,
-                        DWORD dwEventThread, DWORD dwmsEventTime);
-    static void HandleWinNameEvent(HWINEVENTHOOK hook, DWORD event, HWND hwnd,
-                        LONG idObject, LONG idChild,
-                        DWORD dwEventThread, DWORD dwmsEventTime);
+    static void
+    HandleWinEvent(HWINEVENTHOOK hook, DWORD event, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread,
+                   DWORD dwmsEventTime);
+    static void
+    HandleWinNameEvent(HWINEVENTHOOK hook, DWORD event, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread,
+                       DWORD dwmsEventTime);
 
     static BOOL EnumChildAppHostWindowsCallback(HWND hWnd, LPARAM lp);
     static void GetProcessName(HWND hWnd, TCHAR *procName);
@@ -54,9 +55,9 @@ public:
     WindowDetails();
     HWND currenthwnd;
 
-    bool standardAccCallback(IControlItem* node, void* userData);
-    bool chromeAccCallback(IControlItem * node, void * userData);
-    bool operaAccCallback(IControlItem * node, void * userData);
+    bool standardAccCallback(IControlItem *node, void *userData);
+    bool chromeAccCallback(IControlItem *node, void *userData);
+    bool operaAccCallback(IControlItem *node, void *userData);
 
     QString GetAdditionalInfo(QString processName, HWND passedHwnd);
     bool startsWithGoodProtocol(QString checkedStr);
@@ -76,7 +77,8 @@ public:
     static std::wstring GetFirefoxURL(HWND hwnd);
 
 private:
-    static HRESULT GetControlCondition(IUIAutomation *automation, const long controlType, IUIAutomationCondition** controlCondition);
+    static HRESULT
+    GetControlCondition(IUIAutomation *automation, const long controlType, IUIAutomationCondition **controlCondition);
 };
 
 #endif // WINDOWEVENTS_W_H

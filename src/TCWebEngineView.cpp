@@ -8,9 +8,7 @@
 // Workaround to get opened URL from: https://bugreports.qt.io/browse/QTBUG-56637
 
 
-TCWebEngineView::TCWebEngineView(QWidget *parent)
-        : QWebEngineView(parent),
-          result(nullptr)
+TCWebEngineView::TCWebEngineView(QWidget *parent) : QWebEngineView(parent), result(nullptr)
 {
 }
 

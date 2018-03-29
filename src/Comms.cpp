@@ -20,8 +20,7 @@ Comms &Comms::instance()
     return _instance;
 }
 
-Comms::Comms(QObject *parent)
-    : QObject(parent)
+Comms::Comms(QObject *parent) : QObject(parent)
 {
     apiKey = settings.value(SETT_APIKEY).toString();
 }
@@ -34,10 +33,10 @@ void Comms::timedUpdates()
 
     setCurrentTime(QDateTime::currentMSecsSinceEpoch()); // time of DB fetch is passed, so we can update to it if successful
 
-    QList<AppData*> appList = DbManager::instance().getAppsSinceLastSync(lastSync); // get apps since last sync
+    QList < AppData * > appList = DbManager::instance().getAppsSinceLastSync(lastSync); // get apps since last sync
 
     qDebug() << "app list length: " << appList.length();
-    if(appList.length() > 0){ // send only if there is anything
+    if (appList.length() > 0) { // send only if there is anything
         sendAppData(&appList);
     }
     getUserInfo();
@@ -89,7 +88,7 @@ bool Comms::isApiKeyOK()
     return true;
 }
 
-void Comms::sendAppData(QList<AppData*> *appList)
+void Comms::sendAppData(QList<AppData *> *appList)
 {
     // read api key from settings
     apiKey = settings.value(SETT_APIKEY).toString();
@@ -115,12 +114,12 @@ void Comms::sendAppData(QList<AppData*> *appList)
 //    qDebug() << "getStart: " << app->getStart();
 //    qDebug() << "getEnd: " << app->getEnd();
 
-        if(app->getAppName() != "IDLE" && app->getWindowName() != "IDLE") {
+        if (app->getAppName() != "IDLE" && app->getWindowName() != "IDLE") {
             QString base_str = QString("computer_activities") + QString("[") + QString::number(count) + QString("]");
 
-            if(!canSendActivityInfo) {
+            if (!canSendActivityInfo) {
                 params.addQueryItem(base_str + QString("[application_name]"), app->getAppName());
-                if(canSendWindowTitles) {
+                if (canSendWindowTitles) {
                     params.addQueryItem(base_str + QString("[window_title]"), app->getWindowName());
 
                     // "Web Browser App" when appName is Internet but no domain
@@ -188,7 +187,7 @@ void Comms::appDataReply(QNetworkReply *reply)
 {
     QByteArray buffer = reply->readAll();
     qDebug() << "AppData Response: " << buffer;
-    if(buffer == ""){
+    if (buffer == "") {
         qDebug() << "update last sync to whenever we sent the data";
         settings.setValue(SETT_LAST_SYNC, getCurrentTime()); // update last sync to whenever we sent the data
     }
@@ -325,7 +324,8 @@ void Comms::getSettings()
 //    loop.exec();
 }
 
-void Comms::settingsReply(QNetworkReply *reply) {
+void Comms::settingsReply(QNetworkReply *reply)
+{
     QByteArray buffer = reply->readAll();
     qDebug() << "Settings Response: " << buffer;
 
@@ -341,6 +341,8 @@ void Comms::settingsReply(QNetworkReply *reply) {
     qInfo() << "SETT idletime: " << settings.value(QString("SETT_WEB_") + QString("idletime")).toInt();
     qInfo() << "SETT logoffline: " << settings.value(QString("SETT_WEB_") + QString("logoffline")).toBool();
     qInfo() << "SETT logofflinemin: " << settings.value(QString("SETT_WEB_") + QString("logofflinemin")).toInt();
-    qInfo() << "SETT dontCollectComputerActivity: " << settings.value(QString("SETT_WEB_") + QString("dontCollectComputerActivity")).toBool();
-    qInfo() << "SETT collectWindowTitles: " << settings.value(QString("SETT_WEB_") + QString("collectWindowTitles")).toBool();
+    qInfo() << "SETT dontCollectComputerActivity: "
+            << settings.value(QString("SETT_WEB_") + QString("dontCollectComputerActivity")).toBool();
+    qInfo() << "SETT collectWindowTitles: "
+            << settings.value(QString("SETT_WEB_") + QString("collectWindowTitles")).toBool();
 }

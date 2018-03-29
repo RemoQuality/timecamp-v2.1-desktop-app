@@ -7,18 +7,19 @@
 
 #include "AppData.h"
 
-class Comms : public QObject {
-    Q_OBJECT
+class Comms : public QObject
+{
+Q_OBJECT
     Q_DISABLE_COPY(Comms)
 
 public:
 
     static Comms &instance();
     explicit Comms(QObject *parent = nullptr);
-    virtual ~Comms(){}
+    virtual ~Comms() {}
 
     void saveApp(AppData *app);
-    void sendAppData(QList<AppData*> *appList);
+    void sendAppData(QList<AppData *> *appList);
     void getUserInfo();
     void getSettings();
 

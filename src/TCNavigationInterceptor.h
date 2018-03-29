@@ -5,9 +5,9 @@
 
 class TCNavigationInterceptor : public QWebEnginePage
 {
-    QWebEnginePage* target;
+    QWebEnginePage *target;
 public:
-    explicit TCNavigationInterceptor(QWebEnginePage* parent);
+    explicit TCNavigationInterceptor(QWebEnginePage *parent);
     bool acceptNavigationRequest(const QUrl &url, NavigationType type, bool isMainFrame) override;
 };
 

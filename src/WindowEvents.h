@@ -23,7 +23,7 @@ protected:
 private:
     unsigned long lastIdleTimestamp = 0;
     unsigned long currentIdleTimestamp = 0;
-    unsigned int switchToIdleTimeAfterMS = 2*60*1000; // 2min default
+    unsigned int switchToIdleTimeAfterMS = 2 * 60 * 1000; // 2min default
     bool shouldShowAwayPopup = true;
     unsigned int showAwayPopupAfterMS = 0; // right away
 };

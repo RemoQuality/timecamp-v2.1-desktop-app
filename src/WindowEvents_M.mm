@@ -19,20 +19,15 @@ unsigned long WindowEvents_M::getIdleTime()
     int64_t idlesecs = -1;
     io_iterator_t iter = 0;
 
-    if (IOServiceGetMatchingServices(kIOMasterPortDefault, IOServiceMatching("IOHIDSystem"), &iter) == KERN_SUCCESS)
-    {
+    if (IOServiceGetMatchingServices(kIOMasterPortDefault, IOServiceMatching("IOHIDSystem"), &iter) == KERN_SUCCESS) {
         io_registry_entry_t entry = IOIteratorNext(iter);
-        if (entry)
-        {
+        if (entry) {
             CFMutableDictionaryRef dict = NULL;
-            if (IORegistryEntryCreateCFProperties(entry, &dict, kCFAllocatorDefault, 0) == KERN_SUCCESS)
-            {
+            if (IORegistryEntryCreateCFProperties(entry, &dict, kCFAllocatorDefault, 0) == KERN_SUCCESS) {
                 CFNumberRef obj = (CFNumberRef) CFDictionaryGetValue(dict, CFSTR("HIDIdleTime"));
-                if (obj)
-                {
+                if (obj) {
                     int64_t nanoseconds = 0;
-                    if (CFNumberGetValue(obj, kCFNumberSInt64Type, &nanoseconds))
-                    {
+                    if (CFNumberGetValue(obj, kCFNumberSInt64Type, &nanoseconds)) {
                         idlesecs = (nanoseconds / 1000000); // Convert from nanoseconds to milliseconds
                     }
                 }
@@ -55,10 +50,10 @@ void WindowEvents_M::run()
 //    timer->start(2*1000);
     while (!QThread::currentThread()->isInterruptionRequested()) {
         // empty loop, waiting for stopping the thread
-        if(!isIdle) {
+        if (!isIdle) {
             this->GetActiveApp();
         }
-        QThread::msleep(1*1000);
+        QThread::msleep(1 * 1000);
     }
 //    timer->stop();
 
@@ -71,23 +66,21 @@ void WindowEvents_M::GetActiveApp()
     QString processName = "";
     QString additionalInfo = "";
 
-    NSAutoreleasePool* pool = [NSAutoreleasePool new];
+    NSAutoreleasePool *pool = [NSAutoreleasePool new];
 
-    NSString* procName = @"";
-    NSString* procName2 = @"";
-    NSArray* runningApps = [[NSWorkspace sharedWorkspace] runningApplications];
+    NSString *procName = @"";
+    NSString *procName2 = @"";
+    NSArray *runningApps = [[NSWorkspace sharedWorkspace] runningApplications];
 
 
-    for (id currApp in runningApps)
-    {
+    for (id currApp in runningApps) {
         /*
          Here we suppose that there is only one active app.
         */
 //        procName2 = [currApp localizedName];
 //        QString buff2 = QString::fromNSString(procName2);
 //        qDebug() << "Buffer: " << buff2;
-        if ([currApp isActive])
-        {
+        if ([currApp isActive]) {
             procName = [currApp localizedName];
             break;
         }
@@ -96,8 +89,7 @@ void WindowEvents_M::GetActiveApp()
     QString buffer = QString::fromNSString(procName);
 //    qDebug() << "Buffer: " << buffer;
 
-    if (!buffer.isEmpty())
-    {
+    if (!buffer.isEmpty()) {
         processName = buffer;
     }
 
@@ -129,14 +121,13 @@ void WindowEvents_M::GetActiveApp()
 QString WindowEvents_M::GetProcWindowName(QString processName)
 {
     QString appTitle;
-    NSAutoreleasePool* pool = [NSAutoreleasePool new];
-    const char* windowNameUtf8 = "";
-    NSString* windowName = @"";
-    NSDictionary* errorDict;
-    NSAppleEventDescriptor* returnDescriptor = NULL;
+    NSAutoreleasePool *pool = [NSAutoreleasePool new];
+    const char *windowNameUtf8 = "";
+    NSString *windowName = @"";
+    NSDictionary *errorDict;
+    NSAppleEventDescriptor *returnDescriptor = NULL;
 
-    NSAppleScript* scriptObject = [[NSAppleScript alloc] initWithSource:
-                                   @"global frontApp, frontAppName, windowTitle, fileURL \n \
+    NSAppleScript *scriptObject = [[NSAppleScript alloc] initWithSource:@"global frontApp, frontAppName, windowTitle, fileURL \n \
                                    set windowTitle to \"\" \n \
                                    set fileURL to \"\" \n \
                                    tell application \"System Events\" \n \
@@ -158,17 +149,15 @@ QString WindowEvents_M::GetProcWindowName(QString processName)
                                    return {frontAppName, windowTitle}"]; //return {frontApp, frontAppName, windowTitle}"];
 
     // Run the AppleScript.
-    returnDescriptor = [scriptObject executeAndReturnError: &errorDict];
+    returnDescriptor = [scriptObject executeAndReturnError:&errorDict];
 //    NSLog(@"DESCRIPTOR %@", returnDescriptor);
 //    NSLog(@"ERROR %@", errorDict); // warning, THROWS ERRORS! breaks app!!!
 
     [scriptObject release];
     NSInteger howMany = [returnDescriptor numberOfItems];
 
-    if([returnDescriptor descriptorType])
-    {
-        if(kAENullEvent != [returnDescriptor descriptorType])
-        {
+    if ([returnDescriptor descriptorType]) {
+        if (kAENullEvent != [returnDescriptor descriptorType]) {
             windowName = [[returnDescriptor descriptorAtIndex:howMany] stringValue];
             appTitle = QString::fromNSString(windowName);
         }
@@ -178,15 +167,15 @@ QString WindowEvents_M::GetProcWindowName(QString processName)
     return appTitle;
 }
 
-QString WindowEvents_M::GetProcNameFromPath(QString processName){
+QString WindowEvents_M::GetProcNameFromPath(QString processName)
+{
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
-    const char* procNameUtf8;
-    NSString* procName;
-    NSDictionary        *errorDict;
-    NSAppleEventDescriptor  *returnDescriptor;
+    const char *procNameUtf8;
+    NSString *procName;
+    NSDictionary *errorDict;
+    NSAppleEventDescriptor *returnDescriptor;
     // WORKING SCRIPT!
-    NSAppleScript *scriptObject = [[NSAppleScript alloc] initWithSource:
-                                   @"tell application \"System Events\" \n \
+    NSAppleScript *scriptObject = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\" \n \
                                    set name_ to name of (info for (path to frontmost application)) as string \n \
                                    end tell \n \
                                    RemoveFromString(name_, \".app\") \n \
@@ -208,15 +197,13 @@ QString WindowEvents_M::GetProcNameFromPath(QString processName){
                                    end try \n \
                                    end RemoveFromString"];
     // Run the AppleScript.
-    returnDescriptor = [scriptObject executeAndReturnError: &errorDict];
+    returnDescriptor = [scriptObject executeAndReturnError:&errorDict];
     //NSLog(@"DESCRIPTOR %@", returnDescriptor);
     [scriptObject release];
 
-    if([returnDescriptor descriptorType])
-    {
+    if ([returnDescriptor descriptorType]) {
         //NSLog(@"Script executed sucessfully.");
-        if(kAENullEvent != [returnDescriptor descriptorType])
-        {
+        if (kAENullEvent != [returnDescriptor descriptorType]) {
             //NSLog(@"descriptorType == %@", NSFileTypeForHFSTypeCode(descriptorType));
             procName = [returnDescriptor stringValue];
             procNameUtf8 = [procName UTF8String];
@@ -236,18 +223,17 @@ QString WindowEvents_M::GetAdditionalInfo(QString processName)
     QString additionalInfo;
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
     bool executed = false;
-    const char* addInfoUtf8;
-    NSString* addInfo;
-    NSDictionary        *errorDict;
-    NSAppleEventDescriptor  *returnDescriptor;
+    const char *addInfoUtf8;
+    NSString *addInfo;
+    NSDictionary *errorDict;
+    NSAppleEventDescriptor *returnDescriptor;
     NSAppleScript *scriptObject;
 
     // gist for some browsers:
     // https://gist.github.com/vitorgalvao/5392178
 
-    if(processName == "google chrome" || processName == "google chrome canary" || processName == "chromium" || processName == "vivaldi")
-    {
-        QString* pom2 = new QString("tell application \"" + processName + "\" \n \
+    if (processName == "google chrome" || processName == "google chrome canary" || processName == "chromium" || processName == "vivaldi") {
+        QString *pom2 = new QString("tell application \"" + processName + "\" \n \
                                       get URL of active tab of first window \n \
                                       end tell");
 
@@ -258,7 +244,7 @@ QString WindowEvents_M::GetAdditionalInfo(QString processName)
 
         NSString* pom = [NSString stringWithUTF8String:cstring_pom2];
          */
-        NSString* pom = pom2->toNSString();
+        NSString *pom = pom2->toNSString();
 
         /*scriptObject = [[NSAppleScript alloc] initWithSource:
                         @"tell application \"Google Chrome\" \n \
@@ -268,52 +254,43 @@ QString WindowEvents_M::GetAdditionalInfo(QString processName)
         executed = true;
 
         delete pom2;
-    }
-    else if(processName=="safari" || processName == "safari technology preview" || processName == "webkit")
-    {
-        QString* pom2 = new QString("tell application \"" + processName + "\" \n \
+    } else if (processName == "safari" || processName == "safari technology preview" || processName == "webkit") {
+        QString *pom2 = new QString("tell application \"" + processName + "\" \n \
                         get URL of current tab of window 1 \n \
                         end tell");
 
-        NSString* pom = pom2->toNSString();
+        NSString *pom = pom2->toNSString();
 
         scriptObject = [[NSAppleScript alloc] initWithSource:pom];
         executed = true;
 
         delete pom2;
-    }
-    else if(processName=="opera")
-    {
-        scriptObject = [[NSAppleScript alloc] initWithSource:
-                        @"tell application \"Opera\" \n \
+    } else if (processName == "opera") {
+        scriptObject = [[NSAppleScript alloc] initWithSource:@"tell application \"Opera\" \n \
                         return URL of front document as string \n \
                         end tell"];
         executed = true;
 
-    }
-    else if(processName=="firefox")
-    {
+    } else if (processName == "firefox") {
         additionalInfo = getCurrentURLFromFirefox();
         qDebug() << "[FirefoxURL] Found: " << additionalInfo;
 
-        executed=false; //this should be false, because we don't have apple script object initialize here
+        executed = false; //this should be false, because we don't have apple script object initialize here
     }
 
-    if(executed) //jesli skrypt wykonal sie, odczytujemy wynik
+    if (executed) //jesli skrypt wykonal sie, odczytujemy wynik
     {
-        returnDescriptor = [scriptObject executeAndReturnError: &errorDict];
+        returnDescriptor = [scriptObject executeAndReturnError:&errorDict];
         //NSLog(@"DESCRIPT %@", returnDescriptor);
         [scriptObject release];
 
-        if([returnDescriptor descriptorType])
-        {
+        if ([returnDescriptor descriptorType]) {
             // The script execution succeeded.
             //NSLog(@"Script executed sucessfully.");
             executed = true;
         }
 
-        if(kAENullEvent != [returnDescriptor descriptorType])
-        {
+        if (kAENullEvent != [returnDescriptor descriptorType]) {
             //NSLog(@"DESCRIPT %@", returnDescriptor);
             //NSLog(@"URL %@", [returnDescriptor stringValue]); //tutaj url
             addInfo = [returnDescriptor stringValue];

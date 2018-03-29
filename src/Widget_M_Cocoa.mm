@@ -3,12 +3,10 @@
 
 @implementation Widget_M_Cocoa
 
-- (id) init
-{
+- (id)init {
     self = [super init];
 
-    if (self)
-    {
+    if (self) {
         widget = [[[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength] retain]; //90 to optymalny rozmiar
 
         widgetText = @"";
@@ -17,8 +15,9 @@
         [widget setTitle:@""];
 
         stdFont = [NSFont fontWithName:@"Courier" size:16];
-        if ([NSFont respondsToSelector:@selector(monospacedDigitSystemFontOfSize:weight:)])
+        if ([NSFont respondsToSelector:@selector(monospacedDigitSystemFontOfSize:weight:)]) {
             stdFont = [NSFont monospacedDigitSystemFontOfSize:14 weight:NSFontWeightRegular];
+        }
         attributesStd = [NSDictionary dictionaryWithObjectsAndKeys:stdFont, NSFontAttributeName, nil];
 
         attributedWidgetText = [[NSAttributedString alloc] initWithString:widgetText attributes:attributesStd];
@@ -31,29 +30,24 @@
     return self;
 }
 
-
-- (void) SetText: (QString) text
-{
+- (void)SetText:(QString)text {
     widgetText = text.toNSString();
 //    [widget.button setTitle:widgetText];
 }
 
-- (void) SetMenu: (QMenu*) menu
-{
-    NSMenu* nsmenu = menu->toNSMenu();
+- (void)SetMenu:(QMenu *)menu {
+    NSMenu *nsmenu = menu->toNSMenu();
     [widget setMenu:nsmenu];
 }
 
-- (void) SetImage: (NSImage*) nsimage
-{
+- (void)SetImage:(NSImage *)nsimage {
     [nsimage setTemplate:YES];
     [widget setImage:nsimage];
 //    [widget.button setImage:nsimage];
 //    widget.button.image = nsimage;
 }
 
-- (void) ShowMe
-{
+- (void)ShowMe {
     attributedWidgetText = [[NSAttributedString alloc] initWithString:widgetText attributes:attributesStd];
     [widget setAttributedTitle:attributedWidgetText];
     [attributedWidgetText release];
@@ -62,8 +56,7 @@
 //    [widget setLength:NSVariableStatusItemLength];
 }
 
-- (void) HideMe
-{
+- (void)HideMe {
     attributedWidgetEmpty = [[NSAttributedString alloc] initWithString:@"" attributes:attributesStd];
     [widget setAttributedTitle:attributedWidgetEmpty];
     [attributedWidgetEmpty release];
@@ -72,8 +65,7 @@
 //    [widget setLength:0];
 }
 
-- (bool) IsHidden
-{
+- (bool)IsHidden {
     return isHidden;
 //    return [widget length] == 0; // equals 0, because of NSVariableStatusItemLength (-1)
 }

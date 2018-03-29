@@ -5,7 +5,6 @@ IConttrolIterator::IConttrolIterator(void)
 {
 }
 
-
 IConttrolIterator::~IConttrolIterator(void)
 {
 }

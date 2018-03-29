@@ -15,9 +15,9 @@
 QString getFirefoxConfigFilePath();
 QString getCurrentURLFromFirefoxConfig(QString &jsonConfig);
 
-void* readFileToMemory(const char* filename, size_t* readSize);
-QString parseJsRecoveryFilePath(const QString& recoveryFilePath);
-QString parseJsonlz4RecoveryFilePath(const QString& recoveryFilePath);
+void *readFileToMemory(const char *filename, size_t *readSize);
+QString parseJsRecoveryFilePath(const QString &recoveryFilePath);
+QString parseJsonlz4RecoveryFilePath(const QString &recoveryFilePath);
 
-bool comparatorGreater(const std::pair<QString, time_t>& left, const std::pair<QString, time_t>& right);
+bool comparatorGreater(const std::pair<QString, time_t> &left, const std::pair<QString, time_t> &right);
 QString getCurrentURLFromFirefox();

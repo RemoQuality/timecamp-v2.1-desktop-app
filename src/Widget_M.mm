@@ -19,7 +19,6 @@ Widget_M::~Widget_M()
     [macWidget release];
 }
 
-
 void Widget_M::setIcon(QString iconPath)
 {
     QPixmap pixmap = QPixmap(iconPath);
@@ -31,12 +30,12 @@ void Widget_M::setIcon(QString iconPath)
         pixelRatio = 2;
     }
 #endif
-    NSImage * nsimage = QtMac::toNSImage(pixmap.scaledToWidth(16 * pixelRatio, Qt::SmoothTransformation));
+    NSImage *nsimage = QtMac::toNSImage(pixmap.scaledToWidth(16 * pixelRatio, Qt::SmoothTransformation));
 
     [macWidget SetImage:nsimage];
 }
 
-void Widget_M::setMenu(QMenu* menu)
+void Widget_M::setMenu(QMenu *menu)
 {
     [macWidget SetMenu:menu];
 }

@@ -4,132 +4,133 @@
 #include <strsafe.h>
 #include <src/WindowEvents_W.h>
 
-class UIAControlItem: public IControlItem
+class UIAControlItem : public IControlItem
 {
 public:
-	IUIAutomationElement* node;	
-	UIAControlItem(IControlItem * parent = NULL, IUIAutomationElement* node = NULL):IControlItem(parent), node(node){};
-	std::wstring getDescription();
-	std::wstring getRoleText();
-	long getRole();
-	std::wstring getName();
-	std::wstring getValue();
+    IUIAutomationElement *node;
+    UIAControlItem(IControlItem *parent = NULL, IUIAutomationElement *node = NULL)
+            : IControlItem(parent), node(node) {};
+    std::wstring getDescription();
+    std::wstring getRoleText();
+    long getRole();
+    std::wstring getName();
+    std::wstring getValue();
 
 };
 
-class UIAControlIterator: public IConttrolIterator{
+class UIAControlIterator : public IConttrolIterator
+{
 public:
-	static bool informError;
-	int timeout;
+    static bool informError;
+    int timeout;
 
-	UIAControlIterator() :IConttrolIterator()
-	{
-		this->timeout = 500;
-	}
+    UIAControlIterator() : IConttrolIterator()
+    {
+        this->timeout = 500;
+    }
 
-	template <class C>
-	void iterate( HWND currenthwnd, C* callbackObj, bool (C::*callbackFunction)(IControlItem * node, void * userData), void * userData = NULL, bool fromLast = false )
-	{
-		if(WindowEvents_W::getWindowsVersion() < 6)
-			return;
+    template<class C>
+    void iterate(HWND currenthwnd, C *callbackObj, bool (C::*callbackFunction)(IControlItem *node, void *userData),
+                 void *userData = NULL, bool fromLast = false)
+    {
+        if (WindowEvents_W::getWindowsVersion() < 6) {
+            return;
+        }
 
-		SYSTEMTIME time;
-		GetSystemTime(&time);
-		this->started = (time.wSecond * 1000) + time.wMilliseconds;
+        SYSTEMTIME time;
+        GetSystemTime(&time);
+        this->started = (time.wSecond * 1000) + time.wMilliseconds;
 
-		HRESULT res = CoInitialize(NULL);
-		if (!SUCCEEDED(res))
-		{
-			if (!UIAControlIterator::informError)
-			{
-				UIAControlIterator::informError = true;
-				qDebug("Couldn't initialize COM library %x", res);
-			}
-			return;
-		}
-			
-		res = InitializeUIAutomation(&g_pAutomation);
-		if (!SUCCEEDED(res))
-		{
-			if (!UIAControlIterator::informError)
-			{
-				UIAControlIterator::informError = true;
-				qDebug("Couldn't initialize UIA %x", res);
-			}
+        HRESULT res = CoInitialize(NULL);
+        if (!SUCCEEDED(res)) {
+            if (!UIAControlIterator::informError) {
+                UIAControlIterator::informError = true;
+                qDebug("Couldn't initialize COM library %x", res);
+            }
+            return;
+        }
 
-			CoUninitialize();
-			return;
-		}
-		
-		IUIAutomationElement * elem;
-		res = g_pAutomation->ElementFromHandle(currenthwnd, &elem);
-		if (elem && SUCCEEDED(res))
-		{
-			UIAControlItem root(NULL, elem);
-			iterateRecursion(&root, callbackObj,callbackFunction, userData, fromLast);
-		}
-		CoUninitialize();
-	}
+        res = InitializeUIAutomation(&g_pAutomation);
+        if (!SUCCEEDED(res)) {
+            if (!UIAControlIterator::informError) {
+                UIAControlIterator::informError = true;
+                qDebug("Couldn't initialize UIA %x", res);
+            }
+
+            CoUninitialize();
+            return;
+        }
+
+        IUIAutomationElement *elem;
+        res = g_pAutomation->ElementFromHandle(currenthwnd, &elem);
+        if (elem && SUCCEEDED(res)) {
+            UIAControlItem root(NULL, elem);
+            iterateRecursion(&root, callbackObj, callbackFunction, userData, fromLast);
+        }
+        CoUninitialize();
+    }
 
 private:
-	long int started;
-	IUIAutomation * g_pAutomation;
-	
-	HRESULT InitializeUIAutomation(IUIAutomation **ppAutomation)
-	{
-		return CoCreateInstance(CLSID_CUIAutomation, NULL,
-			CLSCTX_INPROC_SERVER, IID_IUIAutomation, 
-			reinterpret_cast<void**>(ppAutomation));
-	}
+    long int started;
+    IUIAutomation *g_pAutomation;
 
-	template <class C>
-	bool iterateRecursion(UIAControlItem * parent, C* callbackObj, bool (C::*callbackFunction)(IControlItem * node, void * userData), void * userData, bool fromLast)
-	{
-		bool result = true;
-		if (parent == NULL)
-			return result;
+    HRESULT InitializeUIAutomation(IUIAutomation **ppAutomation)
+    {
+        return CoCreateInstance(CLSID_CUIAutomation, NULL, CLSCTX_INPROC_SERVER, IID_IUIAutomation, reinterpret_cast<void **>(ppAutomation));
+    }
 
-		SYSTEMTIME time;
-		GetSystemTime(&time);
-		long int miliseconds = (time.wSecond * 1000) + time.wMilliseconds;
-		if (miliseconds - this->started > this->timeout)
-			return false;
+    template<class C>
+    bool iterateRecursion(UIAControlItem *parent, C *callbackObj,
+                          bool (C::*callbackFunction)(IControlItem *node, void *userData), void *userData,
+                          bool fromLast)
+    {
+        bool result = true;
+        if (parent == NULL) {
+            return result;
+        }
 
-		IUIAutomationTreeWalker* pControlWalker = NULL;
-		IUIAutomationElement* pNode = NULL;
+        SYSTEMTIME time;
+        GetSystemTime(&time);
+        long int miliseconds = (time.wSecond * 1000) + time.wMilliseconds;
+        if (miliseconds - this->started > this->timeout) {
+            return false;
+        }
 
-		g_pAutomation->get_ControlViewWalker(&pControlWalker);
-		if (pControlWalker != NULL){
-			pControlWalker->GetFirstChildElement(parent->node, &pNode);
-			if (pNode != NULL) {
-				while (pNode)
-				{
-					UIAControlItem node(parent, pNode);
+        IUIAutomationTreeWalker *pControlWalker = NULL;
+        IUIAutomationElement *pNode = NULL;
 
-					result = (callbackObj->*callbackFunction)(&node, userData);
+        g_pAutomation->get_ControlViewWalker(&pControlWalker);
+        if (pControlWalker != NULL) {
+            pControlWalker->GetFirstChildElement(parent->node, &pNode);
+            if (pNode != NULL) {
+                while (pNode) {
+                    UIAControlItem node(parent, pNode);
 
-					if(result)
-					{
-						result = iterateRecursion(&node, callbackObj, callbackFunction, userData, fromLast);
-					}
-					
-					IUIAutomationElement* pNext = NULL;
+                    result = (callbackObj->*callbackFunction)(&node, userData);
 
-					if (result){
-						pControlWalker->GetNextSiblingElement(pNode, &pNext);
-					}
-					pNode->Release();
-					pNode = pNext;
-				}
-			}
-		}
+                    if (result) {
+                        result = iterateRecursion(&node, callbackObj, callbackFunction, userData, fromLast);
+                    }
 
-		if (pControlWalker != NULL)
-			pControlWalker->Release();
+                    IUIAutomationElement *pNext = NULL;
 
-		if (pNode != NULL)
-			pNode->Release();
+                    if (result) {
+                        pControlWalker->GetNextSiblingElement(pNode, &pNext);
+                    }
+                    pNode->Release();
+                    pNode = pNext;
+                }
+            }
+        }
 
-		return result;
-	}
+        if (pControlWalker != NULL) {
+            pControlWalker->Release();
+        }
+
+        if (pNode != NULL) {
+            pNode->Release();
+        }
+
+        return result;
+    }
 };

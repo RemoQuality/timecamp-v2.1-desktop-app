@@ -6,9 +6,7 @@
 #include "WindowEventsManager.h"
 
 
-MainWidget::MainWidget(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::MainWidget)
+MainWidget::MainWidget(QWidget *parent) : QWidget(parent), ui(new Ui::MainWidget)
 {
     ui->setupUi(this);
 
@@ -29,7 +27,7 @@ MainWidget::MainWidget(QWidget *parent) :
     this->setMinimumSize(QSize(350, 500));
 
 #ifdef Q_OS_MACOS
-    this->setWindowFlags( Qt::Sheet | Qt::WindowCloseButtonHint | Qt::WindowTitleHint | Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint );
+    this->setWindowFlags(Qt::Sheet | Qt::WindowCloseButtonHint | Qt::WindowTitleHint | Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
 #else
     this->setWindowFlags( Qt::WindowStaysOnTopHint );
 #endif
@@ -44,7 +42,8 @@ MainWidget::~MainWidget()
     delete ui;
 }
 
-void MainWidget::init(){
+void MainWidget::init()
+{
     this->setWindowTitle(WINDOW_NAME);
     this->setupWebview(); // starts the embedded webpage
     this->wasTheWindowLeftOpened();
@@ -78,7 +77,7 @@ void MainWidget::closeEvent(QCloseEvent *event)
 
 void MainWidget::twoSecTimerTimeout()
 {
-    if(loggedIn) {
+    if (loggedIn) {
         fetchAPIkey();
         checkIsTimerRunning();
         emit checkIsIdle();
@@ -139,7 +138,7 @@ void MainWidget::handleLoadStarted()
 void MainWidget::handleLoadProgress(int progress)
 {
 //    qDebug() << "cursor: load progress " << progress;
-    if(progress == 100){
+    if (progress == 100) {
         QGuiApplication::restoreOverrideCursor(); // pop from the cursor stack
     }
 }
@@ -153,7 +152,7 @@ void MainWidget::handleLoadFinished(bool ok)
 
 void MainWidget::wasTheWindowLeftOpened()
 {
-    if(settings.value(SETT_WAS_WINDOW_LEFT_OPENED, true).toBool()){
+    if (settings.value(SETT_WAS_WINDOW_LEFT_OPENED, true).toBool()) {
         this->open();
     }
 }
@@ -203,7 +202,7 @@ void MainWidget::open()
     settings.sync();
     restoreGeometry(settings.value("mainWindowGeometry").toByteArray());
     show();
-    setWindowState( (windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
+    setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
     raise();  // for MacOS
     activateWindow(); // for Windows
     raise();  // for MacOS
@@ -233,15 +232,15 @@ void MainWidget::goToTimerPage()
     if (!this->checkIfOnTimerPage()) {
         QEventLoop loop;
         QMetaObject::Connection conn1 = QObject::connect(QTWEPage, &QWebEnginePage::loadFinished, &loop, &QEventLoop::quit);
-        QMetaObject::Connection conn2 = QObject::connect(QTWEPage, &QWebEnginePage::loadProgress,
-                                                         [this, &loop]( const int &newValue ) {
-                                                             qDebug() << "Load progress: " << newValue;
-                                                             if(newValue == 100) {
-                                                                 QThread::msleep(128);
-                                                                 loop.quit();
-                                                             }
-                                                         }
-        );
+        QMetaObject::Connection conn2 = QObject::connect(QTWEPage, &QWebEnginePage::loadProgress, [this, &loop](
+                const int &newValue)
+        {
+            qDebug() << "Load progress: " << newValue;
+            if (newValue == 100) {
+                QThread::msleep(128);
+                loop.quit();
+            }
+        });
         QTWEPage->load(QUrl(APPLICATION_URL));
         loop.exec();
         QObject::disconnect(conn1);
@@ -252,8 +251,9 @@ void MainWidget::goToTimerPage()
     }
 }
 
-void MainWidget::goToAwayPage() {
-    if(!this->isVisible()){
+void MainWidget::goToAwayPage()
+{
+    if (!this->isVisible()) {
         this->open();
     }
 //    emit windowStatusChanged(true);
@@ -264,7 +264,7 @@ void MainWidget::startTask()
 {
     goToTimerPage();
     this->stopTask(); // stop the last timer
-    if(!this->isVisible()){
+    if (!this->isVisible()) {
         this->open();
     }
 //    emit windowStatusChanged(true);
@@ -280,8 +280,9 @@ void MainWidget::stopTask()
 
 void MainWidget::checkIsTimerRunning()
 {
-    QTWEPage->runJavaScript("angular.element(document.body).injector().get('TimerService').timer.isTimerRunning",
-    [this](const QVariant &v) {
+    QTWEPage->runJavaScript("angular.element(document.body).injector().get('TimerService').timer.isTimerRunning", [this](
+            const QVariant &v)
+    {
 //        qDebug() << "Timer running: " << v.toString();
         setIsTimerRunning(v.toBool());
     });
@@ -290,8 +291,8 @@ void MainWidget::checkIsTimerRunning()
 void MainWidget::fetchAPIkey()
 {
 //    QTWEPage->runJavaScript("await window.apiService.getToken()",
-    QTWEPage->runJavaScript("window.apiService.getToken().$$state.value",
-    [this](const QVariant &v) {
+    QTWEPage->runJavaScript("window.apiService.getToken().$$state.value", [this](const QVariant &v)
+    {
 //        qDebug() << "API Key: " << v.toString();
         setApiKey(v.toString());
     });
@@ -300,25 +301,25 @@ void MainWidget::fetchAPIkey()
 void MainWidget::fetchTimerName()
 {
     QTWEPage->runJavaScript("var task = TC.TimeTracking.getTask(angular.element(document.body).injector().get('TimerService').timer.task_id);"
-                                "if(task!=null){task.name}",
-    [this](const QVariant &v) {
+                            "if(task!=null){task.name}", [this](const QVariant &v)
+                            {
 //        qDebug() << "Timer name: " << v.toString();
-        setTimerName(v.toString());
-    });
+                                setTimerName(v.toString());
+                            });
 }
-
 
 void MainWidget::quit()
 {
     QGuiApplication::quit();
 }
 
-void MainWidget::setApiKey(const QString &apiKey) {
+void MainWidget::setApiKey(const QString &apiKey)
+{
     settings.setValue(SETT_APIKEY, apiKey); // save apikey to settings
 }
 
-
-void MainWidget::setTimerName(const QString &timerName) {
+void MainWidget::setTimerName(const QString &timerName)
+{
     QFont x = QFont();
     QFontMetrics metrix(x);
     int width = 100; // pixels
@@ -326,11 +327,12 @@ void MainWidget::setTimerName(const QString &timerName) {
     emit timerStatusChanged(true, MainWidget::timerName); // reenable task stopping
 }
 
-void MainWidget::setIsTimerRunning(bool isTimerRunning) {
+void MainWidget::setIsTimerRunning(bool isTimerRunning)
+{
     MainWidget::timerIsRunning = isTimerRunning;
-    if(isTimerRunning){
+    if (isTimerRunning) {
         fetchTimerName(); // this will make menu say "Stop XYZ timer"
-    }else{ // no timer running
+    } else { // no timer running
         emit timerStatusChanged(false, "timer"); // disable the option - gray it out;  make the option say "Stop timer"
     }
 }
