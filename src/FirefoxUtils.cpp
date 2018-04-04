@@ -112,8 +112,10 @@ QString parseJsonlz4RecoveryFilePath(const QString &recoveryFilePath)
 
     if (!(encryptedData = (char *) readFileToMemory(cstr_recoveryFilePath, &readSize))) {
         qDebug() << "[FirefoxUtils::parseJsonlz4RecoveryFilePath] Can't read file: " + recoveryFilePath;
+        delete cstr_recoveryFilePath;
         return "";
     }
+    delete cstr_recoveryFilePath;
 
     if (readSize < magic_size + decomp_size || memcmp(mozlz4_magic, encryptedData, magic_size)) {
         qDebug() << "[FirefoxUtils::parseJsonlz4RecoveryFilePath] Unsupported file format: " + recoveryFilePath;
@@ -133,9 +135,11 @@ QString parseJsonlz4RecoveryFilePath(const QString &recoveryFilePath)
     int decryptedDataSize = LZ4_decompress_safe(encryptedData + i, decryptedData, (int) (readSize - i), (int) outputBufferSize);
     if (decryptedDataSize < 0) {
         qDebug() << "[FirefoxUtils::parseJsonlz4RecoveryFilePath] Failed to decompress a file: " + recoveryFilePath;
+        free(decryptedData);
         return "";
     }
     QString qDecryptedData = QString(decryptedData);
+    free(decryptedData);
     int decryptedDataOriginalSize = qDecryptedData.length();
 
     int indexOfLastProperChar = qDecryptedData.lastIndexOf("}");
