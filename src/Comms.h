@@ -27,6 +27,9 @@ public:
     void setCurrentTime(qint64 current_time);
     void timedUpdates();
 
+    void netRequest(QNetworkRequest, QNetworkAccessManager::Operation,
+                    void (Comms::*)(QNetworkReply *), QByteArray);
+
     bool isApiKeyOK();
 
 private:
@@ -46,5 +49,8 @@ public slots:
     void userInfoReply(QNetworkReply *reply);
     void settingsReply(QNetworkReply *reply);
 };
+
+typedef void (Comms::*ReplyHandler)(QNetworkReply *reply);
+// https://isocpp.org/wiki/faq/pointers-to-members#typedef-for-ptr-to-memfn
 
 #endif // COMMS_H

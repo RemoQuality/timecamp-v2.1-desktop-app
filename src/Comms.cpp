@@ -167,22 +167,7 @@ void Comms::sendAppData(QList<AppData *> *appList)
     request.setRawHeader("Content-Type", "application/x-www-form-urlencoded");
     request.setRawHeader("Content-Length", postDataSize);
 
-    QNetworkAccessManager *m_qnam = new QNetworkAccessManager();
-    m_qnam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
-//    connect(m_qnam, SIGNAL(finished(QNetworkReply *)), this, SLOT(appDataReply(QNetworkReply *)));
-    connect(m_qnam, &QNetworkAccessManager::finished, this, &Comms::appDataReply);
-
-
-//    qDebug() << "JSON String: " << jsonString;
-
-// Use QNetworkReply * QNetworkAccessManager::post(const QNetworkRequest & request, const QByteArray & data); to send your request. Qt will rearrange everything correctly.
-    QNetworkReply *reply = m_qnam->post(request, jsonString);
-
-    QEventLoop loop;
-    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-    loop.exec();
-    reply->deleteLater();
-    m_qnam->deleteLater();
+    this->netRequest(request, QNetworkAccessManager::PostOperation, &Comms::appDataReply, jsonString);
 }
 
 void Comms::appDataReply(QNetworkReply *reply)
@@ -228,17 +213,7 @@ void Comms::getUserInfo()
     request.setRawHeader("User-Agent", CONN_USER_AGENT);
     request.setRawHeader(CONN_CUSTOM_HEADER_NAME, CONN_CUSTOM_HEADER_VALUE);
 
-    QNetworkAccessManager *m_qnam = new QNetworkAccessManager();
-    m_qnam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
-    connect(m_qnam, &QNetworkAccessManager::finished, this, &Comms::userInfoReply);
-
-    QNetworkReply *reply = m_qnam->get(request);
-
-    QEventLoop loop;
-    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-    loop.exec();
-    reply->deleteLater();
-    m_qnam->deleteLater();
+    this->netRequest(request, QNetworkAccessManager::GetOperation, &Comms::userInfoReply, "");
 }
 
 void Comms::userInfoReply(QNetworkReply *reply)
@@ -327,17 +302,7 @@ void Comms::getSettings()
     request.setRawHeader("User-Agent", CONN_USER_AGENT);
     request.setRawHeader(CONN_CUSTOM_HEADER_NAME, CONN_CUSTOM_HEADER_VALUE);
 
-    QNetworkAccessManager *m_qnam = new QNetworkAccessManager();
-    m_qnam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
-    connect(m_qnam, &QNetworkAccessManager::finished, this, &Comms::settingsReply);
-
-    QNetworkReply *reply = m_qnam->get(request);
-
-    QEventLoop loop;
-    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-    loop.exec();
-    reply->deleteLater();
-    m_qnam->deleteLater();
+    this->netRequest(request, QNetworkAccessManager::GetOperation, &Comms::settingsReply, "");
 }
 
 void Comms::settingsReply(QNetworkReply *reply)
@@ -365,4 +330,29 @@ void Comms::settingsReply(QNetworkReply *reply)
             << settings.value(QString("SETT_WEB_") + QString("dontCollectComputerActivity")).toBool();
     qInfo() << "SETT collectWindowTitles: "
             << settings.value(QString("SETT_WEB_") + QString("collectWindowTitles")).toBool();
+}
+
+void Comms::netRequest(QNetworkRequest request, QNetworkAccessManager::Operation netOp, ReplyHandler callback, QByteArray data)
+{
+    auto *qnam = new QNetworkAccessManager();
+    qnam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
+    connect(qnam, &QNetworkAccessManager::finished, this, callback);
+
+    qDebug() << "Network op: " << netOp;
+    qDebug() << "Request URL: " << request.url().toString();
+
+    QNetworkReply *reply;
+    if(netOp == QNetworkAccessManager::GetOperation) {
+        reply = qnam->get(request);
+    }else if(netOp == QNetworkAccessManager::PostOperation) {
+        reply = qnam->post(request, data);
+    }
+
+    QEventLoop loop;
+    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+    delete reply;
+    delete qnam;
+//    reply->deleteLater(); // this was sometimes deleting wrong reply!
+//    qnam->deleteLater(); // and this was dropping wrong qnam...
 }
