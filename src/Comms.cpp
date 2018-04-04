@@ -182,10 +182,16 @@ void Comms::sendAppData(QList<AppData *> *appList)
     connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
     loop.exec();
     reply->deleteLater();
+    m_qnam->deleteLater();
 }
 
 void Comms::appDataReply(QNetworkReply *reply)
 {
+    if(reply->error() != QNetworkReply::NoError){
+        qInfo() << "Network error: " << reply->errorString();
+        return;
+    }
+
     QByteArray buffer = reply->readAll();
     qDebug() << "AppData Response: " << buffer;
     if (buffer == "") {
@@ -232,10 +238,16 @@ void Comms::getUserInfo()
     connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
     loop.exec();
     reply->deleteLater();
+    m_qnam->deleteLater();
 }
 
 void Comms::userInfoReply(QNetworkReply *reply)
 {
+    if(reply->error() != QNetworkReply::NoError){
+        qInfo() << "Network error: " << reply->errorString();
+        return;
+    }
+
     QByteArray buffer = reply->readAll();
     qDebug() << "UserInfo Response: " << buffer;
 
@@ -325,10 +337,15 @@ void Comms::getSettings()
     connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
     loop.exec();
     reply->deleteLater();
+    m_qnam->deleteLater();
 }
 
 void Comms::settingsReply(QNetworkReply *reply)
 {
+    if(reply->error() != QNetworkReply::NoError){
+        qInfo() << "Network error: " << reply->errorString();
+        return;
+    }
     QByteArray buffer = reply->readAll();
     qDebug() << "Settings Response: " << buffer;
 
