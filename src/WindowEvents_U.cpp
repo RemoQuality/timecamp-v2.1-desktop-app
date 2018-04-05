@@ -87,7 +87,19 @@ void WindowEvents_U::run()
         XNextEvent(display, &event);
         if (event.type == PropertyNotify) {
             if (event.xproperty.atom == NET_ACTIVE_WINDOW || event.xproperty.atom == NET_WM_NAME || event.xproperty.atom == WM_NAME) {
-                status = XGetWindowProperty(display, root, NET_ACTIVE_WINDOW, 0, (~0L), False, AnyPropertyType, &actual_type, &actual_format, &nitems, &bytes, (unsigned char **) &data);
+                status = XGetWindowProperty(
+                    display,
+                    root,
+                    NET_ACTIVE_WINDOW,
+                    0,
+                    (~0L),
+                    False,
+                    AnyPropertyType,
+                    &actual_type,
+                    &actual_format,
+                    &nitems,
+                    &bytes,
+                    (unsigned char**)&data);
 
                 if (status != Success) {
                     fprintf(stderr, "status = %d\n", status);
@@ -103,14 +115,38 @@ void WindowEvents_U::run()
                     XSelectInput(display, xwindowid_curr, PropertyChangeMask);
                 }
 
-                status = XGetWindowProperty(display, xwindowid_curr, NET_WM_NAME, 0, (~0L), False, AnyPropertyType, &actual_type, &actual_format, &nitems, &bytes, &window_name);
+                status = XGetWindowProperty(
+                    display,
+                    xwindowid_curr,
+                    NET_WM_NAME,
+                    0,
+                    (~0L),
+                    False,
+                    AnyPropertyType,
+                    &actual_type,
+                    &actual_format,
+                    &nitems,
+                    &bytes,
+                    &window_name);
 
                 if (status != Success) {
                     fprintf(stderr, "status = %d\n", status);
                     exit(1);
                 }
 
-                status = XGetWindowProperty(display, xwindowid_curr, NET_WM_PID, 0, (~0L), False, AnyPropertyType, &actual_type, &actual_format, &nitems, &bytes, &pid);
+                status = XGetWindowProperty(
+                    display,
+                    xwindowid_curr,
+                    NET_WM_PID,
+                    0,
+                    (~0L),
+                    False,
+                    AnyPropertyType,
+                    &actual_type,
+                    &actual_format,
+                    &nitems,
+                    &bytes,
+                    &pid);
 
                 if (status != Success) {
                     fprintf(stderr, "status = %d\n", status);
@@ -120,15 +156,15 @@ void WindowEvents_U::run()
                 long longpid = longarr[0];
 
                 std::string command = "";
-                command += "ps -q ";
+                command += "ps ";
+                command += " -o comm= ";
                 command += QString::number(longpid).toStdString();
-                command += " -o comm=\"\"";
 
 //                qInfo() << QString::fromStdString(command);
 
                 app_name = execCommand(command.c_str());
 
-                logAppName(QString::fromStdString(app_name), QString::fromUtf8((char *) window_name));
+                logAppName(QString::fromStdString(app_name).trimmed(), QString::fromUtf8((char*)window_name));
             }
         }
     }
