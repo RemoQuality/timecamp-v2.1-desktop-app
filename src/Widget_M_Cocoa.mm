@@ -7,7 +7,7 @@
     self = [super init];
 
     if (self) {
-        widget = [[[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength] retain]; //90 to optymalny rozmiar
+        widget = [[NSStatusBar.systemStatusBar statusItemWithLength:NSVariableStatusItemLength] retain]; //90 to optymalny rozmiar
 
         widgetText = @"";
         [widget setHighlightMode:YES];
@@ -18,9 +18,9 @@
         if ([NSFont respondsToSelector:@selector(monospacedDigitSystemFontOfSize:weight:)]) {
             stdFont = [NSFont monospacedDigitSystemFontOfSize:14 weight:NSFontWeightRegular];
         }
-        attributesStd = [NSDictionary dictionaryWithObjectsAndKeys:stdFont, NSFontAttributeName, nil];
+        attributesStd = @{NSFontAttributeName: stdFont};
 
-        attributedWidgetText = [[NSAttributedString alloc] initWithString:widgetText attributes:attributesStd];
+        attributedWidgetText = [NSAttributedString.alloc initWithString:widgetText attributes:attributesStd];
 
         [widget setAttributedTitle:attributedWidgetText];
 
@@ -41,14 +41,18 @@
 }
 
 - (void)SetImage:(NSImage *)nsimage {
-    [nsimage setTemplate:YES];
+    [nsimage lockFocus];
     [widget setImage:nsimage];
+//    [nsimage setScalesWhenResized:YES];
+    [nsimage setSize: NSMakeSize(16, 16)];
+    [nsimage setTemplate:YES];
+    [nsimage unlockFocus];
 //    [widget.button setImage:nsimage];
 //    widget.button.image = nsimage;
 }
 
 - (void)ShowMe {
-    attributedWidgetText = [[NSAttributedString alloc] initWithString:widgetText attributes:attributesStd];
+    attributedWidgetText = [NSAttributedString.alloc initWithString:widgetText attributes:attributesStd];
     [widget setAttributedTitle:attributedWidgetText];
     [attributedWidgetText release];
     isHidden = false;
@@ -57,7 +61,7 @@
 }
 
 - (void)HideMe {
-    attributedWidgetEmpty = [[NSAttributedString alloc] initWithString:@"" attributes:attributesStd];
+    attributedWidgetEmpty = [NSAttributedString.alloc initWithString:@"" attributes:attributesStd];
     [widget setAttributedTitle:attributedWidgetEmpty];
     [attributedWidgetEmpty release];
     isHidden = true;

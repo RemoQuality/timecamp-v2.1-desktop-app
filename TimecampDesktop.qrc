@@ -5,6 +5,5 @@
         <file>res/AppIcon.ico</file>
         <file>res/AppIcon.icns</file>
         <file>res/AppIcon_Dark.png</file>
-        <file>res/AppIcon_Dark@2x.png</file>
     </qresource>
 </RCC>

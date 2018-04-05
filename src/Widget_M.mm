@@ -23,13 +23,14 @@ void Widget_M::setIcon(QString iconPath)
 {
     QPixmap pixmap = QPixmap(iconPath);
 //    pixmap.setMask(pixmap.createHeuristicMask());
-    qreal commaRatio = ((QGuiApplication *) QCoreApplication::instance())->devicePixelRatio();
-#ifdef Q_OS_MACOS
-    if (commaRatio > 1.0f) {
-        pixmap.setDevicePixelRatio(commaRatio);
-    }
-#endif
-    NSImage *nsimage = QtMac::toNSImage(pixmap.scaledToHeight(16, Qt::FastTransformation));
+//    qreal commaRatio = ((QGuiApplication *) QCoreApplication::instance())->devicePixelRatio();
+//#ifdef Q_OS_MACOS
+//    if (commaRatio > 1.0f) {
+//        pixmap.setDevicePixelRatio(commaRatio);
+//    }
+//#endif
+    NSImage *nsimage = QtMac::toNSImage(pixmap.scaledToWidth(32, Qt::SmoothTransformation));
+//    NSImage *nsimage = QtMac::toNSImage(pixmap);
 
     [macWidget SetImage:nsimage];
 }
