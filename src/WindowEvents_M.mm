@@ -69,7 +69,6 @@ void WindowEvents_M::GetActiveApp()
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
 
     NSString *procName = @"";
-    NSString *procName2 = @"";
     NSArray *runningApps = [[NSWorkspace sharedWorkspace] runningApplications];
 
 
@@ -80,7 +79,7 @@ void WindowEvents_M::GetActiveApp()
 //        procName2 = [currApp localizedName];
 //        QString buff2 = QString::fromNSString(procName2);
 //        qDebug() << "Buffer: " << buff2;
-        if ([currApp isActive]) {
+        if ([currApp isActive] != 0) {
             procName = [currApp localizedName];
             break;
         }
