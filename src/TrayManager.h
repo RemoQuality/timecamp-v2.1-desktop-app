@@ -36,7 +36,6 @@ public:
 
     void updateStopMenu(bool, QString);
     void loginLogout(bool, QString);
-    void openCloseWindowText(bool);
 
 signals:
     void pcActivitiesValueChanged(bool);
