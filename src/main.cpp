@@ -18,7 +18,7 @@
 #include "DataCollector/WindowEvents.h"
 #include "WindowEventsManager.h"
 
-#include "vendor/de/skycoder42/qhotkey/QHotkey/qhotkey.h"
+#include "third-party/vendor/de/skycoder42/qhotkey/QHotkey/qhotkey.h"
 
 
 void firstRun()

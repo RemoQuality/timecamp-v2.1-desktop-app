@@ -137,7 +137,7 @@ if (APPLE)
 endif ()
 
 # QHotkey
-set(QHOTKEY_PATH "vendor/de/skycoder42/qhotkey/QHotkey")
+set(QHOTKEY_PATH "third-party/vendor/de/skycoder42/qhotkey/QHotkey")
 list(APPEND SOURCE_FILES
         "${QHOTKEY_PATH}/QHotkey"
         "${QHOTKEY_PATH}/qhotkey.cpp"
