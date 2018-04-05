@@ -268,8 +268,19 @@ void MainWidget::startTask()
         this->open();
     }
 //    emit windowStatusChanged(true);
-    this->runJSinPage("if($('.btn-timer').text().trim().toLowerCase() == 'start timer') { $('.btn-timer').click(); }"); // start new timer
-//    this->runJSinPage("$('#timer-task-picker').click();"); // task picker toggle
+
+    // if on manual page, switch to "start timer" page
+    this->runJSinPage("if($('.btn-timer').text().trim().toLowerCase() == 'add time entry') { "
+                      "$('.btn-timer').siblings('.btn-link').click();"
+                      "}"
+    );
+
+    // actually start timer
+    this->runJSinPage("if($('.btn-timer').text().trim().toLowerCase() == 'start timer') { "
+                      "$('.btn-timer').click(); "
+                      "}"); // start new timer
+
+//    this->runJSinPage("$('#timer-task-picker').click();"); // task picker toggle is now launched atuomatically
 }
 
 void MainWidget::stopTask()
