@@ -1,5 +1,5 @@
 #include "TCRequestInterceptor.h"
-#include "Settings.h"
+#include "src/Settings.h"
 
 TCRequestInterceptor::TCRequestInterceptor(QObject *p) : QWebEngineUrlRequestInterceptor(p)
 {
