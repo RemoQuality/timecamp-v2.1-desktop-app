@@ -11,12 +11,12 @@
 #endif
 
 #include "Settings.h"
+#include "Autorun.h"
 #include "MainWidget.h"
 #include "Comms.h"
-#include "WindowEvents.h"
-#include "WindowEventsManager.h"
 #include "TrayManager.h"
-#include "Autorun.h"
+#include "DataCollector/WindowEvents.h"
+#include "WindowEventsManager.h"
 
 #include "vendor/de/skycoder42/qhotkey/QHotkey/qhotkey.h"
 

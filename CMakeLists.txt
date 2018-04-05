@@ -88,14 +88,14 @@ list(APPEND SOURCE_FILES
         "src/WindowEventsManager.cpp"
         "src/TrayManager.cpp"
         "src/third-party/mozilla_lz4/lz4.c"
-        "src/WindowEvents.cpp"
+        "src/DataCollector/WindowEvents.cpp"
         "src/Widget.cpp"
         )
 
 
 if (WIN32)
     list(APPEND SOURCE_FILES
-            "src/WindowEvents_W.cpp"
+            "src/DataCollector/WindowEvents_W.cpp"
             "src/ControlIterator/IControlIterator.cpp"
             "src/ControlIterator/AccControlIterator.cpp"
             "src/ControlIterator/UIAControlIterator.cpp"
@@ -114,7 +114,7 @@ endif ()
 
 if (UNIX AND NOT APPLE)
     list(APPEND SOURCE_FILES
-            "src/WindowEvents_U.cpp"
+            "src/DataCollector/WindowEvents_U.cpp"
             )
 
     list(APPEND TC_LIBS
@@ -124,7 +124,7 @@ endif ()
 
 if (APPLE)
     list(APPEND SOURCE_FILES
-            "src/WindowEvents_M.mm"
+            "src/DataCollector/WindowEvents_M.mm"
             "src/Utils_M.mm"
             "src/Widget_M.mm"
             "src/Widget_M_Cocoa.mm"

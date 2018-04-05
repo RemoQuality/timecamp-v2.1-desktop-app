@@ -1,8 +1,7 @@
 #ifndef THEGUI_WINDOWEVENTSMANAGER_H
 #define THEGUI_WINDOWEVENTSMANAGER_H
 
-#include "WindowEvents.h"
-#include <QThread>
+#include "DataCollector/WindowEvents.h"
 
 class WindowEventsManager : public QObject
 {
@@ -13,7 +12,7 @@ public:
 
     static WindowEventsManager &instance();
     explicit WindowEventsManager(QObject *parent = nullptr);
-    virtual ~WindowEventsManager() {}
+    virtual ~WindowEventsManager() = default;
     WindowEvents *getCaptureEventsThread() const;
 
 signals:
