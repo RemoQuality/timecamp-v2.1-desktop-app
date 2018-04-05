@@ -9,13 +9,11 @@
 
 
 #ifdef Q_OS_LINUX
-#include "WindowEvents_U.h"
+#include "DataCollector/WindowEvents_U.h"
 #elif defined(Q_OS_WIN)
-#include "WindowEvents_W.h"
+#include "DataCollector/WindowEvents_W.h"
 #else
-
-#include "WindowEvents_M.h"
-
+#include "DataCollector/WindowEvents_M.h"
 #endif
 
 

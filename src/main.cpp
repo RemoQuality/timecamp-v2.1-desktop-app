@@ -11,14 +11,14 @@
 #endif
 
 #include "Settings.h"
+#include "Autorun.h"
 #include "MainWidget.h"
 #include "Comms.h"
-#include "WindowEvents.h"
-#include "WindowEventsManager.h"
 #include "TrayManager.h"
-#include "Autorun.h"
+#include "DataCollector/WindowEvents.h"
+#include "WindowEventsManager.h"
 
-#include "vendor/de/skycoder42/qhotkey/QHotkey/qhotkey.h"
+#include "third-party/vendor/de/skycoder42/qhotkey/QHotkey/qhotkey.h"
 
 
 void firstRun()
@@ -118,7 +118,6 @@ int main(int argc, char *argv[])
     auto *trayManager = new TrayManager();
     QObject::connect(&mainWidget, &MainWidget::pageStatusChanged, trayManager, &TrayManager::loginLogout);
     QObject::connect(&mainWidget, &MainWidget::timerStatusChanged, trayManager, &TrayManager::updateStopMenu);
-    QObject::connect(&mainWidget, &MainWidget::windowStatusChanged, trayManager, &TrayManager::openCloseWindowText);
     QObject::connect(trayManager, &TrayManager::pcActivitiesValueChanged, windowEventsManager, &WindowEventsManager::startOrStopThread);
 
     // send updates from DB to server

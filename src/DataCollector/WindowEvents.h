@@ -3,7 +3,7 @@
 
 #include <QThread>
 #include <QDebug>
-#include "AppData.h"
+#include "src/AppData.h"
 
 class WindowEvents : public QThread
 {

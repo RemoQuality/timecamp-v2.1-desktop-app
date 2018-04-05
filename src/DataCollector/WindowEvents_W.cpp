@@ -1,7 +1,7 @@
-#include <src/ControlIterator/AccControlIterator.h>
 #include "WindowEvents_W.h"
-#include "ControlIterator/UIAControlIterator.h"
-#include "FirefoxUtils.h"
+#include "src/ControlIterator/AccControlIterator.h"
+#include "src/ControlIterator/UIAControlIterator.h"
+#include "src/FirefoxUtils.h"
 #include <QElapsedTimer>
 #include <QUrl>
 

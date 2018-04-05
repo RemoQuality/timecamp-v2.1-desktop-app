@@ -16,8 +16,8 @@
 #include <QMessageBox>
 #include <QSettings>
 
-#include "TCRequestInterceptor.h"
-#include "TCWebEngineView.h"
+#include "Overrides/TCRequestInterceptor.h"
+#include "Overrides/TCWebEngineView.h"
 
 namespace Ui
 {

@@ -49,6 +49,7 @@ void TrayManager::setupTray(MainWidget *parent)
     widget->setIcon(":/Icons/res/AppIcon_Dark.png");
     widget->setText(""); // at the start there should be no timer text
 #endif
+    settings.sync();
     this->setupSettings();
 }
 
@@ -108,22 +109,9 @@ void TrayManager::iconActivated(QSystemTrayIcon::ActivationReason reason)
     }
 }
 
-void TrayManager::openCloseWindowText(bool isBeingOpened)
-{
-    if (!isBeingOpened) {                   // was active
-        openAct->setText("Open window");    // and menu says "hey try to open it again"
-    } else {
-        openAct->setText("Close window");
-    }
-}
-
 void TrayManager::openCloseWindowAction()
 {
-    if (openAct->text() == "Open window") {
-        mainWidget->open();
-    } else {
-        mainWidget->close();
-    }
+    mainWidget->open();
 }
 
 void TrayManager::contactSupport()
@@ -134,7 +122,7 @@ void TrayManager::contactSupport()
 
 void TrayManager::createActions(QMenu *menu)
 {
-    openAct = new QAction(tr("Open window"), this);
+    openAct = new QAction(tr("Show"), this);
     openAct->setStatusTip(tr("Opens TimeCamp interface"));
     openAct->setShortcut(QKeySequence("ctrl+alt+/"));
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))

@@ -25,12 +25,14 @@ MainWidget::MainWidget(QWidget *parent) : QWidget(parent), ui(new Ui::MainWidget
     timerName = "";
 
     this->setMinimumSize(QSize(350, 500));
-
-#ifdef Q_OS_MACOS
-    this->setWindowFlags(Qt::Sheet | Qt::WindowCloseButtonHint | Qt::WindowTitleHint | Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
-#else
-    this->setWindowFlags( Qt::WindowStaysOnTopHint );
-#endif
+//
+//#ifdef Q_OS_MACOS
+//    this->setWindowFlags(Qt::Sheet | Qt::WindowCloseButtonHint | Qt::WindowTitleHint | Qt::WindowStaysOnTopHint | Qt::CustomizeWindowHint);
+//#else
+//    this->setWindowFlags( Qt::WindowStaysOnTopHint );
+//#endif
+//
+    this->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
 
     this->setAcceptDrops(false);
 
@@ -53,6 +55,7 @@ void MainWidget::moveEvent(QMoveEvent *event)
 {
     this->setUpdatesEnabled(false);
     settings.setValue("mainWindowGeometry", saveGeometry()); // save window position
+    settings.sync();
     this->setUpdatesEnabled(true);
     QWidget::moveEvent(event); // do the default "whatever happens on move"
 }
@@ -62,6 +65,7 @@ void MainWidget::resizeEvent(QResizeEvent *event)
     this->setUpdatesEnabled(false);
     QTWEView->resize(size()); // resize webview
     settings.setValue("mainWindowGeometry", saveGeometry()); // save window position
+    settings.sync();
     this->setUpdatesEnabled(true);
     QWidget::resizeEvent(event); // do the default "whatever happens on resize"
 }
@@ -70,6 +74,7 @@ void MainWidget::closeEvent(QCloseEvent *event)
 {
     settings.setValue("mainWindowGeometry", saveGeometry()); // save window position
     settings.setValue(SETT_WAS_WINDOW_LEFT_OPENED, false); // save if window was opened
+    settings.sync();
     hide(); // hide our window when X was pressed
     emit windowStatusChanged(false);
     event->ignore(); // don't do the default action (which usually is app exit)
@@ -268,8 +273,19 @@ void MainWidget::startTask()
         this->open();
     }
 //    emit windowStatusChanged(true);
-    this->runJSinPage("if($('.btn-timer').text().trim().toLowerCase() == 'start timer') { $('.btn-timer').click(); }"); // start new timer
-//    this->runJSinPage("$('#timer-task-picker').click();"); // task picker toggle
+
+    // if on manual page, switch to "start timer" page
+    this->runJSinPage("if($('.btn-timer').text().trim().toLowerCase() == 'add time entry') { "
+                      "$('.btn-timer').siblings('.btn-link').click();"
+                      "}"
+    );
+
+    // actually start timer
+    this->runJSinPage("if($('.btn-timer').text().trim().toLowerCase() == 'start timer') { "
+                      "$('.btn-timer').click(); "
+                      "}"); // start new timer
+
+//    this->runJSinPage("$('#timer-task-picker').click();"); // task picker toggle is now launched atuomatically
 }
 
 void MainWidget::stopTask()
@@ -316,6 +332,7 @@ void MainWidget::quit()
 void MainWidget::setApiKey(const QString &apiKey)
 {
     settings.setValue(SETT_APIKEY, apiKey); // save apikey to settings
+    settings.sync();
 }
 
 void MainWidget::setTimerName(const QString &timerName)

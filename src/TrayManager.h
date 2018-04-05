@@ -8,13 +8,13 @@
 #include <QMessageBox>
 #include <QSettings>
 
-#include "Widget.h"
+#include "Widget/Widget.h"
 
 #ifdef Q_OS_MACOS
 
-#include "Widget_M.h"
-
+#include "Widget/Widget_M.h"
 #define _WIDGET_EXISTS_
+
 #else
 #endif
 
@@ -36,7 +36,6 @@ public:
 
     void updateStopMenu(bool, QString);
     void loginLogout(bool, QString);
-    void openCloseWindowText(bool);
 
 signals:
     void pcActivitiesValueChanged(bool);

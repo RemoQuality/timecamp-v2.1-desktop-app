@@ -78,24 +78,24 @@ list(APPEND SOURCE_FILES
         "src/main.cpp"
         "src/DbManager.cpp"
         "src/MainWidget.cpp"
-        "src/TCRequestInterceptor.cpp"
-        "src/TCNavigationInterceptor.cpp"
-        "src/TCWebEngineView.cpp"
+        "src/Overrides/TCRequestInterceptor.cpp"
+        "src/Overrides/TCNavigationInterceptor.cpp"
+        "src/Overrides/TCWebEngineView.cpp"
         "src/Comms.cpp"
         "src/AppData.cpp"
         "src/Autorun.cpp"
         "src/FirefoxUtils.cpp"
         "src/WindowEventsManager.cpp"
         "src/TrayManager.cpp"
-        "src/third-party/mozilla_lz4/lz4.c"
-        "src/WindowEvents.cpp"
-        "src/Widget.cpp"
+        "third-party/mozilla_lz4/lz4.c"
+        "src/DataCollector/WindowEvents.cpp"
+        "src/Widget/Widget.cpp"
         )
 
 
 if (WIN32)
     list(APPEND SOURCE_FILES
-            "src/WindowEvents_W.cpp"
+            "src/DataCollector/WindowEvents_W.cpp"
             "src/ControlIterator/IControlIterator.cpp"
             "src/ControlIterator/AccControlIterator.cpp"
             "src/ControlIterator/UIAControlIterator.cpp"
@@ -114,7 +114,7 @@ endif ()
 
 if (UNIX AND NOT APPLE)
     list(APPEND SOURCE_FILES
-            "src/WindowEvents_U.cpp"
+            "src/DataCollector/WindowEvents_U.cpp"
             )
 
     list(APPEND TC_LIBS
@@ -124,10 +124,10 @@ endif ()
 
 if (APPLE)
     list(APPEND SOURCE_FILES
-            "src/WindowEvents_M.mm"
+            "src/DataCollector/WindowEvents_M.mm"
             "src/Utils_M.mm"
-            "src/Widget_M.mm"
-            "src/Widget_M_Cocoa.mm"
+            "src/Widget/Widget_M.mm"
+            "src/Widget/Widget_M_Cocoa.mm"
             )
     set_source_files_properties(src/*.mm PROPERTIES COMPILE_FLAGS "-x objective-c++")
 
@@ -137,7 +137,7 @@ if (APPLE)
 endif ()
 
 # QHotkey
-set(QHOTKEY_PATH "vendor/de/skycoder42/qhotkey/QHotkey")
+set(QHOTKEY_PATH "third-party/vendor/de/skycoder42/qhotkey/QHotkey")
 list(APPEND SOURCE_FILES
         "${QHOTKEY_PATH}/QHotkey"
         "${QHOTKEY_PATH}/qhotkey.cpp"
