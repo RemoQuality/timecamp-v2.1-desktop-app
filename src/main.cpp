@@ -5,7 +5,9 @@
 #include <iomanip>
 
 #ifdef Q_OS_MACOS
+
 #include "Utils_M.h"
+
 #endif
 
 #include "Settings.h"
@@ -19,10 +21,11 @@
 #include "vendor/de/skycoder42/qhotkey/QHotkey/qhotkey.h"
 
 
-void firstRun() {
+void firstRun()
+{
     QSettings settings;
 
-    if(settings.value(SETT_IS_FIRST_RUN, true).toBool()) {
+    if (settings.value(SETT_IS_FIRST_RUN, true).toBool()) {
         Autorun::enableAutorun();
 #ifdef Q_OS_MACOS
         enableAssistiveDevices();
@@ -31,7 +34,7 @@ void firstRun() {
     settings.setValue(SETT_IS_FIRST_RUN, false);
 }
 
-void myMessageHandler(QtMsgType type, const QMessageLogContext &, const QString & msg)
+void myMessageHandler(QtMsgType type, const QMessageLogContext &, const QString &msg)
 {
     std::time_t stdtime = std::time(nullptr);
 //    std::cout << "UTC:       " << std::put_time(std::gmtime(&stdtime), "%H:%M:%S") << '\n';

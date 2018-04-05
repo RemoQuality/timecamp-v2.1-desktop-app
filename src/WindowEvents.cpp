@@ -33,7 +33,7 @@ void WindowEvents::checkIdleStatus()
     } else if (wasPreviousIdle) {
         // was idle but is not anymore
         isIdle = false;
-        if(shouldShowAwayPopup && wasIdleLongEnoughToShowAwayPopup) {
+        if (shouldShowAwayPopup && wasIdleLongEnoughToShowAwayPopup) {
             emit noLongerAway(lastIdleTimestamp);
         }
     }

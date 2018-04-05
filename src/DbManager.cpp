@@ -13,20 +13,16 @@ DbManager &DbManager::instance()
     return _instance;
 }
 
-DbManager::DbManager(QObject *parent)
-    : QObject(parent)
+DbManager::DbManager(QObject *parent) : QObject(parent)
 {
     qInfo() << "[DB] Starting DB manager! Available drivers: ";
     qInfo() << QSqlDatabase::drivers();
     m_db = QSqlDatabase::addDatabase("QSQLITE");
     m_db.setDatabaseName(QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first() + "/" + DB_FILENAME);
 
-    if (!m_db.open())
-    {
+    if (!m_db.open()) {
         qInfo() << "[DB] Error: connection with database fail";
-    }
-    else
-    {
+    } else {
         qDebug() << "[DB] Database: connection ok";
         createTable();
     }
@@ -34,8 +30,7 @@ DbManager::DbManager(QObject *parent)
 
 DbManager::~DbManager()
 {
-    if (m_db.isOpen())
-    {
+    if (m_db.isOpen()) {
         m_db.close();
     }
 }
@@ -52,8 +47,7 @@ bool DbManager::createTable()
     QSqlQuery query;
     query.prepare("CREATE TABLE \"apps\" ( `ID` INTEGER PRIMARY KEY AUTOINCREMENT, `app_name` TEXT, `window_name` TEXT, `additional_info` TEXT, `start_time` INTEGER NOT NULL, `end_time` INTEGER NOT NULL )");
 
-    if (!query.exec())
-    {
+    if (!query.exec()) {
         qDebug() << "Couldn't create the table: one might already exist.";
         success = false;
     }
@@ -70,8 +64,7 @@ bool DbManager::saveAppToDb(AppData *app)
     qint64 start = app->getStart();
     qint64 end = app->getEnd();
 
-    if (start > 0 && end > 0)
-    {
+    if (start > 0 && end > 0) {
         QSqlQuery queryAdd;
         queryAdd.prepare("INSERT INTO apps (ID, app_name, window_name, additional_info, start_time, end_time) VALUES (NULL, ?, ?, ?, ?, ?)");
         queryAdd.addBindValue(appName);
@@ -80,36 +73,29 @@ bool DbManager::saveAppToDb(AppData *app)
         queryAdd.addBindValue(start);
         queryAdd.addBindValue(end);
 
-        if(queryAdd.exec())
-        {
+        if (queryAdd.exec()) {
 //            qDebug() << "[DB] app added successfully";
             success = true;
-        }
-        else
-        {
+        } else {
             qInfo() << "[DB] adding failed: " << queryAdd.lastError();
         }
-    }
-    else
-    {
+    } else {
         qInfo() << "[DB] adding failed: missing values!";
     }
 
     return success;
 }
 
-QList<AppData*> DbManager::getAppsSinceLastSync(qint64 last_sync)
+QList<AppData *> DbManager::getAppsSinceLastSync(qint64 last_sync)
 {
     QSqlQuery querySelect;
     querySelect.prepare("SELECT app_name, window_name, additional_info, start_time, end_time FROM apps WHERE start_time > :lastSync");
     querySelect.bindValue(":lastSync", last_sync);
 
-    QList<AppData*> appList;
+    QList<AppData *> appList;
 
-    if(querySelect.exec())
-    {
-        while(querySelect.next())
-        {
+    if (querySelect.exec()) {
+        while (querySelect.next()) {
             AppData *tempApp = new AppData();
             tempApp->setAppName(querySelect.value("app_name").toString());
             tempApp->setWindowName(querySelect.value("window_name").toString());

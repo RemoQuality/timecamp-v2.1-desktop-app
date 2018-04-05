@@ -5,7 +5,8 @@
 #include <QDir>
 #include <QtCore/qcoreapplication.h>
 
-class Autorun {
+class Autorun
+{
 public:
     static void enableAutorun();
     static void disableAutorun();

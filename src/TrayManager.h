@@ -11,25 +11,27 @@
 #include "Widget.h"
 
 #ifdef Q_OS_MACOS
+
 #include "Widget_M.h"
+
 #define _WIDGET_EXISTS_
 #else
 #endif
 
 class MainWidget;
 
-class TrayManager: public QObject
+class TrayManager : public QObject
 {
-    Q_OBJECT
+Q_OBJECT
     Q_DISABLE_COPY(TrayManager)
 
 public:
 
     static TrayManager &instance();
     explicit TrayManager(QObject *parent = nullptr);
-    virtual ~TrayManager(){}
+    virtual ~TrayManager() {}
 
-    void setupTray(MainWidget*);
+    void setupTray(MainWidget *);
     void setupSettings();
 
     void updateStopMenu(bool, QString);
@@ -55,7 +57,7 @@ private:
     QMenu *trayMenu;
     QSettings settings;
 
-    void createActions(QMenu*);
+    void createActions(QMenu *);
     QAction *openAct;
     QAction *startTaskAct;
     QAction *stopTaskAct;

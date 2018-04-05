@@ -11,7 +11,7 @@ class Widget_M : public Widget
 {
 public:
     void setText(QString title) override;
-    void setMenu(QMenu* menu) override;
+    void setMenu(QMenu *menu) override;
     void setIcon(QString iconPath) override;
     void showMe() override;
     void hideMe() override;
@@ -21,7 +21,7 @@ public:
     ~Widget_M();
 
 private:
-    void * macWidget;
+    void *macWidget;
 };
 
 

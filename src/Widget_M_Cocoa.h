@@ -14,23 +14,23 @@
 
 @interface Widget_M_Cocoa : NSObject
 {
-    NSStatusItem* widget;
+    NSStatusItem *widget;
     NSString *widgetText;
 
-    NSFont* stdFont;
-    NSDictionary* attributesStd;
+    NSFont *stdFont;
+    NSDictionary *attributesStd;
     NSAttributedString *attributedWidgetEmpty;
     NSAttributedString *attributedWidgetText;
     bool isHidden;
 }
 
-- (id) init;
-- (void) SetText: (QString) text;
-- (void) SetMenu: (QMenu*) menu;
-- (void) SetImage: (NSImage*) nsimage;
-- (void) HideMe;
-- (void) ShowMe;
-- (bool) IsHidden;
+- (id)init;
+- (void)SetText:(QString)text;
+- (void)SetMenu:(QMenu *)menu;
+- (void)SetImage:(NSImage *)nsimage;
+- (void)HideMe;
+- (void)ShowMe;
+- (bool)IsHidden;
 
 @end
 

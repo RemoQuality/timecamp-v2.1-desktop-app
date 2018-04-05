@@ -9,7 +9,7 @@
 
 class DbManager : QObject
 {
-    Q_OBJECT
+Q_OBJECT
     Q_DISABLE_COPY(DbManager)
 
 public:
@@ -31,7 +31,7 @@ public:
      */
     bool saveAppToDb(AppData *app);
 
-    QList<AppData*> getAppsSinceLastSync(qint64 last_sync);
+    QList<AppData *> getAppsSinceLastSync(qint64 last_sync);
 
 private:
     QSqlDatabase m_db;

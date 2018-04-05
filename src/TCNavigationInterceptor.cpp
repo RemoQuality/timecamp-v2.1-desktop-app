@@ -3,8 +3,7 @@
 
 #include "TCNavigationInterceptor.h"
 
-TCNavigationInterceptor::TCNavigationInterceptor(QWebEnginePage* parent)
-        : QWebEnginePage(parent)
+TCNavigationInterceptor::TCNavigationInterceptor(QWebEnginePage *parent) : QWebEnginePage(parent)
 {
     target = parent;
 }
@@ -13,7 +12,7 @@ bool TCNavigationInterceptor::acceptNavigationRequest(const QUrl &url, Navigatio
 {
     Q_UNUSED(isMainFrame);
 
-    auto *page = dynamic_cast<QWebEnginePage*>(target);
+    auto *page = dynamic_cast<QWebEnginePage *>(target);
     if (type == NavigationTypeLinkClicked && page) {
 //        qDebug() << "External URL: " << url;
         QDesktopServices::openUrl(url);

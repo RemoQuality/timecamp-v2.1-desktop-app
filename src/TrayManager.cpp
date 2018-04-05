@@ -14,16 +14,15 @@ TrayManager &TrayManager::instance()
     return _instance;
 }
 
-TrayManager::TrayManager(QObject *parent)
-    : QObject(parent)
+TrayManager::TrayManager(QObject *parent) : QObject(parent)
 {
 }
 
 void TrayManager::setupTray(MainWidget *parent)
 {
     mainWidget = parent;
-    if(!QSystemTrayIcon::isSystemTrayAvailable()){
-        QMessageBox::critical(mainWidget,":(","Ninja Mode is not available on this computer. Try again later :P");
+    if (!QSystemTrayIcon::isSystemTrayAvailable()) {
+        QMessageBox::critical(mainWidget, ":(", "Ninja Mode is not available on this computer. Try again later :P");
     }
 
     trayMenu = new QMenu(parent);
@@ -77,9 +76,9 @@ void TrayManager::updateStopMenu(bool canBeStopped, QString timerName)
 
 void TrayManager::autoStart(bool checked)
 {
-    if(checked){
+    if (checked) {
         Autorun::enableAutorun();
-    }else{
+    } else {
         Autorun::disableAutorun();
     }
 }
@@ -94,9 +93,9 @@ void TrayManager::tracker(bool checked)
 void TrayManager::widgetToggl(bool checked)
 {
     settings.setValue(SETT_SHOW_WIDGET, checked);
-    if(checked){
+    if (checked) {
         widget->showMe();
-    }else{
+    } else {
         widget->hideMe();
     }
 }
@@ -104,12 +103,13 @@ void TrayManager::widgetToggl(bool checked)
 
 void TrayManager::iconActivated(QSystemTrayIcon::ActivationReason reason)
 {
-    if(reason != QSystemTrayIcon::Context){
+    if (reason != QSystemTrayIcon::Context) {
         mainWidget->open();
     }
 }
 
-void TrayManager::openCloseWindowText(bool isBeingOpened) {
+void TrayManager::openCloseWindowText(bool isBeingOpened)
+{
     if (!isBeingOpened) {                   // was active
         openAct->setText("Open window");    // and menu says "hey try to open it again"
     } else {
@@ -117,7 +117,8 @@ void TrayManager::openCloseWindowText(bool isBeingOpened) {
     }
 }
 
-void TrayManager::openCloseWindowAction() {
+void TrayManager::openCloseWindowAction()
+{
     if (openAct->text() == "Open window") {
         mainWidget->open();
     } else {
@@ -125,7 +126,8 @@ void TrayManager::openCloseWindowAction() {
     }
 }
 
-void TrayManager::contactSupport() {
+void TrayManager::contactSupport()
+{
     QUrl mail("https://www.timecamp.com/kb/contact/?utm_source=timecamp_desktop");
     QDesktopServices::openUrl(mail);
 };
@@ -207,7 +209,7 @@ void TrayManager::loginLogout(bool loggedIn, QString tooltipText)
     trackerAct->setEnabled(loggedIn);
 #ifdef _WIDGET_EXISTS_
     widgetAct->setEnabled(loggedIn);
-    if(!loggedIn){
+    if (!loggedIn) {
         widget->hideMe();
     }
 #endif
@@ -216,13 +218,13 @@ void TrayManager::loginLogout(bool loggedIn, QString tooltipText)
 #endif
 
 #ifdef _WIDGET_EXISTS_
-    if(stopTaskAct->isEnabled()){ // if timer is running
-        QString maybeTime = tooltipText.mid(0,8); // first 8 chars: 12:23:45
+    if (stopTaskAct->isEnabled()) { // if timer is running
+        QString maybeTime = tooltipText.mid(0, 8); // first 8 chars: 12:23:45
         bool ok;
-        maybeTime.mid(0,2).toInt(&ok, 10); // take first two and try to make it int; if failed then it's not time
-        if(ok) {
+        maybeTime.mid(0, 2).toInt(&ok, 10); // take first two and try to make it int; if failed then it's not time
+        if (ok) {
             widget->setText(maybeTime);
-        }else{
+        } else {
             widget->setText(NO_TIMER_TEXT);
         }
     }

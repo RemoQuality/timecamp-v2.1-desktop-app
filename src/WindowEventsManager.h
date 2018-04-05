@@ -4,15 +4,16 @@
 #include "WindowEvents.h"
 #include <QThread>
 
-class WindowEventsManager : public QObject {
-    Q_OBJECT
+class WindowEventsManager : public QObject
+{
+Q_OBJECT
     Q_DISABLE_COPY(WindowEventsManager)
 
 public:
 
     static WindowEventsManager &instance();
     explicit WindowEventsManager(QObject *parent = nullptr);
-    virtual ~WindowEventsManager(){}
+    virtual ~WindowEventsManager() {}
     WindowEvents *getCaptureEventsThread() const;
 
 signals:

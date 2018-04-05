@@ -6,7 +6,7 @@
 
 class TCRequestInterceptor : public QWebEngineUrlRequestInterceptor
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
     TCRequestInterceptor(QObject *p = Q_NULLPTR);

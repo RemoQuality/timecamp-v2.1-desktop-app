@@ -14,7 +14,7 @@ unsigned long WindowEvents_U::getIdleTime()
 
     if (display == nullptr) {
         qInfo() << "[WindowEvents_U::getIdleTime] GetIdleTime failed";
-    }else {
+    } else {
         XScreenSaverQueryInfo(display, DefaultRootWindow(display), info);
         XCloseDisplay(display);
         return info->idle;
@@ -23,15 +23,16 @@ unsigned long WindowEvents_U::getIdleTime()
     return 0;
 }
 
-std::string WindowEvents_U::execCommand(const char* cmd)
+std::string WindowEvents_U::execCommand(const char *cmd)
 {
     std::array<char, 128> buffer;
     std::string result;
     std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
     if (!pipe) throw std::runtime_error("popen() failed!");
     while (!feof(pipe.get())) {
-        if (fgets(buffer.data(), 128, pipe.get()) != nullptr)
+        if (fgets(buffer.data(), 128, pipe.get()) != nullptr) {
             result += buffer.data();
+        }
     }
     return result;
 }
@@ -41,7 +42,6 @@ void WindowEvents_U::logAppName(QString appName, QString windowName)
 //    qInfo("APP: %s | %s \n", appName.toLatin1().constData(), windowName.toLatin1().constData());
     WindowEvents::logAppName(appName, windowName, "");
 }
-
 
 void WindowEvents_U::run()
 {
@@ -69,15 +69,15 @@ void WindowEvents_U::run()
     char *last_name;
     char *curr_name;
 
-    Atom     actual_type;
-    int      actual_format;
-    unsigned long     nitems;
-    unsigned long     bytes;
-    long     *data;
-    unsigned char     *window_name;
-    unsigned char     *pid;
+    Atom actual_type;
+    int actual_format;
+    unsigned long nitems;
+    unsigned long bytes;
+    long *data;
+    unsigned char *window_name;
+    unsigned char *pid;
     std::string app_name;
-    int      status;
+    int status;
     long xwindowid_old;
     long xwindowid_curr;
 
@@ -85,7 +85,7 @@ void WindowEvents_U::run()
 
     while (!QThread::currentThread()->isInterruptionRequested()) {
         XNextEvent(display, &event);
-        if(event.type == PropertyNotify) {
+        if (event.type == PropertyNotify) {
             if (event.xproperty.atom == NET_ACTIVE_WINDOW || event.xproperty.atom == NET_WM_NAME || event.xproperty.atom == WM_NAME) {
                 status = XGetWindowProperty(
                     display,
@@ -106,7 +106,7 @@ void WindowEvents_U::run()
                     exit(1);
                 }
 
-                if(xwindowid_curr != data[0] && data[0] != 0){
+                if (xwindowid_curr != data[0] && data[0] != 0) {
                     XSelectInput(display, xwindowid_old, NoEventMask); // don't fetch events from old window
 
                     xwindowid_old = xwindowid_curr; // what was current is now old
@@ -152,7 +152,7 @@ void WindowEvents_U::run()
                     fprintf(stderr, "status = %d\n", status);
                     exit(1);
                 }
-                long* longarr = reinterpret_cast<long*>(pid);
+                long *longarr = reinterpret_cast<long *>(pid);
                 long longpid = longarr[0];
 
                 std::string command = "";

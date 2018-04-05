@@ -20,8 +20,7 @@ Comms &Comms::instance()
     return _instance;
 }
 
-Comms::Comms(QObject *parent)
-    : QObject(parent)
+Comms::Comms(QObject *parent) : QObject(parent)
 {
     apiKey = settings.value(SETT_APIKEY).toString();
 }
@@ -34,10 +33,10 @@ void Comms::timedUpdates()
 
     setCurrentTime(QDateTime::currentMSecsSinceEpoch()); // time of DB fetch is passed, so we can update to it if successful
 
-    QList<AppData*> appList = DbManager::instance().getAppsSinceLastSync(lastSync); // get apps since last sync
+    QList < AppData * > appList = DbManager::instance().getAppsSinceLastSync(lastSync); // get apps since last sync
 
     qDebug() << "app list length: " << appList.length();
-    if(appList.length() > 0){ // send only if there is anything
+    if (appList.length() > 0) { // send only if there is anything
         sendAppData(&appList);
     }
     getUserInfo();
@@ -89,7 +88,7 @@ bool Comms::isApiKeyOK()
     return true;
 }
 
-void Comms::sendAppData(QList<AppData*> *appList)
+void Comms::sendAppData(QList<AppData *> *appList)
 {
     // read api key from settings
     apiKey = settings.value(SETT_APIKEY).toString();
@@ -115,12 +114,12 @@ void Comms::sendAppData(QList<AppData*> *appList)
 //    qDebug() << "getStart: " << app->getStart();
 //    qDebug() << "getEnd: " << app->getEnd();
 
-        if(app->getAppName() != "IDLE" && app->getWindowName() != "IDLE") {
+        if (app->getAppName() != "IDLE" && app->getWindowName() != "IDLE") {
             QString base_str = QString("computer_activities") + QString("[") + QString::number(count) + QString("]");
 
-            if(!canSendActivityInfo) {
+            if (canSendActivityInfo) {
                 params.addQueryItem(base_str + QString("[application_name]"), app->getAppName());
-                if(canSendWindowTitles) {
+                if (canSendWindowTitles) {
                     params.addQueryItem(base_str + QString("[window_title]"), app->getWindowName());
 
                     // "Web Browser App" when appName is Internet but no domain
@@ -168,27 +167,19 @@ void Comms::sendAppData(QList<AppData*> *appList)
     request.setRawHeader("Content-Type", "application/x-www-form-urlencoded");
     request.setRawHeader("Content-Length", postDataSize);
 
-    QNetworkAccessManager *m_qnam = new QNetworkAccessManager();
-    m_qnam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
-//    connect(m_qnam, SIGNAL(finished(QNetworkReply *)), this, SLOT(appDataReply(QNetworkReply *)));
-    connect(m_qnam, &QNetworkAccessManager::finished, this, &Comms::appDataReply);
-
-
-//    qDebug() << "JSON String: " << jsonString;
-
-// Use QNetworkReply * QNetworkAccessManager::post(const QNetworkRequest & request, const QByteArray & data); to send your request. Qt will rearrange everything correctly.
-    QNetworkReply *reply = m_qnam->post(request, jsonString);
-
-//    QEventLoop loop;
-//    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-//    loop.exec();
+    this->netRequest(request, QNetworkAccessManager::PostOperation, &Comms::appDataReply, jsonString);
 }
 
 void Comms::appDataReply(QNetworkReply *reply)
 {
+    if(reply->error() != QNetworkReply::NoError){
+        qInfo() << "Network error: " << reply->errorString();
+        return;
+    }
+
     QByteArray buffer = reply->readAll();
     qDebug() << "AppData Response: " << buffer;
-    if(buffer == ""){
+    if (buffer == "") {
         qDebug() << "update last sync to whenever we sent the data";
         settings.setValue(SETT_LAST_SYNC, getCurrentTime()); // update last sync to whenever we sent the data
     }
@@ -222,19 +213,16 @@ void Comms::getUserInfo()
     request.setRawHeader("User-Agent", CONN_USER_AGENT);
     request.setRawHeader(CONN_CUSTOM_HEADER_NAME, CONN_CUSTOM_HEADER_VALUE);
 
-    QNetworkAccessManager *m_qnam = new QNetworkAccessManager();
-    m_qnam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
-    connect(m_qnam, &QNetworkAccessManager::finished, this, &Comms::userInfoReply);
-
-    QNetworkReply *reply = m_qnam->get(request);
-
-//    QEventLoop loop;
-//    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-//    loop.exec();
+    this->netRequest(request, QNetworkAccessManager::GetOperation, &Comms::userInfoReply, "");
 }
 
 void Comms::userInfoReply(QNetworkReply *reply)
 {
+    if(reply->error() != QNetworkReply::NoError){
+        qInfo() << "Network error: " << reply->errorString();
+        return;
+    }
+
     QByteArray buffer = reply->readAll();
     qDebug() << "UserInfo Response: " << buffer;
 
@@ -314,18 +302,15 @@ void Comms::getSettings()
     request.setRawHeader("User-Agent", CONN_USER_AGENT);
     request.setRawHeader(CONN_CUSTOM_HEADER_NAME, CONN_CUSTOM_HEADER_VALUE);
 
-    QNetworkAccessManager *m_qnam = new QNetworkAccessManager();
-    m_qnam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
-    connect(m_qnam, &QNetworkAccessManager::finished, this, &Comms::settingsReply);
-
-    QNetworkReply *reply = m_qnam->get(request);
-
-//    QEventLoop loop;
-//    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-//    loop.exec();
+    this->netRequest(request, QNetworkAccessManager::GetOperation, &Comms::settingsReply, "");
 }
 
-void Comms::settingsReply(QNetworkReply *reply) {
+void Comms::settingsReply(QNetworkReply *reply)
+{
+    if(reply->error() != QNetworkReply::NoError){
+        qInfo() << "Network error: " << reply->errorString();
+        return;
+    }
     QByteArray buffer = reply->readAll();
     qDebug() << "Settings Response: " << buffer;
 
@@ -341,6 +326,33 @@ void Comms::settingsReply(QNetworkReply *reply) {
     qInfo() << "SETT idletime: " << settings.value(QString("SETT_WEB_") + QString("idletime")).toInt();
     qInfo() << "SETT logoffline: " << settings.value(QString("SETT_WEB_") + QString("logoffline")).toBool();
     qInfo() << "SETT logofflinemin: " << settings.value(QString("SETT_WEB_") + QString("logofflinemin")).toInt();
-    qInfo() << "SETT dontCollectComputerActivity: " << settings.value(QString("SETT_WEB_") + QString("dontCollectComputerActivity")).toBool();
-    qInfo() << "SETT collectWindowTitles: " << settings.value(QString("SETT_WEB_") + QString("collectWindowTitles")).toBool();
+    qInfo() << "SETT dontCollectComputerActivity: "
+            << settings.value(QString("SETT_WEB_") + QString("dontCollectComputerActivity")).toBool();
+    qInfo() << "SETT collectWindowTitles: "
+            << settings.value(QString("SETT_WEB_") + QString("collectWindowTitles")).toBool();
+}
+
+void Comms::netRequest(QNetworkRequest request, QNetworkAccessManager::Operation netOp, ReplyHandler callback, QByteArray data)
+{
+    auto *qnam = new QNetworkAccessManager();
+    qnam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
+    connect(qnam, &QNetworkAccessManager::finished, this, callback);
+
+    qDebug() << "Network op: " << netOp;
+    qDebug() << "Request URL: " << request.url().toString();
+
+    QNetworkReply *reply;
+    if(netOp == QNetworkAccessManager::GetOperation) {
+        reply = qnam->get(request);
+    }else if(netOp == QNetworkAccessManager::PostOperation) {
+        reply = qnam->post(request, data);
+    }
+
+    QEventLoop loop;
+    connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+    delete reply;
+    delete qnam;
+//    reply->deleteLater(); // this was sometimes deleting wrong reply!
+//    qnam->deleteLater(); // and this was dropping wrong qnam...
 }
