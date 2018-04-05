@@ -7,7 +7,7 @@
 #include <QMenu>
 
 #include <AppKit/AppKit.h>
-#include <AppKit/NSStatusItem.h>
+#include <AppKit/AppKit.h>
 #include <Foundation/Foundation.h>
 
 #import "Widget_M.h"

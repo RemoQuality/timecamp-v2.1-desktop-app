@@ -89,7 +89,7 @@ list(APPEND SOURCE_FILES
         "src/TrayManager.cpp"
         "third-party/mozilla_lz4/lz4.c"
         "src/DataCollector/WindowEvents.cpp"
-        "src/Widget.cpp"
+        "src/Widget/Widget.cpp"
         )
 
 
@@ -126,8 +126,8 @@ if (APPLE)
     list(APPEND SOURCE_FILES
             "src/DataCollector/WindowEvents_M.mm"
             "src/Utils_M.mm"
-            "src/Widget_M.mm"
-            "src/Widget_M_Cocoa.mm"
+            "src/Widget/Widget_M.mm"
+            "src/Widget/Widget_M_Cocoa.mm"
             )
     set_source_files_properties(src/*.mm PROPERTIES COMPILE_FLAGS "-x objective-c++")
 

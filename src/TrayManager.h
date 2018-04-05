@@ -8,13 +8,13 @@
 #include <QMessageBox>
 #include <QSettings>
 
-#include "Widget.h"
+#include "Widget/Widget.h"
 
 #ifdef Q_OS_MACOS
 
-#include "Widget_M.h"
-
+#include "Widget/Widget_M.h"
 #define _WIDGET_EXISTS_
+
 #else
 #endif
 

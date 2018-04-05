@@ -1,5 +1,5 @@
 #import "Widget_M_Cocoa.h"
-#import "Settings.h"
+#import "src/Settings.h"
 
 @implementation Widget_M_Cocoa
 
