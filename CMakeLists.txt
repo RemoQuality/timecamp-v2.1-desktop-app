@@ -87,7 +87,7 @@ list(APPEND SOURCE_FILES
         "src/FirefoxUtils.cpp"
         "src/WindowEventsManager.cpp"
         "src/TrayManager.cpp"
-        "src/third-party/mozilla_lz4/lz4.c"
+        "third-party/mozilla_lz4/lz4.c"
         "src/DataCollector/WindowEvents.cpp"
         "src/Widget.cpp"
         )
