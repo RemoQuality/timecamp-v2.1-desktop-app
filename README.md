@@ -3,6 +3,8 @@
 Manage your tasks and timesheet on Timecamp, right from your desktop.  
 Start timers, create projects, do everything that can be done on the web version.
 
+---
+
 ## Repository structure
 
 The project structure tree looks like this:
@@ -134,4 +136,3 @@ Tools:
 * **[Karol Olszacki](https://github.com/karololszak)** - *Initial work*
 
 See also the list of [contributors](https://github.com/timecamp/timecamp-desktop/contributors) who participated in this project.
-
