@@ -39,9 +39,14 @@ Where `Xcode` is [generator of your choosing](https://cmake.org/cmake/help/v3.1/
 
 Now you can open it in your IDE of choice.
 
-Firstly, you need to make `CMakeProjectConfig.cmake`.
+#### Updating enviroment info
+To compile our code you need to make a `CMakeProjectConfig.cmake` file.
+
 Copy and rename `CMakeProjectConfig.cmake.example` and modify the path to Path to Qt precompiled libs.
 
+Adding path to Qt to the `PATH` enviroment variable is also advisable, it will help with packaging installer and signing the binaries.
+
+Now you are ready to go!
 
 ## Compiling our source
 
