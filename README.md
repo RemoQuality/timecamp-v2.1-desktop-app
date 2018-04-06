@@ -1,11 +1,12 @@
 # Timecamp Desktop
 
-Manage your tasks and timesheet on Timecamp, right from your desktop.
+Manage your tasks and timesheet on Timecamp, right from your desktop.  
 Start timers, create projects, do everything that can be done on the web version.
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See *Creating installers* for notes on how to make packages for Windows, macOS and Linux.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.  
+See *Creating installers* for notes on how to make packages for Windows, macOS and Linux.
 
 ### Prerequisites
 
@@ -13,15 +14,18 @@ To compile **Timecamp Desktop** you need:
 * _[Qt](https://www.qt.io/) 5.9_ or greater, and
 
 
-* either a CMake-compatible IDE (Qt Creator, JetBrains CLion, Microsoft Visual Studio 2017) - they can load this repo as a native project
-* ... or just [CMake](https://cmake.org/) _(at least v. 3.1)_, which can generate project files for many other IDEs and build systems
+* either a CMake-compatible IDE  
+(Qt Creator, JetBrains CLion, Microsoft Visual Studio 2017)  
+\- they can load this repo as a native project
+* ... or just [CMake](https://cmake.org/) _(at least v. 3.1)_, which can generate project files for many other IDEs and build systems  
 (eg. XCode, Code::Blocks, Eclipse, Ninja Build System, older MS Visual Studios, or plain old Makefiles)
 
 ## Developing
 
 Start by [Installing Qt](http://doc.qt.io/qt-5/gettingstarted.html).
 
-Make sure you have all of the required tools - install with your favourite package manager:
+Make sure you have all of the required tools  
+\- install with your favourite package manager:
 ```
 git, cmake, clang/gcc/msvc
 ```
@@ -35,7 +39,8 @@ git clone git@github.com:timecamp/timecamp-desktop.git
 ```
 cmake -G Xcode -B cmake-build-xcode
 ```
-Where `Xcode` is [generator of your choosing](https://cmake.org/cmake/help/v3.1/manual/cmake-generators.7.html), and `cmake-build-xcode` is where project files will be created.
+Where `Xcode` is [generator of your choosing](https://cmake.org/cmake/help/v3.1/manual/cmake-generators.7.html),  
+and `cmake-build-xcode` is where project files will be created.
 
 Now you can open it in your IDE of choice.
 
@@ -44,13 +49,14 @@ To compile our code you need to make a `CMakeProjectConfig.cmake` file.
 
 Copy and rename `CMakeProjectConfig.cmake.example` and modify the path to Path to Qt precompiled libs.
 
-Adding path to Qt to the `PATH` enviroment variable is also advisable, it will help with packaging installer and signing the binaries.
+Adding path to Qt to the `PATH` enviroment variable is also advisable,  
+it will help with packaging installer and signing the binaries.
 
 Now you are ready to go!
 
 ## Compiling our source
 
-We compile **Timecamp Desktop** with MSVC on Windows, Clang on macOS and GCC on Linux.
+We compile **Timecamp Desktop** with MSVC on Windows, Clang on macOS and GCC on Linux.  
 Both Qt Creator and CLion allow you to choose the compiler in settings in their GUI.
 
 Other combinations are sometimes possible, but are not used by us right now.
@@ -67,12 +73,13 @@ We already checked these:
     * Clang
         * you can use it in eg. Qt Creator, CLion and XCode-generated project
     * not <del>GCC</del>
-        * we had some troubles with our macOS-related Objective-C++ mixed code (status widget), with Clang it works out of the box - but you can submit patches to get us gcc compatibility!
+        * we had some troubles with our macOS-related Objective-C++ mixed code (status widget),  
+        with Clang it works out of the box \- but you can submit patches to get us gcc compatibility!
 * Linux
     * GCC
     * Clang
-        * Qt precompiled with gcc is available for download on qt.io,
-        but you can use it with clang as well, as it is ABI compatible;
+        * Qt precompiled with gcc is available for download on qt.io,  
+        but you can use it with clang as well, as it is ABI compatible;  
         or you can compile Qt with clang yourself
 
 
