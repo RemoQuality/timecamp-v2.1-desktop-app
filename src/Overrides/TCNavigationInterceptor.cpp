@@ -12,7 +12,7 @@ bool TCNavigationInterceptor::acceptNavigationRequest(const QUrl &url, Navigatio
 {
     Q_UNUSED(isMainFrame);
 
-    auto *page = dynamic_cast<QWebEnginePage *>(target);
+    auto *page = target;
     if (type == NavigationTypeLinkClicked && page) {
 //        qDebug() << "External URL: " << url;
         QDesktopServices::openUrl(url);

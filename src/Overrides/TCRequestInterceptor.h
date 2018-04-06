@@ -9,8 +9,8 @@ class TCRequestInterceptor : public QWebEngineUrlRequestInterceptor
 Q_OBJECT
 
 public:
-    TCRequestInterceptor(QObject *p = Q_NULLPTR);
-    void interceptRequest(QWebEngineUrlRequestInfo &info);
+    explicit TCRequestInterceptor(QObject *p = Q_NULLPTR);
+    void interceptRequest(QWebEngineUrlRequestInfo &info) override;
 };
 
 #endif // TCREQUESTINTERCEPTOR_H

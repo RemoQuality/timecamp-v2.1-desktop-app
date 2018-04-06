@@ -30,8 +30,8 @@ Q_OBJECT
     Q_DISABLE_COPY(MainWidget)
 
 public:
-    explicit MainWidget(QWidget *parent = 0);
-    ~MainWidget();
+    explicit MainWidget(QWidget *parent = nullptr);
+    ~MainWidget() override;
     void init();
 
     void twoSecTimerTimeout();
@@ -92,7 +92,6 @@ private:
 
     bool loggedIn;
     QString timerName;
-    bool timerIsRunning;
 
     void setApiKey(const QString &apiKey);
     void setTimerName(const QString &timerName);

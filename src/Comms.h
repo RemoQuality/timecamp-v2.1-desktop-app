@@ -16,7 +16,7 @@ public:
 
     static Comms &instance();
     explicit Comms(QObject *parent = nullptr);
-    virtual ~Comms() {}
+    ~Comms() override = default;
 
     void saveApp(AppData *app);
     void sendAppData(QList<AppData *> *appList);

@@ -15,7 +15,7 @@ Q_OBJECT
 public:
     static DbManager &instance();
     explicit DbManager(QObject *parent = nullptr);
-    ~DbManager();
+    ~DbManager() override;
 
     bool isOpen() const;
 

@@ -21,7 +21,6 @@ MainWidget::MainWidget(QWidget *parent) : QWidget(parent), ui(new Ui::MainWidget
 
     // set some defaults
     loggedIn = false;
-    timerIsRunning = false;
     timerName = "";
 
     this->setMinimumSize(QSize(350, 500));
@@ -346,7 +345,6 @@ void MainWidget::setTimerName(const QString &timerName)
 
 void MainWidget::setIsTimerRunning(bool isTimerRunning)
 {
-    MainWidget::timerIsRunning = isTimerRunning;
     if (isTimerRunning) {
         fetchTimerName(); // this will make menu say "Stop XYZ timer"
     } else { // no timer running

@@ -13,7 +13,7 @@ public:
     void checkIdleStatus();
 
 signals:
-    void noLongerAway(unsigned long);
+    void noLongerAway(unsigned long); // Signals cannot be declared virtual
 
 protected:
     virtual void run() = 0;

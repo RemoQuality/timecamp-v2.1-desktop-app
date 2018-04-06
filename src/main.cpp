@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
     QIcon appIcon = QIcon(MAIN_ICON);
 //    appIcon.addFile(":/Icons/res/AppIcon32.png");
 //    appIcon.addFile(":/Icons/res/AppIcon128.png");
-    app.setWindowIcon(appIcon);
+    QApplication::setWindowIcon(appIcon);
 
 
     // create events manager
@@ -157,5 +157,5 @@ int main(int argc, char *argv[])
     syncDBtimer->start(30 * 1000); // sync DB every 30s
     twoSecondTimer->start(2 * 1000);
 
-    return app.exec();
+    return QApplication::exec();
 }

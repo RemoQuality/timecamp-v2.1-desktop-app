@@ -1,15 +1,15 @@
 #include "AppData.h"
 #include <QUrl>
+#include <utility>
 
 AppData::AppData()
-{
-}
+= default;
 
 AppData::AppData(QString appName, QString windowName, QString additionalInfo)
 {
-    this->appName = appName;
-    this->windowName = windowName;
-    this->additionalInfo = additionalInfo;
+    this->appName = std::move(appName);
+    this->windowName = std::move(windowName);
+    this->additionalInfo = std::move(additionalInfo);
 }
 
 const QString &AppData::getAppName() const

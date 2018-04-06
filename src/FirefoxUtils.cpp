@@ -53,7 +53,7 @@ void *readFileToMemory(const char *filename, size_t *readSize)
         goto cleanup;
     }
 
-    filesize = ftell(fileDescriptor);
+    filesize = static_cast<size_t>(ftell(fileDescriptor));
     fseek(fileDescriptor, 0, SEEK_SET);
 
     if (!(returnValue = malloc(filesize))) {

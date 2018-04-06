@@ -45,7 +45,7 @@ void Comms::timedUpdates()
 
 void Comms::saveApp(AppData *app)
 {
-    if (lastApp == NULL) {
+    if (lastApp == nullptr) {
         qDebug() << "[FIRST APP DETECTED]";
         qint64 now = QDateTime::currentMSecsSinceEpoch();
         lastApp = app;
@@ -341,7 +341,7 @@ void Comms::netRequest(QNetworkRequest request, QNetworkAccessManager::Operation
     qDebug() << "Network op: " << netOp;
     qDebug() << "Request URL: " << request.url().toString();
 
-    QNetworkReply *reply;
+    QNetworkReply *reply = nullptr;
     if(netOp == QNetworkAccessManager::GetOperation) {
         reply = qnam->get(request);
     }else if(netOp == QNetworkAccessManager::PostOperation) {
