@@ -3,6 +3,23 @@
 Manage your tasks and timesheet on Timecamp, right from your desktop.  
 Start timers, create projects, do everything that can be done on the web version.
 
+## Repository structure
+
+The project structure tree looks like this:
+* `cmake` - cmake-specific helpers for various OSes and for Qt
+* `res` - resource files; icons, images, desktop shortcut templates
+* `src` - source files
+    * `Overrides` - various classes that override default Qt functionality  
+    (like hijacking clicks to external websites, to open them in default OS browser)    
+    * `*Other directories*` - directories created for classes that have OS-dependent functionality, eg:
+    * `DataCollector`
+        * with `WindowEvents.cpp` as the base class (with shared functionality, like data saving),
+        * and `WindowEvents_W.cpp` as a subclass with functionality for Windows (collecting window names, etc)
+* `third-party` - code from other projects, that we use internally (currently LZ4 and QHotkey)
+* Files placed directly in root are for strictly organisational purposes, eg:  
+`.gitignore`, `.editorconfig`, `CMakeLists.txt` and `README.md`.
+* For ease of deployment, our `deploy_*` scripts are also in the root. This might change in future versions.
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your machine for development and testing purposes.  
