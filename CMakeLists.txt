@@ -13,6 +13,11 @@ include(QtCommon) # cmake/QtCommon.cmake
 
 include(CMakeProjectConfig.cmake)
 
+if (NOT DEFINED PRODUCT_NAME)
+    message(FATAL_ERROR "You haven't prepared CMakeProjectConfig.cmake file.
+    See README.md/Developing for details.")
+endif ()
+
 # Set PROJECT_VERSION_PATCH and PROJECT_VERSION_TWEAK to 0 if not present, needed by add_project_meta
 fix_project_version()
 
