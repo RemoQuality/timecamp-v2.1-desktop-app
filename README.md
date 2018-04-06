@@ -111,6 +111,7 @@ Source:
 * Previous [Timecamp Desktop App](https://github.com/timecamp/timecamp-v2-desktop-app) - sources for macOS widgets and data collecting
 
 Tools:
+* [SQLite](https://www.sqlite.org/) - local database
 * [EditorConfig](http://editorconfig.org/) - consistent coding style (see `.editorconfig` for more info)
 
 ## Authors
