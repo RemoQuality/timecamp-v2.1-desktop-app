@@ -67,7 +67,7 @@ We already checked these:
     * not <del>MinGW</del>
         * QtWebEngine [can't be built on Windows](https://doc.qt.io/qt-5.10/qtwebengine-platform-notes.html) using this toolchain, and we depend on QtWebEngine
     * not <del>Clang</del>
-        * same as above, but [Chromium for Windows is now being built using Clang by default](https://groups.google.com/a/chromium.org/forum/#!topic/chromium-dev/Y3OEIKkdlu0),
+        * same as above, but [Chromium for Windows is now being built using Clang by default](https://groups.google.com/a/chromium.org/forum/#!topic/chromium-dev/Y3OEIKkdlu0),  
         and QtWebEngine is based on Chromium, so [maybe it will be available soon](https://bugreports.qt.io/browse/QTBUG-66664?)    
 * macOS
     * Clang
@@ -80,7 +80,7 @@ We already checked these:
     * Clang
         * Qt precompiled with gcc is available for download on qt.io,  
         but you can use it with clang as well, as it is ABI compatible;  
-        or you can compile Qt with clang yourself
+        * or you can compile Qt with clang yourself!
 
 
 ## Creating Installers
@@ -90,11 +90,13 @@ Our installers are created with:
     * `windeployqt` - a Qt [Deployment Tool](http://doc.qt.io/qt-5/windows-deployment.html), which pulls all needed Qt dynamic libraries and dependencies
     * `NSIS` - [Nullsoft Scriptable Install System](http://nsis.sourceforge.net/Main_Page), with our proprietary script (not in this repo)
 * macOS
-    * `macdeployqt` - a Qt [Deployment Tool](http://doc.qt.io/qt-5/osx-deployment.html), which pulls all needed Qt dynamic libraries and dependencies and creates an App Bundle
+    * `macdeployqt` - a Qt [Deployment Tool](http://doc.qt.io/qt-5/osx-deployment.html), which pulls all needed Qt dynamic libraries and dependencies,  
+    and creates an App Bundle
     * `create-dmg` - a Node.js [script for creating DMG packages](https://github.com/sindresorhus/create-dmg), _created by [Sindre Sorhus](https://github.com/sindresorhus)_
 * Linux
     * `linuxdeployqt` - a Community-created [Deployment Tool](https://github.com/probonopd/linuxdeployqt), which pulls all needed Qt dynamic libraries and dependencies
-    * `appimagetool` - a [creator of runnable packages](https://github.com/AppImage/AppImageKit) for Linux in AppImage format, _created by [Simon Peter](https://github.com/probonopd) and contributors_
+    * `appimagetool` - a [creator of runnable packages](https://github.com/AppImage/AppImageKit) for Linux in AppImage format,  
+    _created by [Simon Peter](https://github.com/probonopd) and contributors_
 
 Additionally, our Windows and macOS installers are being signed with Timecamp certificates.
 
@@ -106,7 +108,8 @@ Source:
 * [Qt](https://www1.qt.io/) [LGPLv3] - we're using it under LGPLv3 license, with prebuilt binaries provided on their website
 * [QHotkey](https://github.com/Skycoder42/QHotkey) [BSD 3-Clause] - globally working hotkeys for Windows, macOS and Linux
 * [LZ4](http://lz4.github.io/lz4/) [BSD 2-Clause] - for reading Firefox data (see `FirefoxUtils.cpp`)
-* [Minimal CMake template for Qt5 Projects](https://github.com/euler0/mini-cmake-qt) [Unlicense] - the simplest possible version of a working, multi-platform Qt5 project
+* [Minimal CMake template for Qt5 Projects](https://github.com/euler0/mini-cmake-qt) [Unlicense] - the simplest possible version of a working,  
+multi-platform Qt5 project
 * Previous [Timecamp Desktop App](https://github.com/timecamp/timecamp-v2-desktop-app) - sources for macOS widgets and data collecting
 
 Tools:
