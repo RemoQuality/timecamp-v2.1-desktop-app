@@ -45,10 +45,8 @@ and `cmake-build-xcode` is where project files will be created.
 Now you can open it in your IDE of choice.
 
 #### Updating enviroment info
-To compile our code you need to make a `CMakeProjectConfig.cmake` file.
-
-Copy and rename `CMakeProjectConfig.cmake.example` and modify the path to Path to Qt precompiled libs.
-
+To compile our code you need to make a `CMakeProjectConfig.cmake` file.  
+Copy and rename `CMakeProjectConfig.cmake.example` and modify the path to Path to Qt precompiled libs.  
 You can also add path to Qt to the `PATH` enviroment variable - it will help with packaging installer and signing the binaries.
 
 Now you are ready to go!
