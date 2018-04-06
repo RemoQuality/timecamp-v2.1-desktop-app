@@ -12,20 +12,20 @@ The project structure tree looks like this:
 * `res` - resource files; icons, images, desktop shortcut templates
 * `src` - source files
     * `Overrides` - various classes that override default Qt functionality  
-    (like hijacking clicks to external websites, to open them in default OS browser)    
+    (like hijacking clicks to external websites to open them in default OS browser)    
     * `*Other directories*` - directories created for classes that have OS-dependent functionality, eg:
     * `DataCollector`
         * with `WindowEvents.cpp` as the base class (with shared functionality, like data saving),
         * and `WindowEvents_W.cpp` as a subclass with functionality for Windows (collecting window names, etc)
 * `third-party` - code from other projects, that we use internally (currently LZ4 and QHotkey)
 * Files placed directly in root are for strictly organisational purposes, eg:  
-`.gitignore`, `.editorconfig`, `CMakeLists.txt` and `README.md`.
+`.gitignore`, `.editorconfig`, `CMakeLists.txt` and `README.md`
 * For ease of deployment, our `deploy_*` scripts are also in the root. This might change in future versions.
 
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your machine for development and testing purposes.  
-See *Creating installers* for notes on how to make packages for Windows, macOS and Linux.
+See *[Creating installers](https://github.com/timecamp/timecamp-desktop#creating-installers)* for notes on how to make packages for Windows, macOS and Linux.
 
 ### Prerequisites
 
@@ -103,16 +103,15 @@ We already checked these:
 
 Our installers are created with:
 * Windows
-    * `windeployqt` - a Qt [Deployment Tool](http://doc.qt.io/qt-5/windows-deployment.html), which pulls all needed Qt dynamic libraries and dependencies
+    * `windeployqt` - a Qt [Deployment Tool](http://doc.qt.io/qt-5/windows-deployment.html), which pulls in Qt dynamic libraries and dependencies
     * `NSIS` - [Nullsoft Scriptable Install System](http://nsis.sourceforge.net/Main_Page), with our proprietary script (not in this repo)
 * macOS
-    * `macdeployqt` - a Qt [Deployment Tool](http://doc.qt.io/qt-5/osx-deployment.html), which pulls all needed Qt dynamic libraries and dependencies,  
+    * `macdeployqt` - a Qt [Deployment Tool](http://doc.qt.io/qt-5/osx-deployment.html), which pulls in Qt libraries and dependencies,
     and creates an App Bundle
-    * `create-dmg` - a Node.js [script for creating DMG packages](https://github.com/sindresorhus/create-dmg), _created by [Sindre Sorhus](https://github.com/sindresorhus)_
+    * `create-dmg` - a Node.js [script for creating DMG packages](https://github.com/sindresorhus/create-dmg)
 * Linux
-    * `linuxdeployqt` - a Community-created [Deployment Tool](https://github.com/probonopd/linuxdeployqt), which pulls all needed Qt dynamic libraries and dependencies
-    * `appimagetool` - a [creator of runnable packages](https://github.com/AppImage/AppImageKit) for Linux in AppImage format,  
-    _created by [Simon Peter](https://github.com/probonopd) and contributors_
+    * `linuxdeployqt` - a Community-created [Deployment Tool](https://github.com/probonopd/linuxdeployqt), which pulls in Qt libraries and dependencies
+    * `appimagetool` - a [creator of runnable packages](https://github.com/AppImage/AppImageKit) for Linux in AppImage format
 
 Additionally, our Windows and macOS installers are being signed with Timecamp certificates.
 
