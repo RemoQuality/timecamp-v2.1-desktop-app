@@ -5,7 +5,7 @@ Start timers, create projects, do everything that can be done on the web version
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.  
+These instructions will get you a copy of the project up and running on your machine for development and testing purposes.  
 See *Creating installers* for notes on how to make packages for Windows, macOS and Linux.
 
 ### Prerequisites
@@ -49,8 +49,7 @@ To compile our code you need to make a `CMakeProjectConfig.cmake` file.
 
 Copy and rename `CMakeProjectConfig.cmake.example` and modify the path to Path to Qt precompiled libs.
 
-Adding path to Qt to the `PATH` enviroment variable is also advisable,  
-it will help with packaging installer and signing the binaries.
+You can also add path to Qt to the `PATH` enviroment variable - it will help with packaging installer and signing the binaries.
 
 Now you are ready to go!
 
@@ -108,8 +107,7 @@ Source:
 * [Qt](https://www1.qt.io/) [LGPLv3] - we're using it under LGPLv3 license, with prebuilt binaries provided on their website
 * [QHotkey](https://github.com/Skycoder42/QHotkey) [BSD 3-Clause] - globally working hotkeys for Windows, macOS and Linux
 * [LZ4](http://lz4.github.io/lz4/) [BSD 2-Clause] - for reading Firefox data (see `FirefoxUtils.cpp`)
-* [Minimal CMake template for Qt5 Projects](https://github.com/euler0/mini-cmake-qt) [Unlicense] - the simplest possible version of a working,  
-multi-platform Qt5 project
+* [mini-cmake-qt](https://github.com/euler0/mini-cmake-qt) [[Unlicense](http://unlicense.org/)d] - a template for the simplest possible version of a working,  multi-platform Qt5 project
 * Previous [Timecamp Desktop App](https://github.com/timecamp/timecamp-v2-desktop-app) - sources for macOS widgets and data collecting
 
 Tools:
