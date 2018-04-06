@@ -11,37 +11,21 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 include(QtCommon) # cmake/QtCommon.cmake
 
-
-project(TimecampDesktop VERSION 1.0.1)
+include(CMakeProjectConfig.cmake)
 
 # Set PROJECT_VERSION_PATCH and PROJECT_VERSION_TWEAK to 0 if not present, needed by add_project_meta
 fix_project_version()
-
-# Set additional project information
-set(PRODUCT_NAME "Timecamp Desktop") # the nice visible name
-set(COMPANY "Time Solutions")
-set(COPYRIGHT "Copyright (c) 2010-2018 Time Solutions. All rights reserved.")
-set(IDENTIFIER "com.TimeSolutions.${PROJECT_NAME}")
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (WIN32)
     if ("${CMAKE_GENERATOR}" MATCHES "MinGW")
-        set(CMAKE_PREFIX_PATH
-                "C:\\Qt\\5.10.0\\mingw53_32\\lib\\cmake" # what about mingw64?
-                )
         message(FATAL_ERROR "There's no QtWebEngine (no chromium) for MinGW, you have to use MSVC on win32")
     elseif ("${CMAKE_GENERATOR}" MATCHES "Visual Studio" OR "${CMAKE_GENERATOR}" MATCHES "NMake" OR "${CMAKE_GENERATOR}" MATCHES "Ninja")
-        set(CMAKE_PREFIX_PATH
-                "C:\\Qt\\5.10.0\\msvc2017_64\\lib\\cmake"
-                "C:\\WinDDK\\7600.16385.1\\lib\\win7\\i386"
-                )
+        LIST(APPEND CMAKE_PREFIX_PATH "C:\\WinDDK\\7600.16385.1\\lib\\win7\\i386")
     endif ()
-elseif (UNIX AND NOT APPLE)
-    set(CMAKE_PREFIX_PATH "~/Qt/5.10.1/gcc_64/")
-else ()
-    set(CMAKE_PREFIX_PATH "~/Qt/5.10.1/clang_64/")
+elseif (APPLE)
     set(CMAKE_EXE_LINKER_FLAGS "-framework Carbon -framework AppKit -framework IOKit -framework Foundation -framework CoreFoundation")
 endif ()
 

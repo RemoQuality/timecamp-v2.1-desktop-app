@@ -1,0 +1,15 @@
+project(TimecampDesktop VERSION 1.0.1)
+
+# Set project information
+set(PRODUCT_NAME "Timecamp Desktop") # the nice visible name
+set(COMPANY "Time Solutions")
+set(IDENTIFIER "com.TimeSolutions.${PROJECT_NAME}")
+set(COPYRIGHT "Copyright (c) 2010-2018 Time Solutions. All rights reserved.")
+
+# Path to Qt precompiled libs:
+set(CMAKE_PREFIX_PATH "~/Qt/5.10.1/gcc_64/")
+
+# usual default paths from installer:
+# Windows: "C:\\Qt\\5.10.0\\msvc2017_64\\lib\\cmake"
+# Linux: "~/Qt/5.10.1/gcc_64/"
+# macOS: "~/Qt/5.10.1/clang_64/"

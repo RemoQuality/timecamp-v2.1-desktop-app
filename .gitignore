@@ -5,6 +5,7 @@ deploy/
 
 CMakeLists.txt.user*
 CMakeSettings.json
+CMakeProjectConfig.cmake
 
 linuxdeployqt/
 

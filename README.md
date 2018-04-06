@@ -39,17 +39,9 @@ Where `Xcode` is [generator of your choosing](https://cmake.org/cmake/help/v3.1/
 
 Now you can open it in your IDE of choice.
 
-You need to edit `CMakeLists.txt` and modify paths to Qt:
-* find lines which set `CMAKE_PREFIX_PATH`
-* replace the paths found for your Qt installation folder:
-    * eg. replace:
-        ```
-        set(CMAKE_PREFIX_PATH "~/Qt/5.10.1/gcc_64/")
-        ```
-        with:
-        ```
-        set(CMAKE_PREFIX_PATH "/opt/Qt/5.10.1/clang_64/")
-        ```
+Firstly, you need to make `CMakeProjectConfig.cmake`.
+Copy and rename `CMakeProjectConfig.cmake.example` and modify the path to Path to Qt precompiled libs.
+
 
 ## Compiling our source
 
