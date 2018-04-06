@@ -1,9 +1,9 @@
 <RCC>
     <qresource prefix="/Icons">
-        <file>res/AppIcon32.png</file>
-        <file>res/AppIcon128.png</file>
-        <file>res/AppIcon.ico</file>
-        <file>res/AppIcon.icns</file>
-        <file>res/AppIcon_Dark.png</file>
+        <file>AppIcon32.png</file>
+        <file>AppIcon128.png</file>
+        <file>AppIcon.ico</file>
+        <file>AppIcon.icns</file>
+        <file>AppIcon_Dark.png</file>
     </qresource>
 </RCC>
