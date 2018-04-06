@@ -156,7 +156,7 @@ endif ()
 
 add_project_meta(META_FILES_TO_INCLUDE)
 
-set(RESOURCE_FILES TimecampDesktop.qrc)
+set(RESOURCE_FILES res/TimecampDesktop.qrc)
 
 
 add_executable(${PROJECT_NAME} ${OS_BUNDLE} # Expands to WIN32 or MACOS_BUNDLE depending on OS
