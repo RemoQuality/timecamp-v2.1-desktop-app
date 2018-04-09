@@ -89,7 +89,7 @@ bool DbManager::saveAppToDb(AppData *app)
 QList<AppData *> DbManager::getAppsSinceLastSync(qint64 last_sync)
 {
     QSqlQuery querySelect;
-    querySelect.prepare("SELECT app_name, window_name, additional_info, start_time, end_time FROM apps WHERE start_time > :lastSync");
+    querySelect.prepare("SELECT app_name, window_name, additional_info, start_time, end_time FROM apps WHERE start_time > :lastSync LIMIT 400");
     querySelect.bindValue(":lastSync", last_sync);
 
     QList<AppData *> appList;

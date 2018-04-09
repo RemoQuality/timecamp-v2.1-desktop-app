@@ -33,7 +33,7 @@ void Comms::timedUpdates()
 
     setCurrentTime(QDateTime::currentMSecsSinceEpoch()); // time of DB fetch is passed, so we can update to it if successful
 
-    QList < AppData * > appList = DbManager::instance().getAppsSinceLastSync(lastSync); // get apps since last sync
+    QList<AppData *> appList = DbManager::instance().getAppsSinceLastSync(lastSync); // get apps since last sync
 
     qDebug() << "app list length: " << appList.length();
     if (appList.length() > 0) { // send only if there is anything
@@ -140,6 +140,7 @@ void Comms::sendAppData(QList<AppData *> *appList)
 //            qDebug() << "converted end_time: " << end_time;
             count++;
         }
+        lastSync = app->getEnd(); // set our internal variable to value from last app
     }
 
 //    qDebug() << "--------------";
@@ -178,7 +179,7 @@ void Comms::appDataReply(QNetworkReply *reply)
     qDebug() << "AppData Response: " << buffer;
     if (buffer == "") {
         qDebug() << "update last sync to whenever we sent the data";
-        settings.setValue(SETT_LAST_SYNC, getCurrentTime()); // update last sync to whenever we sent the data
+        settings.setValue(SETT_LAST_SYNC, lastSync); // update last sync to our internal variable (to the last app in the last set)
     }
 }
 
