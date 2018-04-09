@@ -54,12 +54,13 @@ Get this repo:
 git clone git@github.com:timecamp/timecamp-desktop.git
 ```
 
-*(Optional)* Generate project files for your IDE, eg. XCode on Mac:
+*(Optional)* Generate project files for your IDE, eg. XCode on Mac, in a subdirectory:
 ```
-cmake -G Xcode -B cmake-build-xcode
+mkdir cmake-build-xcode
+cd cmake-build-xcode
+cmake -G Xcode -B ..
 ```
-Where `Xcode` is [generator of your choosing](https://cmake.org/cmake/help/v3.1/manual/cmake-generators.7.html),  
-and `cmake-build-xcode` is where project files will be created.
+Where `Xcode` is [generator of your choosing](https://cmake.org/cmake/help/v3.1/manual/cmake-generators.7.html), and `cmake-build-xcode` is where project files will be created.
 
 Now you can open it in your IDE of choice.
 
