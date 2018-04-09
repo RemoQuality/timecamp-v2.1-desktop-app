@@ -116,7 +116,6 @@ QString WindowEvents_M::GetProcWindowName(QString processName)
 {
     QString appTitle;
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
-    const char *windowNameUtf8 = "";
     NSString *windowName = @"";
     NSDictionary *errorDict;
     NSAppleEventDescriptor *returnDescriptor = nil;
