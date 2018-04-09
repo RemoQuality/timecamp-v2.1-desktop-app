@@ -65,17 +65,14 @@ void Comms::saveApp(AppData *app)
         needsReporting = true;
     }
 
-//    qDebug() << "Needs reporting: " << needsReporting;
-
     if (needsReporting) {
         qint64 now = QDateTime::currentMSecsSinceEpoch();
-//        sendAppData(lastApp, lastAppTimestamp, now);
         lastApp->setEnd(now); // it already has start, now we only update end
         DbManager::instance().saveAppToDb(lastApp);
 
         app->setStart(now);
         lastApp = app; // update app reference
-//        qDebug("SAVE: %s | %s \n", lastApp->getAppName().toLatin1().constData(), lastApp->getWindowName().toLatin1().constData());
+//        qDebug("DBSAVE: %s | %s \n", lastApp->getAppName().toLatin1().constData(), lastApp->getWindowName().toLatin1().constData());
     }
 }
 
