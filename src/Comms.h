@@ -38,6 +38,10 @@ private:
     qint64 lastSync;
     qint64 currentTime;
     QString apiKey;
+    int retryCount = 0;
+    int maxBatchSize = 400;
+    bool lastBatchBig = false;
+
     int user_id;
     int root_group_id;
     int primary_group_id;
@@ -48,6 +52,7 @@ public slots:
     void appDataReply(QNetworkReply *reply);
     void userInfoReply(QNetworkReply *reply);
     void settingsReply(QNetworkReply *reply);
+    void checkBatchSize();
 };
 
 typedef void (Comms::*ReplyHandler)(QNetworkReply *reply);

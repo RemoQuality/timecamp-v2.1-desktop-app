@@ -36,8 +36,14 @@ void Comms::timedUpdates()
     QList<AppData *> appList = DbManager::instance().getAppsSinceLastSync(lastSync); // get apps since last sync
 
     qDebug() << "app list length: " << appList.length();
-    if (appList.length() > 0) { // send only if there is anything
+    if (appList.length() > 0) { // send only if there is anything to send (0 is if "computer activities" are disabled)
         sendAppData(&appList);
+        if(appList.length() > maxBatchSize){
+            lastBatchBig = true;
+        } else {
+            lastBatchBig = false;
+            retryCount = 0; // we send small amount of activities, so our last push must've been success
+        }
     }
     getUserInfo();
     getSettings();
@@ -180,6 +186,19 @@ void Comms::appDataReply(QNetworkReply *reply)
     if (buffer == "") {
         qDebug() << "update last sync to whenever we sent the data";
         settings.setValue(SETT_LAST_SYNC, lastSync); // update last sync to our internal variable (to the last app in the last set)
+        this->checkBatchSize();
+    }
+}
+
+void Comms::checkBatchSize()
+{
+    if (lastBatchBig) {
+        retryCount++;
+        if(retryCount < 10) {
+            auto *timer = new QTimer();
+            timer->setSingleShot(true);
+            QObject::connect(timer, &QTimer::timeout, this, &Comms::timedUpdates);
+        }
     }
 }
 
