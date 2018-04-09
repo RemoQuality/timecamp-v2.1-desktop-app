@@ -38,7 +38,7 @@ void Comms::timedUpdates()
     qDebug() << "app list length: " << appList.length();
     if (appList.length() > 0) { // send only if there is anything to send (0 is if "computer activities" are disabled)
         sendAppData(&appList);
-        if(appList.length() > maxBatchSize){
+        if(appList.length() > MAX_ACTIVITIES_BATCH_SIZE){
             lastBatchBig = true;
         } else {
             lastBatchBig = false;

@@ -39,7 +39,6 @@ private:
     qint64 currentTime;
     QString apiKey;
     int retryCount = 0;
-    int maxBatchSize = 400;
     bool lastBatchBig = false;
 
     int user_id;

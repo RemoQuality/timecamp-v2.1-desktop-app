@@ -89,8 +89,9 @@ bool DbManager::saveAppToDb(AppData *app)
 QVector<AppData *> DbManager::getAppsSinceLastSync(qint64 last_sync)
 {
     QSqlQuery querySelect;
-    querySelect.prepare("SELECT app_name, window_name, additional_info, start_time, end_time FROM apps WHERE start_time > :lastSync LIMIT 400");
+    querySelect.prepare("SELECT app_name, window_name, additional_info, start_time, end_time FROM apps WHERE start_time > :lastSync LIMIT :maxCount");
     querySelect.bindValue(":lastSync", last_sync);
+    querySelect.bindValue(":maxCount", MAX_ACTIVITIES_BATCH_SIZE);
 
     QVector<AppData *> appList;
 
