@@ -83,6 +83,7 @@ private:
     void fetchTimerName();
     bool checkIfOnTimerPage();
     void goToTimerPage();
+    void refreshTimerPageData();
 
     void checkIfLoggedIn(QString title);
     void setupWebview();

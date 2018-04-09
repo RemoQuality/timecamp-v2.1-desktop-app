@@ -124,7 +124,7 @@ void MainWidget::setupWebview()
 
 //    pagePointer = m_pWebEngineView->page();
 
-    goToTimerPage(); // loads main app url
+    this->goToTimerPage(); // loads main app url
 //    QTWEPage->load(QUrl(APPLICATION_URL));
 //    QTWEPage->load(QUrl("http://request.urih.com/"));
 
@@ -251,6 +251,8 @@ void MainWidget::goToTimerPage()
         QThread::msleep(128);
 
         this->webpageTitleChanged(QTWEPage->title());
+    } else {
+        this->refreshTimerPageData();
     }
 }
 
@@ -265,7 +267,7 @@ void MainWidget::goToAwayPage()
 
 void MainWidget::startTask()
 {
-    goToTimerPage();
+    this->goToTimerPage();
     this->stopTask(); // stop the last timer
     if (!this->isVisible()) {
         this->open();
@@ -288,9 +290,17 @@ void MainWidget::startTask()
 
 void MainWidget::stopTask()
 {
-    goToTimerPage();
+    this->goToTimerPage();
     this->runJSinPage("if($('.btn-timer').text().trim().toLowerCase() == 'stop timer') { $('.btn-timer').click(); }");
 }
+
+void MainWidget::refreshTimerPageData()
+{
+    if(this->checkIfOnTimerPage()) {
+        this->runJSinPage("$('.btn .fa-repeat').parent().click();");
+    }
+}
+
 
 void MainWidget::checkIsTimerRunning()
 {
