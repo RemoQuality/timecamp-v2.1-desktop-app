@@ -39,7 +39,6 @@ std::string WindowEvents_U::execCommand(const char *cmd)
 
 void WindowEvents_U::logAppName(QString appName, QString windowName)
 {
-//    qInfo("APP: %s | %s \n", appName.toLatin1().constData(), windowName.toLatin1().constData());
     WindowEvents::logAppName(appName, windowName, "");
 }
 
