@@ -140,7 +140,6 @@ QString parseJsonlz4RecoveryFilePath(const QString &recoveryFilePath)
     }
     QString qDecryptedData = QString(decryptedData);
     free(decryptedData);
-    int decryptedDataOriginalSize = qDecryptedData.length();
 
     int indexOfLastProperChar = qDecryptedData.lastIndexOf("}");
     QString cutData = qDecryptedData.left(indexOfLastProperChar + 1);
