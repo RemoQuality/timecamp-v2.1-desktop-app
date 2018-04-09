@@ -236,8 +236,7 @@ void MainWidget::goToTimerPage()
     if (!this->checkIfOnTimerPage()) {
         QEventLoop loop;
         QMetaObject::Connection conn1 = QObject::connect(QTWEPage, &QWebEnginePage::loadFinished, &loop, &QEventLoop::quit);
-        QMetaObject::Connection conn2 = QObject::connect(QTWEPage, &QWebEnginePage::loadProgress, [this, &loop](
-                const int &newValue)
+        QMetaObject::Connection conn2 = QObject::connect(QTWEPage, &QWebEnginePage::loadProgress, [&loop](const int &newValue)
         {
             qDebug() << "Load progress: " << newValue;
             if (newValue == 100) {
