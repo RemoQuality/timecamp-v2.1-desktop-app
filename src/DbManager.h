@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QSqlDatabase>
-#include <QList>
+#include <QVector>
 
 #include "AppData.h"
 
@@ -31,7 +31,7 @@ public:
      */
     bool saveAppToDb(AppData *app);
 
-    QList<AppData *> getAppsSinceLastSync(qint64 last_sync);
+    QVector<AppData *> getAppsSinceLastSync(qint64 last_sync);
 
 private:
     QSqlDatabase m_db;

@@ -86,15 +86,21 @@ bool DbManager::saveAppToDb(AppData *app)
     return success;
 }
 
-QList<AppData *> DbManager::getAppsSinceLastSync(qint64 last_sync)
+QVector<AppData *> DbManager::getAppsSinceLastSync(qint64 last_sync)
 {
     QSqlQuery querySelect;
     querySelect.prepare("SELECT app_name, window_name, additional_info, start_time, end_time FROM apps WHERE start_time > :lastSync LIMIT 400");
     querySelect.bindValue(":lastSync", last_sync);
 
-    QList<AppData *> appList;
+    QVector<AppData *> appList;
 
     if (querySelect.exec()) {
+        int qSize = querySelect.size(); // get count of activities
+
+        if(qSize != -1){
+            appList.reserve(qSize + 1); // reserve memory space for the count
+        }
+
         while (querySelect.next()) {
             AppData *tempApp = new AppData();
             tempApp->setAppName(querySelect.value("app_name").toString());
@@ -104,6 +110,7 @@ QList<AppData *> DbManager::getAppsSinceLastSync(qint64 last_sync)
             tempApp->setEnd(querySelect.value("end_time").toLongLong());
             appList.push_back(tempApp);
         }
+        appList.squeeze(); // finally remove empty elements (because reserve is just a hint)
     }
     return appList;
 }

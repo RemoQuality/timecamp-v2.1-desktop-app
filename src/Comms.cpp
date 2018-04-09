@@ -33,7 +33,7 @@ void Comms::timedUpdates()
 
     setCurrentTime(QDateTime::currentMSecsSinceEpoch()); // time of DB fetch is passed, so we can update to it if successful
 
-    QList<AppData *> appList = DbManager::instance().getAppsSinceLastSync(lastSync); // get apps since last sync
+    QVector<AppData *> appList = DbManager::instance().getAppsSinceLastSync(lastSync); // get apps since last sync
 
     qDebug() << "app list length: " << appList.length();
     if (appList.length() > 0) { // send only if there is anything to send (0 is if "computer activities" are disabled)
@@ -91,7 +91,7 @@ bool Comms::isApiKeyOK()
     return true;
 }
 
-void Comms::sendAppData(QList<AppData *> *appList)
+void Comms::sendAppData(QVector<AppData *> *appList)
 {
     // read api key from settings
     apiKey = settings.value(SETT_APIKEY).toString();
