@@ -18,6 +18,7 @@ public:
     static QString GetProcWindowName(QString processName);
     QString GetProcNameFromPath(QString processName);
     QString GetAdditionalInfo(QString processName);
+    const void didActivateApp(void *anNSnotification) const;
 
 public slots:
     void GetActiveApp();
@@ -28,6 +29,7 @@ protected:
     unsigned long getIdleTime() override;
 
 private:
+    void *workspaceWatcher;
 };
 
 #endif // WindowEvents_M_H

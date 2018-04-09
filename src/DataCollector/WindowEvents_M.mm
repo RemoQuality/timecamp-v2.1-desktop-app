@@ -9,6 +9,37 @@
 
 #include "src/FirefoxUtils.h"
 
+// mixed Objective-C and C++ kudos to:
+// https://stackoverflow.com/questions/9080619/nsworkspace-notifications-in-cfnotificationcenter
+
+@interface MDWorkspaceWatcher : NSObject {
+    WindowEvents_M    *WindowEvents_M;
+}
+- (id)initWithMyClass:(WindowEvents_M *)aWindowEvents_M;
+@end
+
+@implementation MDWorkspaceWatcher
+- (id)initWithMyClass:(WindowEvents_M *)aWindowEvents_M {
+    if ((self = [super init])) {
+        WindowEvents_M = aWindowEvents_M;
+        [[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self
+                                                               selector:@selector(didActivateApp:)
+                                                                   name:NSWorkspaceDidActivateApplicationNotification
+                                                                 object:nil];
+    }
+    return self;
+}
+// very important:
+- (void)dealloc {
+    [[[NSWorkspace sharedWorkspace] notificationCenter] removeObserver:self];
+    [super dealloc];
+}
+- (void)didActivateApp:(NSNotification *)notification {
+//    WindowEvents_M->didActivateApp(notification);
+    WindowEvents_M->GetActiveApp();
+}
+@end
+
 unsigned long WindowEvents_M::getIdleTime()
 {
     int64_t idlesecs = -1;
@@ -43,14 +74,21 @@ void WindowEvents_M::run()
 //    connect(timer, SIGNAL(timeout()), this, SLOT(GetActiveApp()));
 //    connect(timer, &QTimer::timeout, this, &WindowEvents_M::GetActiveApp);
 //    timer->start(2*1000);
+
+//    while (!QThread::currentThread()->isInterruptionRequested()) {
+//        // empty loop, waiting for stopping the thread
+//        if (!isIdle) {
+//            this->GetActiveApp();
+//        }
+//        QThread::msleep(1 * 1000);
+//    }
+
+    //    timer->stop();
+
+    this->workspaceWatcher = [[MDWorkspaceWatcher alloc] initWithMyClass:this];
     while (!QThread::currentThread()->isInterruptionRequested()) {
-        // empty loop, waiting for stopping the thread
-        if (!isIdle) {
-            this->GetActiveApp();
-        }
-        QThread::msleep(1 * 1000);
     }
-//    timer->stop();
+    [(MDWorkspaceWatcher *)this->workspaceWatcher release];
 
     qInfo("thread stopped");
 }
