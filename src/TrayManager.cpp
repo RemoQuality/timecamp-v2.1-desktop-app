@@ -46,7 +46,7 @@ void TrayManager::setupTray(MainWidget *parent)
 #ifdef Q_OS_MACOS
     widget = new Widget_M();
     widget->setMenu(trayMenu);
-    widget->setIcon(":/Icons/res/AppIcon_Dark.png");
+    widget->setIcon(":/Icons/AppIcon_Dark.png");
     widget->setText(""); // at the start there should be no timer text
 #endif
     settings.sync();

@@ -103,8 +103,8 @@ int main(int argc, char *argv[])
     firstRun();
 
     QIcon appIcon = QIcon(MAIN_ICON);
-//    appIcon.addFile(":/Icons/res/AppIcon32.png");
-//    appIcon.addFile(":/Icons/res/AppIcon128.png");
+//    appIcon.addFile(":/Icons/AppIcon32.png");
+//    appIcon.addFile(":/Icons/AppIcon128.png");
     QApplication::setWindowIcon(appIcon);
 
 
