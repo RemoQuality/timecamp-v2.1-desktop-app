@@ -30,7 +30,7 @@ See *[Creating installers](https://github.com/timecamp/timecamp-desktop#creating
 ### Prerequisites
 
 To compile **Timecamp Desktop** you need:
-* _[Qt](https://www.qt.io/) 5.9_ or greater, and
+* _[Qt](https://www.qt.io/) 5.9_ or greater (remember to **select the latest version during Qt instalation**), and
 
 
 * either a CMake-compatible IDE  
@@ -58,6 +58,11 @@ git clone git@github.com:timecamp/timecamp-desktop.git
 To compile our code you need to make a `CMakeProjectConfig.cmake` file.  
 Copy and rename `CMakeProjectConfig.cmake.example` and modify the path to Path to Qt precompiled libs.  
 You can also add path to Qt to the `PATH` enviroment variable - it will help with packaging installer and signing the binaries.
+
+```
+cp CMakeProjectConfig.cmake.example CMakeProjectConfig.cmake
+# edit this file and change path to qt
+```
 
 *(Optional)* Generate project files for your IDE, eg. XCode on Mac, in a subdirectory:
 ```
