@@ -12,6 +12,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 include(QtCommon) # cmake/QtCommon.cmake
 
 include(CMakeProjectConfig.cmake)
+project(TimecampDesktop VERSION ${PRODUCT_VERSION})
 
 if (NOT DEFINED PRODUCT_NAME)
     message(FATAL_ERROR "You haven't prepared CMakeProjectConfig.cmake file.
