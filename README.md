@@ -54,6 +54,11 @@ Get this repo:
 git clone git@github.com:timecamp/timecamp-desktop.git
 ```
 
+#### Updating enviroment info
+To compile our code you need to make a `CMakeProjectConfig.cmake` file.  
+Copy and rename `CMakeProjectConfig.cmake.example` and modify the path to Path to Qt precompiled libs.  
+You can also add path to Qt to the `PATH` enviroment variable - it will help with packaging installer and signing the binaries.
+
 *(Optional)* Generate project files for your IDE, eg. XCode on Mac, in a subdirectory:
 ```
 mkdir cmake-build-xcode
@@ -63,11 +68,6 @@ cmake -G Xcode -B ..
 Where `Xcode` is [generator of your choosing](https://cmake.org/cmake/help/v3.1/manual/cmake-generators.7.html), and `cmake-build-xcode` is where project files will be created.
 
 Now you can open it in your IDE of choice.
-
-#### Updating enviroment info
-To compile our code you need to make a `CMakeProjectConfig.cmake` file.  
-Copy and rename `CMakeProjectConfig.cmake.example` and modify the path to Path to Qt precompiled libs.  
-You can also add path to Qt to the `PATH` enviroment variable - it will help with packaging installer and signing the binaries.
 
 Now you are ready to go!
 
