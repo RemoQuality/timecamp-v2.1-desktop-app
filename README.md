@@ -30,12 +30,14 @@ See *[Creating installers](https://github.com/timecamp/timecamp-desktop#creating
 ### Prerequisites
 
 To compile **Timecamp Desktop** you need:
-* _[Qt](https://www.qt.io/) 5.9_ or greater (remember to **select the latest version during Qt instalation**), and
-
-
-* either a CMake-compatible IDE  
+* _[Qt](https://www.qt.io/) 5.9_ or greater (remember to **select the latest version during Qt instalation**)
+    * you don't need Qt Sources and other components, eg. Android or iOS;  
+    you can **deselect everything except your OS package and Qt WebEngine**
+    
+* and either a CMake-compatible IDE  
 (Qt Creator, JetBrains CLion, Microsoft Visual Studio 2017)  
 \- they can load this repo as a native project
+
 * ... or just [CMake](https://cmake.org/) _(at least v. 3.1)_, which can generate project files for many other IDEs and build systems  
 (eg. XCode, Code::Blocks, Eclipse, Ninja Build System, older MS Visual Studios, or plain old Makefiles)
 
