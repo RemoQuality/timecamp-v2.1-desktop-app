@@ -63,10 +63,13 @@ You can also add path to Qt to the `PATH` enviroment variable - it will help wit
 
 ```
 cp CMakeProjectConfig.cmake.example CMakeProjectConfig.cmake
-# edit this file and change path to qt
+# now edit the copied file and change path to Qt within
+#
+# optional: to add Qt to $PATH environment variable do:
+export PATH=$PATH:/your/qt/install/dir
 ```
 
-*(Optional)* Generate project files for your IDE, eg. XCode on Mac, in a subdirectory:
+***(Optional)*** Generate project files for your IDE, eg. XCode on Mac, in a subdirectory:
 ```
 mkdir cmake-build-xcode
 cd cmake-build-xcode
@@ -74,9 +77,8 @@ cmake -G Xcode -B ..
 ```
 Where `Xcode` is [generator of your choosing](https://cmake.org/cmake/help/v3.1/manual/cmake-generators.7.html), and `cmake-build-xcode` is where project files will be created.
 
-Now you can open it in your IDE of choice.
 
-Now you are ready to go!
+Now you can open it in your IDE of choice. You are ready to go!
 
 ## Compiling our source
 
