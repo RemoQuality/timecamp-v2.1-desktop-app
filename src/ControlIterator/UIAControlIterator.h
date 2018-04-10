@@ -2,7 +2,7 @@
 
 #include <uiautomation.h>
 #include <strsafe.h>
-#include <DataCollector/WindowEvents_W.h>
+#include <src/DataCollector/WindowEvents_W.h>
 
 class UIAControlItem : public IControlItem
 {
