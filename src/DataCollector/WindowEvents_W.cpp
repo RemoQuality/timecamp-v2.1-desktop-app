@@ -31,16 +31,16 @@ void WindowEvents_W::run()
 {
     qInfo("thread started");
 
-    InitializeWindowsHook(g_hook, wname_hook);
+    InitializeWindowsHook(appChangeEventHook, appNameChangeEventHook);
 
-    // Pętla komunikatów WinAPI
+    // WinAPI loop
 
-    while (!QThread::currentThread()->isInterruptionRequested() && GetMessage(&Komunikat, nullptr, 0, 0)) {
-        TranslateMessage(&Komunikat);
-        DispatchMessage(&Komunikat);
+    while (!QThread::currentThread()->isInterruptionRequested() && GetMessage(&winApiMsg, nullptr, 0, 0)) {
+        TranslateMessage(&winApiMsg);
+        DispatchMessage(&winApiMsg);
     }
 
-    ShutdownWindowsHook(g_hook, wname_hook);
+    ShutdownWindowsHook(appChangeEventHook, appNameChangeEventHook);
 
     qInfo("thread stopped");
 }
@@ -226,16 +226,16 @@ void WindowEvents_W::ParseProcessName(HANDLE hProcess, TCHAR *processName)
 }
 
 // Initializes COM and sets up the event hook.
-void WindowEvents_W::InitializeWindowsHook(HWINEVENTHOOK g_hook, HWINEVENTHOOK wname_hook)
+void WindowEvents_W::InitializeWindowsHook(HWINEVENTHOOK appChangeEventHook, HWINEVENTHOOK appNameChangeEventHook)
 {
     CoInitialize(nullptr);
-    g_hook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND,   // Range of events
+    appChangeEventHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND,   // Range of events
                              nullptr,                                            // Handle to DLL
                              reinterpret_cast<WINEVENTPROC>(WindowEvents_W::HandleWinEvent),                                     // The callback
                              0, 0,                                               // Process and thread IDs of interest (0 = all)
                              WINEVENT_OUTOFCONTEXT);
 
-    wname_hook = SetWinEventHook(EVENT_OBJECT_NAMECHANGE, EVENT_OBJECT_NAMECHANGE,   // Range of events
+    appNameChangeEventHook = SetWinEventHook(EVENT_OBJECT_NAMECHANGE, EVENT_OBJECT_NAMECHANGE,   // Range of events
                                  nullptr,                                            // Handle to DLL
                                  reinterpret_cast<WINEVENTPROC>(WindowEvents_W::HandleWinNameEvent),                                 // The callback
                                  0, 0,                                     // Process and thread IDs of interest (0 = all)
@@ -243,10 +243,10 @@ void WindowEvents_W::InitializeWindowsHook(HWINEVENTHOOK g_hook, HWINEVENTHOOK w
 }
 
 // Unhooks the event and shuts down COM.
-void WindowEvents_W::ShutdownWindowsHook(HWINEVENTHOOK g_hook, HWINEVENTHOOK wname_hook)
+void WindowEvents_W::ShutdownWindowsHook(HWINEVENTHOOK appChangeEventHook, HWINEVENTHOOK appNameChangeEventHook)
 {
-    UnhookWinEvent(wname_hook);
-    UnhookWinEvent(g_hook);
+    UnhookWinEvent(appNameChangeEventHook);
+    UnhookWinEvent(appChangeEventHook);
     CoUninitialize();
 }
 

@@ -26,13 +26,13 @@ public:
     static double getWindowsVersion();
 
 protected:
-    void run() override; // your thread implementation goes here
+    void run() override;
     unsigned long getIdleTime() override;
 
 private:
-    HWINEVENTHOOK wname_hook;
-    HWINEVENTHOOK g_hook;
-    MSG Komunikat;
+    HWINEVENTHOOK appNameChangeEventHook;
+    HWINEVENTHOOK appChangeEventHook;
+    MSG winApiMsg;
 
     static void
     HandleWinEvent(HWINEVENTHOOK hook, DWORD event, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread,
@@ -45,8 +45,8 @@ private:
     static void GetProcessName(HWND hWnd, TCHAR *procName);
     static void ParseProcessName(HANDLE hProcess, TCHAR *processName);
 
-    void InitializeWindowsHook(HWINEVENTHOOK g_hook, HWINEVENTHOOK wname_hook);
-    void ShutdownWindowsHook(HWINEVENTHOOK g_hook, HWINEVENTHOOK wname_hook);
+    void InitializeWindowsHook(HWINEVENTHOOK appChangeEventHook, HWINEVENTHOOK appNameChangeEventHook);
+    void ShutdownWindowsHook(HWINEVENTHOOK appChangeEventHook, HWINEVENTHOOK appNameChangeEventHook);
 };
 
 class WindowDetails
