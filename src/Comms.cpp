@@ -252,12 +252,12 @@ void Comms::userInfoReply(QNetworkReply *reply)
     }
 
     QByteArray buffer = reply->readAll();
+    QJsonDocument itemDoc = QJsonDocument::fromJson(buffer);
+
     buffer.truncate(MAX_LOG_TEXT_LENGTH);
     qDebug() << "UserInfo Response: " << buffer;
 
-    QJsonDocument itemDoc = QJsonDocument::fromJson(buffer);
     QJsonObject rootObject = itemDoc.object();
-
     user_id = rootObject.value("user_id").toString().toInt();
     root_group_id = rootObject.value("root_group_id").toString().toInt();
     primary_group_id = rootObject.value("primary_group_id").toString().toInt();
@@ -341,10 +341,10 @@ void Comms::settingsReply(QNetworkReply *reply)
         return;
     }
     QByteArray buffer = reply->readAll();
+    QJsonDocument itemDoc = QJsonDocument::fromJson(buffer);
     buffer.truncate(MAX_LOG_TEXT_LENGTH);
     qDebug() << "Settings Response: " << buffer;
 
-    QJsonDocument itemDoc = QJsonDocument::fromJson(buffer);
     QJsonArray rootArray = itemDoc.array();
     for (QJsonValueRef val: rootArray) {
         QJsonObject obj = val.toObject();
