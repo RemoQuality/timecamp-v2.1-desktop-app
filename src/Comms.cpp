@@ -192,6 +192,7 @@ void Comms::appDataReply(QNetworkReply *reply)
         return;
     }
 
+    buffer.truncate(MAX_LOG_TEXT_LENGTH);
     qDebug() << "AppData Response: " << buffer;
     if (buffer == "") {
         qDebug() << "update last sync to whenever we sent the data";
@@ -251,6 +252,7 @@ void Comms::userInfoReply(QNetworkReply *reply)
     }
 
     QByteArray buffer = reply->readAll();
+    buffer.truncate(MAX_LOG_TEXT_LENGTH);
     qDebug() << "UserInfo Response: " << buffer;
 
     QJsonDocument itemDoc = QJsonDocument::fromJson(buffer);
@@ -339,6 +341,7 @@ void Comms::settingsReply(QNetworkReply *reply)
         return;
     }
     QByteArray buffer = reply->readAll();
+    buffer.truncate(MAX_LOG_TEXT_LENGTH);
     qDebug() << "Settings Response: " << buffer;
 
     QJsonDocument itemDoc = QJsonDocument::fromJson(buffer);
@@ -365,15 +368,15 @@ void Comms::netRequest(QNetworkRequest request, QNetworkAccessManager::Operation
     qnam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
     connect(qnam, &QNetworkAccessManager::finished, this, callback);
 
-    qDebug() << "Network op: " << netOp;
     QString requestUrl = request.url().toString();
-    requestUrl.truncate(50);
-    qDebug() << "Request URL: " << requestUrl;
+    requestUrl.truncate(MAX_LOG_TEXT_LENGTH);
 
     QNetworkReply *reply = nullptr;
     if(netOp == QNetworkAccessManager::GetOperation) {
+        qDebug() << "[GET] URL: " << requestUrl;
         reply = qnam->get(request);
     }else if(netOp == QNetworkAccessManager::PostOperation) {
+        qDebug() << "[POST] URL: " << requestUrl;
         reply = qnam->post(request, data);
     }
 
