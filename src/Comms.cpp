@@ -181,12 +181,13 @@ void Comms::sendAppData(QVector<AppData *> *appList)
 
 void Comms::appDataReply(QNetworkReply *reply)
 {
+    QByteArray buffer = reply->readAll();
     if(reply->error() != QNetworkReply::NoError){
         qInfo() << "Network error: " << reply->errorString();
+        qInfo() << "Data: " << buffer;
         return;
     }
 
-    QByteArray buffer = reply->readAll();
     qDebug() << "AppData Response: " << buffer;
     if (buffer == "") {
         qDebug() << "update last sync to whenever we sent the data";
