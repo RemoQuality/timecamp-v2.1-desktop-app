@@ -403,17 +403,17 @@ QString WindowDetails::GetAdditionalInfo(QString processName, HWND passedHwnd)
         AccControlIterator iterator;
         iterator.iterate(currenthwnd, this, pointerMagic, (void *) &res, true);
 
-        qInfo() << "[ACC] " << res;
+        qDebug() << "[ACC] " << res;
 
         if (res == "" && WindowEvents_W::getWindowsVersion() <= 6.0) {
             UIAControlIterator iterator2;
             iterator2.iterate(currenthwnd, this, pointerMagic, (void *) &res, true);
-            qInfo() << "[UIA] " << res;// << "\r\n";
+            qDebug() << "[UIA] " << res;// << "\r\n";
         }
 
         QUrl url(res);
         QString host = url.host();
-        qInfo() << "[HOST]" << host << "(" << timer.elapsed() << ")" << "ms" << "\r\n";
+        qDebug() << "[HOST]" << host << "(" << timer.elapsed() << ")" << "ms" << "\r\n";
         return res;
     }
 
@@ -422,10 +422,10 @@ QString WindowDetails::GetAdditionalInfo(QString processName, HWND passedHwnd)
         timer.start();
         QString res = QString::fromStdWString(FirefoxURL::GetFirefoxURL(currenthwnd));
 
-        qInfo() << "[FX_W]" << res;
+        qDebug() << "[FX_W]" << res;
         QUrl url(res);
         QString host = url.host();
-        qInfo() << "[HOST]" << host << "(" << timer.elapsed() << ")" << "ms" << "\r\n";
+        qDebug() << "[HOST]" << host << "(" << timer.elapsed() << ")" << "ms" << "\r\n";
         return res; // we do [HOST] here for debug only, but we save full URL to DB
     }
 

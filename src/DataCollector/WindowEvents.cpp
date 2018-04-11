@@ -4,7 +4,6 @@
 
 bool WindowEvents::wasIdleLongEnoughToStopTracking()
 {
-//    this->lastIdleTimestamp = this->currentIdleTimestamp;
     this->currentIdleTimestamp = getIdleTime();
 
 //    unsigned long diff = currentIdleTimestamp; // - lastIdleTimestamp;
@@ -13,7 +12,6 @@ bool WindowEvents::wasIdleLongEnoughToStopTracking()
     // if last was "idle enough", and current is not "idle enough"
     // then we switched from idle to active, so we can save the change now
     return currentIdleTimestamp > switchToIdleTimeAfterMS; // && currentIdleTimestamp < 10 * 1000;
-
 }
 
 void WindowEvents::checkIdleStatus()
@@ -30,9 +28,11 @@ void WindowEvents::checkIdleStatus()
     if (wasIdleLongEnoughToStopTracking()) {
         this->logAppName("IDLE", "IDLE", ""); // firstly log "IDLE" app, while not being idle
         isIdle = true; // then set the idle bit, so we don't set the app anymore
+        qInfo() << "[IDLE] ON: going into idle mode";
     } else if (wasPreviousIdle) {
         // was idle but is not anymore
         isIdle = false;
+        qInfo() << "[IDLE] OFF: going out of idle mode";
         if (shouldShowAwayPopup && wasIdleLongEnoughToShowAwayPopup) {
             emit noLongerAway(lastIdleTimestamp);
         }

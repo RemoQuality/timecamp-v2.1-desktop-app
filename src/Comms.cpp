@@ -38,7 +38,8 @@ void Comms::timedUpdates()
     qDebug() << "app list length: " << appList.length();
     if (appList.length() > 0) { // send only if there is anything to send (0 is if "computer activities" are disabled)
         sendAppData(&appList);
-        if(appList.length() > MAX_ACTIVITIES_BATCH_SIZE){
+        if(appList.length() >= MAX_ACTIVITIES_BATCH_SIZE){
+            qInfo() << "AppList was big";
             lastBatchBig = true;
         } else {
             lastBatchBig = false;
@@ -258,9 +259,9 @@ void Comms::userInfoReply(QNetworkReply *reply)
     settings.setValue("SETT_ROOT_GROUP_ID", root_group_id);
     settings.setValue("SETT_PRIMARY_GROUP_ID", primary_group_id);
     settings.sync();
-    qInfo() << "SETT user_id: " << settings.value("SETT_USER_ID").toInt();
-    qInfo() << "SETT root_group_id: " << settings.value("SETT_ROOT_GROUP_ID").toInt();
-    qInfo() << "SETT primary_group_id: " << settings.value("SETT_PRIMARY_GROUP_ID").toInt();
+    qDebug() << "SETT user_id: " << settings.value("SETT_USER_ID").toInt();
+    qDebug() << "SETT root_group_id: " << settings.value("SETT_ROOT_GROUP_ID").toInt();
+    qDebug() << "SETT primary_group_id: " << settings.value("SETT_PRIMARY_GROUP_ID").toInt();
 }
 
 void Comms::getSettings()
@@ -344,12 +345,12 @@ void Comms::settingsReply(QNetworkReply *reply)
     }
     settings.sync();
 
-    qInfo() << "SETT idletime: " << settings.value(QString("SETT_WEB_") + QString("idletime")).toInt();
-    qInfo() << "SETT logoffline: " << settings.value(QString("SETT_WEB_") + QString("logoffline")).toBool();
-    qInfo() << "SETT logofflinemin: " << settings.value(QString("SETT_WEB_") + QString("logofflinemin")).toInt();
-    qInfo() << "SETT dontCollectComputerActivity: "
+    qDebug() << "SETT idletime: " << settings.value(QString("SETT_WEB_") + QString("idletime")).toInt();
+    qDebug() << "SETT logoffline: " << settings.value(QString("SETT_WEB_") + QString("logoffline")).toBool();
+    qDebug() << "SETT logofflinemin: " << settings.value(QString("SETT_WEB_") + QString("logofflinemin")).toInt();
+    qDebug() << "SETT dontCollectComputerActivity: "
             << settings.value(QString("SETT_WEB_") + QString("dontCollectComputerActivity")).toBool();
-    qInfo() << "SETT collectWindowTitles: "
+    qDebug() << "SETT collectWindowTitles: "
             << settings.value(QString("SETT_WEB_") + QString("collectWindowTitles")).toBool();
 }
 
