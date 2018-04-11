@@ -30,12 +30,14 @@ See *[Creating installers](https://github.com/timecamp/timecamp-desktop#creating
 ### Prerequisites
 
 To compile **Timecamp Desktop** you need:
-* _[Qt](https://www.qt.io/) 5.9_ or greater, and
-
-
-* either a CMake-compatible IDE  
+* _[Qt](https://www.qt.io/) 5.9_ or greater (remember to **select the latest version during Qt instalation**)
+    * you don't need Qt Sources and other components, eg. Android or iOS;  
+    you can **deselect everything except your OS package and Qt WebEngine**
+    
+* and either a CMake-compatible IDE  
 (Qt Creator, JetBrains CLion, Microsoft Visual Studio 2017)  
 \- they can load this repo as a native project
+
 * ... or just [CMake](https://cmake.org/) _(at least v. 3.1)_, which can generate project files for many other IDEs and build systems  
 (eg. XCode, Code::Blocks, Eclipse, Ninja Build System, older MS Visual Studios, or plain old Makefiles)
 
@@ -54,7 +56,20 @@ Get this repo:
 git clone git@github.com:timecamp/timecamp-desktop.git
 ```
 
-*(Optional)* Generate project files for your IDE, eg. XCode on Mac, in a subdirectory:
+#### Updating enviroment info
+To compile our code you need to make a `CMakeProjectConfig.cmake` file.  
+Copy and rename `CMakeProjectConfig.cmake.example` and modify the path pointing to Qt precompiled libs.  
+You can also add path to Qt to the `PATH` enviroment variable - it will help with packaging installer and signing the binaries.
+
+```
+cp CMakeProjectConfig.cmake.example CMakeProjectConfig.cmake
+# now edit the copied file and change path to Qt within
+#
+# optional: to add Qt to $PATH environment variable do:
+export PATH=$PATH:/your/qt/install/dir
+```
+
+***(Optional)*** Generate project files for your IDE, eg. XCode on Mac, in a subdirectory:
 ```
 mkdir cmake-build-xcode
 cd cmake-build-xcode
@@ -62,14 +77,8 @@ cmake -G Xcode -B ..
 ```
 Where `Xcode` is [generator of your choosing](https://cmake.org/cmake/help/v3.1/manual/cmake-generators.7.html), and `cmake-build-xcode` is where project files will be created.
 
-Now you can open it in your IDE of choice.
 
-#### Updating enviroment info
-To compile our code you need to make a `CMakeProjectConfig.cmake` file.  
-Copy and rename `CMakeProjectConfig.cmake.example` and modify the path to Path to Qt precompiled libs.  
-You can also add path to Qt to the `PATH` enviroment variable - it will help with packaging installer and signing the binaries.
-
-Now you are ready to go!
+Now you can open it in your IDE of choice. You are ready to go!
 
 ## Compiling our source
 
