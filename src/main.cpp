@@ -36,11 +36,18 @@ void firstRun()
 
 void myMessageHandler(QtMsgType type, const QMessageLogContext &, const QString &msg)
 {
-    std::time_t stdtime = std::time(nullptr);
+    const std::time_t stdtime = std::time(nullptr);
 //    std::cout << "UTC:       " << std::put_time(std::gmtime(&stdtime), "%H:%M:%S") << '\n';
 //    std::cout << "local:     " << std::put_time(std::localtime(&stdtime), "%H:%M:%S") << '\n';
     char timestring[100];
+
+#ifdef Q_OS_WIN
+    struct tm buf;
+    gmtime_s(&buf, &stdtime);
+    std::strftime(timestring, sizeof(timestring), "%H:%M:%S", &buf);
+#else
     std::strftime(timestring, sizeof(timestring), "%H:%M:%S", std::gmtime(&stdtime)); // UTC, localtime for local
+#endif
 
     QString txt;
     txt += "[";
