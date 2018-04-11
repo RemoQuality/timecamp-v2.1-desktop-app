@@ -451,106 +451,130 @@ HRESULT FirefoxURL::GetControlCondition(IUIAutomation *automation, const long co
 
 std::wstring FirefoxURL::GetFirefoxURL(HWND hwnd)
 {
+    BSTR url;
+    std::wstring returnedError = L"";
+    bool failedBit = false;
+
     IUIAutomation *_automation;
     HRESULT hr = CoInitialize(NULL);
-    if (FAILED(hr)) {
-        wprintf(L"CoInitialize failed, HR:0x%08x\n", hr);
-    } else {
+
+    if (!FAILED(hr)) {
         hr = CoCreateInstance(__uuidof(CUIAutomation), NULL, CLSCTX_INPROC_SERVER, __uuidof(IUIAutomation), (void **) &_automation);
-        if (FAILED(hr)) {
-            wprintf(L"Failed to create a CUIAutomation, HR: 0x%08x\n", hr);
-        } else {
+        if (!FAILED(hr)) {
             IUIAutomationElement *firefoxElement = NULL;
             hr = _automation->ElementFromHandle(hwnd, &firefoxElement);
-            if (FAILED(hr)) {
-                wprintf(L"Failed to ElementFromHandle, HR: 0x%08x\n\n", hr);
-            } else {
+            if (!FAILED(hr)) {
                 IUIAutomationCondition *toolbarCondition;
                 hr = GetControlCondition(_automation, UIA_ToolBarControlTypeId, &toolbarCondition);
-                if (FAILED(hr)) {
-                    wprintf(L"Failed to get toolbar condition, HR: 0x%08x\n\n", hr);
-                } else {
+                if (!FAILED(hr)) {
                     IUIAutomationElementArray *toolbars = NULL;
                     hr = firefoxElement->FindAll(TreeScope_Children, toolbarCondition, &toolbars);
-                    if (FAILED(hr)) {
-                        wprintf(L"Failed to get Firefox toolbars, HR: 0x%08x\n\n", hr);
-                    } else {
+                    if (!FAILED(hr)) {
                         int length = 0;
                         hr = toolbars->get_Length(&length);
-                        if (FAILED(hr)) {
-                            wprintf(L"Failed to get Firefox toolbars length, HR: 0x%08x\n\n", hr);
-                        } else {
+                        if (!FAILED(hr)) {
                             if (length >= 3) {
                                 IUIAutomationElement *toolbarElement = NULL;
                                 hr = toolbars->GetElement(2, &toolbarElement);
-                                if (FAILED(hr)) {
-                                    wprintf(L"Failed to get address toolbar, HR: 0x%08x\n\n", hr);
-                                } else {
+                                if (!FAILED(hr)) {
                                     IUIAutomationCondition *comboCondition;
                                     hr = GetControlCondition(_automation, UIA_ComboBoxControlTypeId, &comboCondition);
-                                    if (FAILED(hr)) {
-                                        wprintf(L"Failed to get comboBox condition, HR: 0x%08x\n\n", hr);
-                                    } else {
+                                    if (!FAILED(hr)) {
                                         IUIAutomationElement *comboElement = NULL;
                                         hr = toolbarElement->FindFirst(TreeScope_Children, comboCondition, &comboElement);
-                                        if (FAILED(hr)) {
-                                            wprintf(L"Failed to get comboBox of address toolbar, HR: 0x%08x\n\n", hr);
-                                        } else {
+                                        if (!FAILED(hr)) {
                                             IUIAutomationCondition *editCondition;
                                             VARIANT propVar;
                                             propVar.vt = VT_I4;
                                             propVar.lVal = UIA_EditControlTypeId;
                                             hr = _automation->CreatePropertyCondition(UIA_ControlTypePropertyId, propVar, &editCondition);
-                                            if (FAILED(hr)) {
-                                                wprintf(L"Failed to get edit condition, HR: 0x%08x\n\n", hr);
-                                            } else {
+                                            if (!FAILED(hr)) {
                                                 IUIAutomationElement *urlElement = NULL;
                                                 hr = comboElement->FindFirst(TreeScope_Children, editCondition, &urlElement);
-                                                if (FAILED(hr)) {
-                                                    wprintf(L"Failed to get edit of address toolbar, HR: 0x%08x\n\n", hr);
-                                                } else {
+                                                if (!FAILED(hr)) {
                                                     IUnknown *patternInter = NULL;
                                                     hr = urlElement->GetCurrentPattern(UIA_ValuePatternId, &patternInter);
-                                                    if (FAILED(hr)) {
-                                                        wprintf(L"Failed to get value pattern interface, HR: 0x%08x\n\n", hr);
-                                                    } else {
+                                                    if (!FAILED(hr)) {
                                                         IUIAutomationValuePattern *valuePattern = NULL;
                                                         hr = patternInter->QueryInterface(IID_IUIAutomationValuePattern, (void **) &valuePattern);
-                                                        if (FAILED(hr)) {
-                                                            wprintf(L"Failed to get value pattern, HR: 0x%08x\n\n", hr);
-                                                        } else {
-                                                            BSTR url;
+                                                        if (!FAILED(hr)) {
                                                             hr = valuePattern->get_CurrentValue(&url);
                                                             if (FAILED(hr)) {
-                                                                wprintf(L"Failed to get url value, HR: 0x%08x\n\n", hr);
-                                                            } else {
-                                                                return std::wstring(url, SysStringLen(url));
-                                                            }
+                                                                qInfo("[GetFirefoxURL] Failed to get url value, HR: 0x%08x\n\n", hr);
+                                                                failedBit = true;
+                                                            } // else: success
                                                             valuePattern->Release();
+                                                        } else {
+                                                            qInfo("[GetFirefoxURL] Failed to get value pattern, HR: 0x%08x\n\n", hr);
+                                                            failedBit = true;
                                                         }
                                                         patternInter->Release();
+                                                    } else {
+                                                        qInfo("[GetFirefoxURL] Failed to get value pattern interface, HR: 0x%08x\n\n", hr);
+                                                        failedBit = true;
                                                     }
                                                     urlElement->Release();
+                                                } else {
+                                                    qInfo("[GetFirefoxURL] Failed to get edit of address toolbar, HR: 0x%08x\n\n", hr);
+                                                    failedBit = true;
                                                 }
                                                 editCondition->Release();
+                                            } else {
+                                                qInfo("[GetFirefoxURL] Failed to get edit condition, HR: 0x%08x\n\n", hr);
+                                                failedBit = true;
                                             }
                                             comboElement->Release();
+                                        } else {
+                                            qInfo("[GetFirefoxURL] Failed to get comboBox of address toolbar, HR: 0x%08x\n\n", hr);
+                                            failedBit = true;
                                         }
                                         comboCondition->Release();
+                                    } else {
+                                        qInfo("[GetFirefoxURL] Failed to get comboBox condition, HR: 0x%08x\n\n", hr);
+                                        failedBit = true;
                                     }
                                     toolbarElement->Release();
+                                } else {
+                                    qInfo("[GetFirefoxURL] Failed to get address toolbar, HR: 0x%08x\n\n", hr);
+                                    failedBit = true;
                                 }
-                            } else { wprintf(L"Too less Firefox's toolbars, %d\n\n", length); }
+                            } else {
+                                qInfo("[GetFirefoxURL] Too less Firefox's toolbars, %d\n\n", length);
+                                failedBit = true;
+                            }
                             toolbars->Release();
+                        } else {
+                            qInfo("[GetFirefoxURL] Failed to get Firefox toolbars length, HR: 0x%08x\n\n", hr);
+                            failedBit = true;
                         }
+                    } else {
+                        qInfo("[GetFirefoxURL] Failed to get Firefox toolbars, HR: 0x%08x\n\n", hr);
+                        failedBit = true;
                     }
                     toolbarCondition->Release();
+                } else {
+                    qInfo("[GetFirefoxURL] Failed to get toolbar condition, HR: 0x%08x\n\n", hr);
+                    failedBit = true;
                 }
                 firefoxElement->Release();
+            } else {
+                qInfo("[GetFirefoxURL] Failed to ElementFromHandle, HR: 0x%08x\n\n", hr);
+                failedBit = true;
             }
             _automation->Release();
+        } else {
+            qInfo("[GetFirefoxURL] Failed to create a CUIAutomation, HR: 0x%08x\n", hr);
+            failedBit = true;
         }
         CoUninitialize();
+    } else {
+        qInfo("[GetFirefoxURL] CoInitialize failed, HR:0x%08x\n", hr);
+        failedBit = true;
     }
-    return L"Failed to get current firefox url value";
+
+    if(failedBit){
+        return returnedError;
+    } else {
+        return std::wstring(url, SysStringLen(url));
+    }
 }
