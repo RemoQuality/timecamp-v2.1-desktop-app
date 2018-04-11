@@ -35,7 +35,6 @@
     [super dealloc];
 }
 - (void)didActivateApp:(NSNotification *)notification {
-//    WindowEvents_M->didActivateApp(notification);
     WindowEvents_M->GetActiveApp();
 }
 @end
@@ -75,18 +74,16 @@ void WindowEvents_M::run()
 //    connect(timer, &QTimer::timeout, this, &WindowEvents_M::GetActiveApp);
 //    timer->start(2*1000);
 
-//    while (!QThread::currentThread()->isInterruptionRequested()) {
-//        // empty loop, waiting for stopping the thread
-//        if (!isIdle) {
-//            this->GetActiveApp();
-//        }
-//        QThread::msleep(1 * 1000);
-//    }
+//    timer->stop();
 
-    //    timer->stop();
 
     this->workspaceWatcher = [[MDWorkspaceWatcher alloc] initWithMyClass:this];
     while (!QThread::currentThread()->isInterruptionRequested()) {
+        // empty loop, waiting for stopping the thread
+        if (!isIdle) {
+            this->GetActiveApp();
+        }
+        QThread::msleep(2 * 1000); // 2 seconds sleep, like in old app
     }
     [(MDWorkspaceWatcher *)this->workspaceWatcher release];
 
