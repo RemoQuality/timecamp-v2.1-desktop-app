@@ -77,8 +77,12 @@ void Comms::saveApp(AppData *app)
         DbManager::instance().saveAppToDb(lastApp);
 
         app->setStart(now);
+        qDebug("DBSAVED: %lds - %s | %s\nADD_INFO: %s \n",
+               (lastApp->getEnd() - lastApp->getStart())/1000,
+               lastApp->getAppName().toLatin1().constData(),
+               lastApp->getWindowName().toLatin1().constData(),
+               lastApp->getAdditionalInfo().toLatin1().constData());
         lastApp = app; // update app reference
-//        qDebug("DBSAVE: %s | %s \n", lastApp->getAppName().toLatin1().constData(), lastApp->getWindowName().toLatin1().constData());
     }
 }
 
