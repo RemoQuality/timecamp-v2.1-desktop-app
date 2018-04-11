@@ -21,7 +21,7 @@ public:
     const void didActivateApp(void *anNSnotification) const;
 
 public slots:
-    void GetActiveApp();
+    void GetActiveApp(QString processName = "");
 
 protected:
     void run() override; // your thread implementation goes here

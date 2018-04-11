@@ -12,8 +12,9 @@
 // mixed Objective-C and C++ kudos to:
 // https://stackoverflow.com/questions/9080619/nsworkspace-notifications-in-cfnotificationcenter
 
-@interface MDWorkspaceWatcher : NSObject {
-    WindowEvents_M    *WindowEvents_M;
+@interface MDWorkspaceWatcher : NSObject
+{
+    WindowEvents_M *WindowEvents_M;
 }
 - (id)initWithMyClass:(WindowEvents_M *)aWindowEvents_M;
 @end
@@ -22,10 +23,7 @@
 - (id)initWithMyClass:(WindowEvents_M *)aWindowEvents_M {
     if ((self = [super init])) {
         WindowEvents_M = aWindowEvents_M;
-        [[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self
-                                                               selector:@selector(didActivateApp:)
-                                                                   name:NSWorkspaceDidActivateApplicationNotification
-                                                                 object:nil];
+        [[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self selector:@selector(didActivateApp:) name:NSWorkspaceDidActivateApplicationNotification object:nil];
     }
     return self;
 }
@@ -35,7 +33,10 @@
     [super dealloc];
 }
 - (void)didActivateApp:(NSNotification *)notification {
-    WindowEvents_M->GetActiveApp();
+    if (!WindowEvents_M->isIdle) {
+        NSRunningApplication *temp = notification.userInfo[NSWorkspaceApplicationKey];
+        WindowEvents_M->GetActiveApp(QString::fromNSString(temp.localizedName));
+    }
 }
 @end
 
@@ -85,59 +86,62 @@ void WindowEvents_M::run()
         }
         QThread::msleep(2 * 1000); // 2 seconds sleep, like in old app
     }
-    [(MDWorkspaceWatcher *)this->workspaceWatcher release];
+    [(MDWorkspaceWatcher *) this->workspaceWatcher release];
 
     qInfo("thread stopped");
 }
 
-void WindowEvents_M::GetActiveApp()
+void WindowEvents_M::GetActiveApp(QString processName)
 {
     QString appTitle = "";
-    QString processName = "";
     QString additionalInfo = "";
 
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
+    if (processName == "") {
+        NSAutoreleasePool *pool = [NSAutoreleasePool new];
 
-    NSString *procName = @"";
-    NSArray *runningApps = [[NSWorkspace sharedWorkspace] runningApplications];
+        NSString *procName = @"";
+        NSArray *runningApps = [[NSWorkspace sharedWorkspace] runningApplications];
 
 
-    for (id currApp in runningApps) {
-        /*
-         Here we suppose that there is only one active app.
-        */
+        for (id currApp in runningApps) {
+            /*
+             Here we suppose that there is only one active app.
+            */
 //        procName2 = [currApp localizedName];
 //        QString buff2 = QString::fromNSString(procName2);
 //        qDebug() << "Buffer: " << buff2;
-        if ([currApp isActive] != 0) {
-            procName = [currApp localizedName];
-            break;
+            if ([currApp isActive] != 0) {
+                procName = [currApp localizedName];
+                break;
+            }
         }
-    }
 
-    QString buffer = QString::fromNSString(procName);
+        QString buffer = QString::fromNSString(procName);
 //    qDebug() << "Buffer: " << buffer;
 
-    if (!buffer.isEmpty()) {
-        processName = buffer;
+        if (!buffer.isEmpty()) {
+            processName = buffer;
+        }
+
+        [pool drain];
+
+
+        /*
+        if(
+           (processName == "WinAppHelper" || processName == "fluidapp" || processName == "FluidApp" || (processName.isEmpty() && ([tmpName isEqualToString:@"java"] || [tmpName isEqualToString:@"WinAppHelper"] || [tmpName isEqualToString:@"winapphelper"] || [tmpName isEqualToString:@"(null)"] || [tmpName isEqualToString:@""]))
+           || ( [tmpName isEqualToString:@"FluidApp"] || [tmpName isEqualToString:@"fluidapp"] )
+           || ( [tmpName isEqualToString:@"prl_client"] || [tmpName isEqualToString:@"prl_client_app"] )
+            ))
+        {
+            processName = GetProcNameFromPath(); //todo: takes a lot of processor this Apple Script
+        }
+        */
+
+        //Get Window Name or
+        appTitle = GetProcWindowName(processName);
+    } else {
+        appTitle = processName;
     }
-
-    [pool drain];
-
-
-    /*
-    if(
-       (processName == "WinAppHelper" || processName == "fluidapp" || processName == "FluidApp" || (processName.isEmpty() && ([tmpName isEqualToString:@"java"] || [tmpName isEqualToString:@"WinAppHelper"] || [tmpName isEqualToString:@"winapphelper"] || [tmpName isEqualToString:@"(null)"] || [tmpName isEqualToString:@""]))
-       || ( [tmpName isEqualToString:@"FluidApp"] || [tmpName isEqualToString:@"fluidapp"] )
-       || ( [tmpName isEqualToString:@"prl_client"] || [tmpName isEqualToString:@"prl_client_app"] )
-        ))
-    {
-        processName = GetProcNameFromPath(); //todo: takes a lot of processor this Apple Script
-    }
-    */
-
-    //Get Window Name or
-    appTitle = GetProcWindowName(processName);
 
     //Get URL from browsers
 //    processName = processName.toLower();
