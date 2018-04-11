@@ -31,7 +31,11 @@ MainWidget::MainWidget(QWidget *parent) : QWidget(parent), ui(new Ui::MainWidget
 //    this->setWindowFlags( Qt::WindowStaysOnTopHint );
 //#endif
 //
+#ifdef Q_OS_MACOS
     this->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
+#else
+//    this->setWindowFlags( Qt::Window );
+#endif
 
     this->setAcceptDrops(false);
 
