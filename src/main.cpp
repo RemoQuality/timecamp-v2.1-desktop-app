@@ -47,11 +47,11 @@ void myMessageHandler(QtMsgType type, const QMessageLogContext &, const QString 
     txt += timestring;
     txt += "] ";
     switch (type) {
-        case QtInfoMsg:
-            txt += QString("Info:\t%1").arg(msg);
-            break;
         case QtDebugMsg:
             txt += QString("Debug:\t%1").arg(msg);
+            break;
+        case QtInfoMsg:
+            txt += QString("Info:\t%1").arg(msg);
             break;
         case QtWarningMsg:
             txt += QString("Warning:\t%1").arg(msg);
