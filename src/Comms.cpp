@@ -366,7 +366,9 @@ void Comms::netRequest(QNetworkRequest request, QNetworkAccessManager::Operation
     connect(qnam, &QNetworkAccessManager::finished, this, callback);
 
     qDebug() << "Network op: " << netOp;
-    qDebug() << "Request URL: " << request.url().toString();
+    QString requestUrl = request.url().toString();
+    requestUrl.truncate(50);
+    qDebug() << "Request URL: " << requestUrl;
 
     QNetworkReply *reply = nullptr;
     if(netOp == QNetworkAccessManager::GetOperation) {
