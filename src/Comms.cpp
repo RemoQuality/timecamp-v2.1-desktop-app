@@ -126,7 +126,11 @@ void Comms::sendAppData(QVector<AppData *> *appList)
             QString base_str = QString("computer_activities") + QString("[") + QString::number(count) + QString("]");
 
             if (canSendActivityInfo) {
-                params.addQueryItem(base_str + QString("[application_name]"), app->getAppName());
+                QString tempAppName = app->getAppName();
+                if(tempAppName == ""){
+                    tempAppName = "explorer2";
+                }
+                params.addQueryItem(base_str + QString("[application_name]"), tempAppName);
                 if (canSendWindowTitles) {
                     params.addQueryItem(base_str + QString("[window_title]"), app->getWindowName());
 
