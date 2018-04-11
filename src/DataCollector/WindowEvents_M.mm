@@ -136,12 +136,10 @@ void WindowEvents_M::GetActiveApp(QString processName)
             processName = GetProcNameFromPath(); //todo: takes a lot of processor this Apple Script
         }
         */
-
-        //Get Window Name or
-        appTitle = GetProcWindowName(processName);
-    } else {
-        appTitle = processName;
     }
+
+    //Get Window Name or
+    appTitle = GetProcWindowName(processName);
 
     //Get URL from browsers
 //    processName = processName.toLower();
