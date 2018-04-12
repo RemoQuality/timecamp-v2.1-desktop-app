@@ -49,10 +49,10 @@ void WindowEvents_U::run()
     Window root;
     XEvent event;
 
-    display = XOpenDisplay(NULL);
+    display = XOpenDisplay(nullptr);
 
-    if (display == NULL) {
-        printf("Error: XOpenDisplay");
+    if (display == nullptr) {
+        qInfo("[WindowEvents_U] Error: XOpenDisplay");
         return;
     }
 
@@ -98,11 +98,11 @@ void WindowEvents_U::run()
                     &actual_format,
                     &nitems,
                     &bytes,
-                    (unsigned char**)&data);
+                    (unsigned char **) &data);
 
                 if (status != Success) {
-                    fprintf(stderr, "status = %d\n", status);
-                    exit(1);
+                    qInfo("[WindowEvents_U] Error of status = %d\n", status);
+                    continue;
                 }
 
                 if (xwindowid_curr != data[0] && data[0] != 0) {
@@ -129,8 +129,8 @@ void WindowEvents_U::run()
                     &window_name);
 
                 if (status != Success) {
-                    fprintf(stderr, "status = %d\n", status);
-                    exit(1);
+                    qInfo("[WindowEvents_U] Error of status = %d\n", status);
+                    continue;
                 }
 
                 status = XGetWindowProperty(
@@ -148,10 +148,14 @@ void WindowEvents_U::run()
                     &pid);
 
                 if (status != Success) {
-                    fprintf(stderr, "status = %d\n", status);
-                    exit(1);
+                    qInfo("[WindowEvents_U] Error of status = %d\n", status);
+                    continue;
                 }
-                long *longarr = reinterpret_cast<long *>(pid);
+                if(pid == nullptr){
+                    continue;
+                }
+
+                auto *longarr = reinterpret_cast<long *>(pid);
                 long longpid = longarr[0];
 
                 std::string command = "";
