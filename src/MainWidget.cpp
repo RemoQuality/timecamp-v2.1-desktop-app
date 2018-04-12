@@ -86,9 +86,13 @@ void MainWidget::closeEvent(QCloseEvent *event)
 void MainWidget::twoSecTimerTimeout()
 {
     if (loggedIn) {
-        fetchAPIkey();
-        checkIsTimerRunning();
         emit checkIsIdle();
+        checkIsTimerRunning();
+        if (settings.value(SETT_APIKEY).toString().isEmpty()) {
+            fetchAPIkey();
+        }
+    } else {
+        setApiKey("");
     }
 }
 
