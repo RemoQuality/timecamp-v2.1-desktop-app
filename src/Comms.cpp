@@ -381,6 +381,8 @@ void Comms::netRequest(QNetworkRequest request, QNetworkAccessManager::Operation
     }else if(netOp == QNetworkAccessManager::PostOperation) {
         qDebug() << "[POST] URL: " << requestUrl;
         reply = qnam->post(request, data);
+        data.truncate(MAX_LOG_TEXT_LENGTH);
+        qDebug() << "[POST] Data: " << data;
     }
 
     QEventLoop loop;
