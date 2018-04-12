@@ -73,12 +73,12 @@ void WindowEventsManager::noLongerAway(unsigned long howLongWasAwayMS)
     // handle returned valuefrom msgBox;
     switch (ret) {
         case QMessageBox::Yes:
-            qDebug() << "AwayPopup QMessageBox::Yes";
+            qDebug() << "[AwayPopup] QMessageBox::Yes";
             emit openAwayTimeManagement();
             break;
         case QMessageBox::No:
         default:
-            qDebug() << "AwayPopup QMessageBox::No";
+            qDebug() << "[AwayPopup] QMessageBox::No";
             break;
     }
 }
