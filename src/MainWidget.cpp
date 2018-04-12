@@ -175,16 +175,22 @@ void MainWidget::webpageTitleChanged(QString title)
     this->setAttribute(Qt::WA_TranslucentBackground);
 }
 
-void MainWidget::webviewRefresh()
+void MainWidget::clearCache()
 {
-    qDebug("[NEW_TC]: page refresh");
     this->setUpdatesEnabled(false);
     this->runJSinPage("localStorage.clear()");
     QTWEProfile->clearAllVisitedLinks();
     QTWEProfile->clearHttpCache();
+    this->setUpdatesEnabled(true);
+}
+
+
+void MainWidget::webviewRefresh()
+{
+    qDebug("[NEW_TC]: page refresh");
+    this->clearCache();
     this->goToTimerPage();
     this->forceLoadUrl(APPLICATION_URL);
-    this->setUpdatesEnabled(true);
 }
 
 void MainWidget::webviewFullscreen()
@@ -215,6 +221,7 @@ void MainWidget::open()
     activateWindow(); // for Windows
     raise();  // for MacOS
     emit windowStatusChanged(true);
+    QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents, 256); // force waiting before we quit this func; and process some events
 }
 
 void MainWidget::runJSinPage(QString js)
@@ -262,9 +269,9 @@ void MainWidget::goToTimerPage()
 
 void MainWidget::goToAwayPage()
 {
-    if (!this->isVisible()) {
-        this->open();
-    }
+    this->clearCache();
+    this->open();
+
 //    emit windowStatusChanged(true);
     QTWEPage->load(QUrl(OFFLINE_URL));
 }
@@ -273,9 +280,7 @@ void MainWidget::startTask()
 {
     this->goToTimerPage();
     this->stopTask(); // stop the last timer
-    if (!this->isVisible()) {
-        this->open();
-    }
+    this->open();
 //    emit windowStatusChanged(true);
 
     // if on manual page, switch to "start timer" page

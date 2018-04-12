@@ -48,6 +48,7 @@ protected:
     void closeEvent(QCloseEvent *event) override;
 
 public slots:
+    void clearCache();
     void webviewRefresh();
     void webviewFullscreen();
 
