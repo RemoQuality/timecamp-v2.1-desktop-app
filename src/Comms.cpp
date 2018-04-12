@@ -29,16 +29,18 @@ void Comms::timedUpdates()
 {
     lastSync = settings.value(SETT_LAST_SYNC, 0).toLongLong(); // set our variable to value from settings (so it works between app restarts)
 
-    qDebug() << "last sync: " << lastSync;
+    qDebug() << "[AppList] last sync: " << lastSync;
 
     setCurrentTime(QDateTime::currentMSecsSinceEpoch()); // time of DB fetch is passed, so we can update to it if successful
 
     QVector<AppData *> appList = DbManager::instance().getAppsSinceLastSync(lastSync); // get apps since last sync
 
-    qDebug() << "app list length: " << appList.length();
-    if (appList.length() > 0) { // send only if there is anything to send (0 is if "computer activities" are disabled)
+    qDebug() << "[AppList] length: " << appList.length();
+    // send only if there is anything to send (0 is if "computer activities" are disabled, 1 is sometimes only with "IDLE" - don't send that)
+    if (appList.length() > 1 || (appList.length() == 1 && appList.first()->getAppName() != "IDLE")) {
         sendAppData(&appList);
-        if(appList.length() > MAX_ACTIVITIES_BATCH_SIZE){
+        if(appList.length() >= MAX_ACTIVITIES_BATCH_SIZE){
+            qInfo() << "[AppList] was big";
             lastBatchBig = true;
         } else {
             lastBatchBig = false;
@@ -64,6 +66,8 @@ void Comms::saveApp(AppData *app)
     }
 
     bool needsReporting = false;
+
+    // not the same activity? we need to log
     if (0 != QString::compare(app->getAppName(), lastApp->getAppName())) {
         needsReporting = true;
     }
@@ -77,8 +81,12 @@ void Comms::saveApp(AppData *app)
         DbManager::instance().saveAppToDb(lastApp);
 
         app->setStart(now);
+        qDebug("DBSAVED: %lds - %s | %s\nADD_INFO: %s \n",
+               (lastApp->getEnd() - lastApp->getStart())/1000,
+               lastApp->getAppName().toLatin1().constData(),
+               lastApp->getWindowName().toLatin1().constData(),
+               lastApp->getAdditionalInfo().toLatin1().constData());
         lastApp = app; // update app reference
-//        qDebug("DBSAVE: %s | %s \n", lastApp->getAppName().toLatin1().constData(), lastApp->getWindowName().toLatin1().constData());
     }
 }
 
@@ -121,7 +129,11 @@ void Comms::sendAppData(QVector<AppData *> *appList)
             QString base_str = QString("computer_activities") + QString("[") + QString::number(count) + QString("]");
 
             if (canSendActivityInfo) {
-                params.addQueryItem(base_str + QString("[application_name]"), app->getAppName());
+                QString tempAppName = app->getAppName();
+                if(tempAppName == ""){
+                    tempAppName = "explorer2";
+                }
+                params.addQueryItem(base_str + QString("[application_name]"), tempAppName);
                 if (canSendWindowTitles) {
                     params.addQueryItem(base_str + QString("[window_title]"), app->getWindowName());
 
@@ -176,12 +188,14 @@ void Comms::sendAppData(QVector<AppData *> *appList)
 
 void Comms::appDataReply(QNetworkReply *reply)
 {
+    QByteArray buffer = reply->readAll();
     if(reply->error() != QNetworkReply::NoError){
         qInfo() << "Network error: " << reply->errorString();
+        qInfo() << "Data: " << buffer;
         return;
     }
 
-    QByteArray buffer = reply->readAll();
+    buffer.truncate(MAX_LOG_TEXT_LENGTH);
     qDebug() << "AppData Response: " << buffer;
     if (buffer == "") {
         qDebug() << "update last sync to whenever we sent the data";
@@ -241,11 +255,12 @@ void Comms::userInfoReply(QNetworkReply *reply)
     }
 
     QByteArray buffer = reply->readAll();
+    QJsonDocument itemDoc = QJsonDocument::fromJson(buffer);
+
+    buffer.truncate(MAX_LOG_TEXT_LENGTH);
     qDebug() << "UserInfo Response: " << buffer;
 
-    QJsonDocument itemDoc = QJsonDocument::fromJson(buffer);
     QJsonObject rootObject = itemDoc.object();
-
     user_id = rootObject.value("user_id").toString().toInt();
     root_group_id = rootObject.value("root_group_id").toString().toInt();
     primary_group_id = rootObject.value("primary_group_id").toString().toInt();
@@ -254,9 +269,9 @@ void Comms::userInfoReply(QNetworkReply *reply)
     settings.setValue("SETT_ROOT_GROUP_ID", root_group_id);
     settings.setValue("SETT_PRIMARY_GROUP_ID", primary_group_id);
     settings.sync();
-    qInfo() << "SETT user_id: " << settings.value("SETT_USER_ID").toInt();
-    qInfo() << "SETT root_group_id: " << settings.value("SETT_ROOT_GROUP_ID").toInt();
-    qInfo() << "SETT primary_group_id: " << settings.value("SETT_PRIMARY_GROUP_ID").toInt();
+    qDebug() << "SETT user_id: " << settings.value("SETT_USER_ID").toInt();
+    qDebug() << "SETT root_group_id: " << settings.value("SETT_ROOT_GROUP_ID").toInt();
+    qDebug() << "SETT primary_group_id: " << settings.value("SETT_PRIMARY_GROUP_ID").toInt();
 }
 
 void Comms::getSettings()
@@ -329,9 +344,10 @@ void Comms::settingsReply(QNetworkReply *reply)
         return;
     }
     QByteArray buffer = reply->readAll();
+    QJsonDocument itemDoc = QJsonDocument::fromJson(buffer);
+    buffer.truncate(MAX_LOG_TEXT_LENGTH);
     qDebug() << "Settings Response: " << buffer;
 
-    QJsonDocument itemDoc = QJsonDocument::fromJson(buffer);
     QJsonArray rootArray = itemDoc.array();
     for (QJsonValueRef val: rootArray) {
         QJsonObject obj = val.toObject();
@@ -340,12 +356,12 @@ void Comms::settingsReply(QNetworkReply *reply)
     }
     settings.sync();
 
-    qInfo() << "SETT idletime: " << settings.value(QString("SETT_WEB_") + QString("idletime")).toInt();
-    qInfo() << "SETT logoffline: " << settings.value(QString("SETT_WEB_") + QString("logoffline")).toBool();
-    qInfo() << "SETT logofflinemin: " << settings.value(QString("SETT_WEB_") + QString("logofflinemin")).toInt();
-    qInfo() << "SETT dontCollectComputerActivity: "
+    qDebug() << "SETT idletime: " << settings.value(QString("SETT_WEB_") + QString("idletime")).toInt();
+    qDebug() << "SETT logoffline: " << settings.value(QString("SETT_WEB_") + QString("logoffline")).toBool();
+    qDebug() << "SETT logofflinemin: " << settings.value(QString("SETT_WEB_") + QString("logofflinemin")).toInt();
+    qDebug() << "SETT dontCollectComputerActivity: "
             << settings.value(QString("SETT_WEB_") + QString("dontCollectComputerActivity")).toBool();
-    qInfo() << "SETT collectWindowTitles: "
+    qDebug() << "SETT collectWindowTitles: "
             << settings.value(QString("SETT_WEB_") + QString("collectWindowTitles")).toBool();
 }
 
@@ -355,14 +371,18 @@ void Comms::netRequest(QNetworkRequest request, QNetworkAccessManager::Operation
     qnam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
     connect(qnam, &QNetworkAccessManager::finished, this, callback);
 
-    qDebug() << "Network op: " << netOp;
-    qDebug() << "Request URL: " << request.url().toString();
+    QString requestUrl = request.url().toString();
+    requestUrl.truncate(MAX_LOG_TEXT_LENGTH);
 
     QNetworkReply *reply = nullptr;
     if(netOp == QNetworkAccessManager::GetOperation) {
+        qDebug() << "[GET] URL: " << requestUrl;
         reply = qnam->get(request);
     }else if(netOp == QNetworkAccessManager::PostOperation) {
+        qDebug() << "[POST] URL: " << requestUrl;
         reply = qnam->post(request, data);
+        data.truncate(MAX_LOG_TEXT_LENGTH);
+        qDebug() << "[POST] Data: " << data;
     }
 
     QEventLoop loop;

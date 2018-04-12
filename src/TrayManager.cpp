@@ -191,7 +191,7 @@ void TrayManager::createActions(QMenu *menu)
 
 void TrayManager::loginLogout(bool loggedIn, QString tooltipText)
 {
-    qDebug() << "Login/Logout action";
+    qDebug() << "[Browser] Page changed; update whether logged in or not";
     startTaskAct->setEnabled(loggedIn);
     stopTaskAct->setEnabled(loggedIn);
     trackerAct->setEnabled(loggedIn);
