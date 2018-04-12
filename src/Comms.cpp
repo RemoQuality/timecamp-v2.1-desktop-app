@@ -113,6 +113,7 @@ void Comms::sendAppData(QVector<AppData *> *appList)
 
     QUrlQuery params;
     params.addQueryItem("api_token", apiKey);
+    params.addQueryItem("service", SETT_API_SERVICE_FIELD);
 
     int count = 0;
 
@@ -290,6 +291,7 @@ void Comms::getSettings()
 
     QUrlQuery params;
     params.addQueryItem("api_token", apiKey);
+    params.addQueryItem("service", SETT_API_SERVICE_FIELD);
 
     // dapp settings
     params.addQueryItem("name[]", "close_agent"); // bool: can close app?

@@ -24,6 +24,7 @@
 #define CONN_USER_AGENT "TC Desktop App 2.0"
 #define CONN_CUSTOM_HEADER_NAME "X-DAPP"
 #define CONN_CUSTOM_HEADER_VALUE "2.0"
+#define SETT_API_SERVICE_FIELD "tc_dapp_2_api"
 
 // settings fields
 #define SETT_TRACK_PC_ACTIVITIES "TRACK_PC_ACTIVITIES"
