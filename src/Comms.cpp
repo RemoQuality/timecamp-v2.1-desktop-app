@@ -29,17 +29,18 @@ void Comms::timedUpdates()
 {
     lastSync = settings.value(SETT_LAST_SYNC, 0).toLongLong(); // set our variable to value from settings (so it works between app restarts)
 
-    qDebug() << "last sync: " << lastSync;
+    qDebug() << "[AppList] last sync: " << lastSync;
 
     setCurrentTime(QDateTime::currentMSecsSinceEpoch()); // time of DB fetch is passed, so we can update to it if successful
 
     QVector<AppData *> appList = DbManager::instance().getAppsSinceLastSync(lastSync); // get apps since last sync
 
-    qDebug() << "app list length: " << appList.length();
-    if (appList.length() > 0) { // send only if there is anything to send (0 is if "computer activities" are disabled)
+    qDebug() << "[AppList] length: " << appList.length();
+    // send only if there is anything to send (0 is if "computer activities" are disabled, 1 is sometimes only with "IDLE" - don't send that)
+    if (appList.length() > 1 || (appList.length() == 1 && appList.first()->getAppName() != "IDLE")) {
         sendAppData(&appList);
         if(appList.length() >= MAX_ACTIVITIES_BATCH_SIZE){
-            qInfo() << "AppList was big";
+            qInfo() << "[AppList] was big";
             lastBatchBig = true;
         } else {
             lastBatchBig = false;
@@ -65,6 +66,8 @@ void Comms::saveApp(AppData *app)
     }
 
     bool needsReporting = false;
+
+    // not the same activity? we need to log
     if (0 != QString::compare(app->getAppName(), lastApp->getAppName())) {
         needsReporting = true;
     }
