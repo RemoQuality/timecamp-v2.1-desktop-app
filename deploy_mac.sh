@@ -6,7 +6,7 @@ BUNDLE_NAME="Timecamp Desktop.app"
 DMG_NAME="Timecamp-Desktop-1.0.dmg"
 TARGET="cmake-build-relwithdebinfo"
 
-#rm -rf $TARGET/"${BUNDLE_NAME}"
+rm -rf $TARGET/"${BUNDLE_NAME}"
 rm -rf $TARGET/${DMG_NAME} # dmg HAS TO BE DELETED
 
 mkdir -p $TARGET
