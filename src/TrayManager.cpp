@@ -22,7 +22,12 @@ void TrayManager::setupTray(MainWidget *parent)
 {
     mainWidget = parent;
     if (!QSystemTrayIcon::isSystemTrayAvailable()) {
-        QMessageBox::critical(mainWidget, ":(", "Ninja Mode is not available on this computer. Try again later :P");
+        QMessageBox::critical(mainWidget,
+                              "No tray",
+
+                              "We couldn't detect system tray. Please contact us at desktopapp@timecamp.com "
+                              "with information about your Operating System, Desktop Environment you use (KDE, Gnome, MATE, etc) "
+                              "and their respective versions. The more information you can give the better.");
     }
 
     trayMenu = new QMenu(parent);
