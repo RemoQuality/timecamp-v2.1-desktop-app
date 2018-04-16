@@ -27,7 +27,9 @@ void TrayManager::setupTray(MainWidget *parent)
 
                               "We couldn't detect system tray. Please contact us at desktopapp@timecamp.com "
                               "with information about your Operating System, Desktop Environment you use (KDE, Gnome, MATE, etc) "
-                              "and their respective versions. The more information you can give the better.");
+                              "and their respective versions. The more information you can give the better."
+                              "\n\n"
+                              "If you're using GNOME, try their Shell Extensions: TopIcons or AppIndicator Support.");
     }
 
     trayMenu = new QMenu(parent);
