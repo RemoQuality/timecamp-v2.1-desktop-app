@@ -43,9 +43,11 @@ signals:
     void windowStatusChanged(bool);
 
 protected:
+    void handleSpacingEvents();
     void resizeEvent(QResizeEvent *event) override;
     void moveEvent(QMoveEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
+    void changeEvent(QEvent *event) override;
 
 public slots:
     void clearCache();
@@ -92,6 +94,7 @@ private:
     QShortcut *refreshBind;
     QShortcut *fullscreenBind;
 
+    bool MainWidgetWasInitialised = false;
     bool loggedIn;
     QString timerName;
 

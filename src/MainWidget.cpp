@@ -52,30 +52,44 @@ void MainWidget::init()
     this->setWindowTitle(WINDOW_NAME);
     this->setupWebview(); // starts the embedded webpage
     this->wasTheWindowLeftOpened();
+    MainWidgetWasInitialised = true;
+}
+
+void MainWidget::handleSpacingEvents()
+{
+    qInfo("Size: %d x %d", size().width(), size().height());
+    this->setUpdatesEnabled(false);
+    if(MainWidgetWasInitialised) {
+        QTWEView->resize(size()); // resize webview
+    }
+    settings.setValue("mainWindowGeometry", saveGeometry()); // save window position
+    settings.sync();
+    this->setUpdatesEnabled(true);
 }
 
 void MainWidget::moveEvent(QMoveEvent *event)
 {
-    this->setUpdatesEnabled(false);
-    settings.setValue("mainWindowGeometry", saveGeometry()); // save window position
-    settings.sync();
-    this->setUpdatesEnabled(true);
+    this->handleSpacingEvents();
     QWidget::moveEvent(event); // do the default "whatever happens on move"
+}
+
+void MainWidget::changeEvent(QEvent *event)
+{
+    if(event->type() == QEvent::WindowStateChange){
+        this->handleSpacingEvents();
+    }
+    QWidget::changeEvent(event);
 }
 
 void MainWidget::resizeEvent(QResizeEvent *event)
 {
-    this->setUpdatesEnabled(false);
-    QTWEView->resize(size()); // resize webview
-    settings.setValue("mainWindowGeometry", saveGeometry()); // save window position
-    settings.sync();
-    this->setUpdatesEnabled(true);
+    this->handleSpacingEvents();
     QWidget::resizeEvent(event); // do the default "whatever happens on resize"
 }
 
 void MainWidget::closeEvent(QCloseEvent *event)
 {
-    settings.setValue("mainWindowGeometry", saveGeometry()); // save window position
+    this->handleSpacingEvents();
     settings.setValue(SETT_WAS_WINDOW_LEFT_OPENED, false); // save if window was opened
     settings.sync();
     hide(); // hide our window when X was pressed
