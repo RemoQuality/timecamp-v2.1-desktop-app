@@ -42,4 +42,4 @@ ${LinuxDeployQtExec} $TARGET"/usr/share/applications/${BUNDLE_NAME}.desktop" -ap
 #${AppImageToolExec} $TARGET
 
 echo "Unbundled dependant libs (they need to be in the system!):"
-find $TARGET -executable -type f -exec ldd {} \; | grep -v "/home" | sort | uniq
+find $TARGET -executable -type f -exec ldd {} \; | grep -v "timecamp-desktop" | cut -d " " -f 2-3  | sort | uniq
