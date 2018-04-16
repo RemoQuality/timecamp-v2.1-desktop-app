@@ -3,6 +3,7 @@
 #include <QStandardPaths>
 #include <ctime>
 #include <iomanip>
+#include <QLibraryInfo>
 
 #ifdef Q_OS_MACOS
 
@@ -107,6 +108,14 @@ int main(int argc, char *argv[])
 
     // standard Qt init
     QApplication app(argc, argv);
+
+    // debugging library locations (most useful for Linux debugging)
+    for(int i = 0; i < 13; i++) {
+        qInfo() << "Location " << i << QLibraryInfo::location(QLibraryInfo::LibraryLocation(i));
+    }
+    qInfo() << "Loc: " << QCoreApplication::applicationDirPath() << '\n';
+    qInfo() << "qt.conf " << QDir(QCoreApplication::applicationDirPath()).exists("qt.conf") << '\n';
+
     firstRun();
 
     QIcon appIcon = QIcon(MAIN_ICON);
