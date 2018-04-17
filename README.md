@@ -1,6 +1,6 @@
-# Timecamp Desktop
+# TimeCamp Desktop
 
-Manage your tasks and timesheet on Timecamp, right from your desktop.  
+Manage your tasks and timesheet on TimeCamp, right from your desktop.  
 Start timers, create projects, do everything that can be done on the web version.
 
 ---
@@ -29,7 +29,7 @@ See *[Creating installers](https://github.com/timecamp/timecamp-desktop#creating
 
 ### Prerequisites
 
-To compile **Timecamp Desktop** you need:
+To compile **TimeCamp Desktop** you need:
 * _[Qt](https://www.qt.io/) 5.9_ or greater (remember to **select the latest version during Qt instalation**)
     * you don't need Qt Sources and other components, eg. Android or iOS;  
     you can **deselect everything except your OS package and Qt WebEngine**
@@ -82,7 +82,7 @@ Now you can open it in your IDE of choice. You are ready to go!
 
 ## Compiling our source
 
-We compile **Timecamp Desktop** with MSVC on Windows, Clang on macOS and GCC on Linux.  
+We compile **TimeCamp Desktop** with MSVC on Windows, Clang on macOS and GCC on Linux.  
 Both Qt Creator and CLion allow you to choose the compiler in settings in their GUI.
 
 Other combinations are sometimes possible, but are not used by us right now.
@@ -123,7 +123,7 @@ Our installers are created with:
     * `linuxdeployqt` - a Community-created [Deployment Tool](https://github.com/probonopd/linuxdeployqt), which pulls in Qt libraries and dependencies
     * `appimagetool` - a [creator of runnable packages](https://github.com/AppImage/AppImageKit) for Linux in AppImage format
 
-Additionally, our Windows and macOS installers are being signed with Timecamp certificates.
+Additionally, our Windows and macOS installers are being signed with TimeCamp certificates.
 
 For more details see `deploy_win.bat`, `deploy_mac.sh` and `deploy_lin.sh` scripts.
 
@@ -134,7 +134,7 @@ Source:
 * [QHotkey](https://github.com/Skycoder42/QHotkey) [BSD 3-Clause] - globally working hotkeys for Windows, macOS and Linux
 * [LZ4](http://lz4.github.io/lz4/) [BSD 2-Clause] - for reading Firefox data (see `FirefoxUtils.cpp`)
 * [mini-cmake-qt](https://github.com/euler0/mini-cmake-qt) [[Unlicense](http://unlicense.org/)d] - a template for the simplest possible version of a working,  multi-platform Qt5 project
-* Previous [Timecamp Desktop App](https://github.com/timecamp/timecamp-v2-desktop-app) - sources for macOS widgets and data collecting
+* Previous [TimeCamp Desktop App](https://github.com/timecamp/timecamp-v2-desktop-app) - sources for macOS widgets and data collecting
 
 Tools:
 * [SQLite](https://www.sqlite.org/) - local database

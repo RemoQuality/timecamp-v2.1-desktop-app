@@ -10,17 +10,17 @@ void Autorun::enableAutorun()
     QString desktopFile = ""
             "[Desktop Entry]\n"
             "Version=1.0\n"
-            "Comment=\"Timecamp Desktop 1.0\"\n"
+            "Comment=\"TimeCamp Desktop 1.0\"\n"
             "Type=Application\n"
-            "Name=Timecamp Desktop\n"
-            "Exec=\"/usr/share/Time Solutions/Timecamp Desktop\"\n"
+            "Name=TimeCamp Desktop\n"
+            "Exec=\"/usr/share/Time Solutions/TimeCamp Desktop\"\n"
             "Icon=\"/usr/share/Time Solutions/icon.png\"\n"
             "StartupNotify=false\n"
             "Terminal=false\n"
             "Categories=Office;ProjectManagement;Monitor;Network;\n"
     ;
 
-    QString filename = QDir::homePath() + "/.config/autostart/Timecamp Desktop.desktop";
+    QString filename = QDir::homePath() + "/.config/autostart/TimeCamp Desktop.desktop";
     if (!QFile::exists(filename)) {
         QFile file(filename);
         if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -42,15 +42,15 @@ void Autorun::enableAutorun()
                         "        <key>RunAtLoad</key>\n"
                         "        <true/>\n"
                         "        <key>Label</key>\n"
-                        "        <string>Timecamp Desktop</string>\n"
+                        "        <string>TimeCamp Desktop</string>\n"
                         "        <key>ProgramArguments</key>\n"
                         "        <array>\n"
-                        "            <string>/Applications/Timecamp Desktop.app/Contents/MacOS/TimecampDesktop</string>\n"
+                        "            <string>/Applications/TimeCamp Desktop.app/Contents/MacOS/TimeCampDesktop</string>\n"
                         "        </array>\n"
                         "    </dict>\n"
                         "</plist>";
 
-    QString filename = QDir::homePath() + "/Library/LaunchAgents/TimecampDesktop.autorun.plist";
+    QString filename = QDir::homePath() + "/Library/LaunchAgents/TimeCampDesktop.autorun.plist";
     if (!QFile::exists(filename)) {
         QFile file(filename);
         if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -65,7 +65,7 @@ void Autorun::disableAutorun()
 {
 #ifdef Q_OS_LINUX
     //
-    QString filename = QDir::homePath() + "/.config/autostart/Timecamp Desktop.desktop";
+    QString filename = QDir::homePath() + "/.config/autostart/TimeCamp Desktop.desktop";
     if (QFile::exists(filename)) {
         QFile::remove(filename);
     }
@@ -74,7 +74,7 @@ void Autorun::disableAutorun()
     settings.remove(APPLICATION_NAME);
     settings.sync();
 #else // macOS
-    QString filename = QDir::homePath() + "/Library/LaunchAgents/TimecampDesktop.autorun.plist";
+    QString filename = QDir::homePath() + "/Library/LaunchAgents/TimeCampDesktop.autorun.plist";
     if (QFile::exists(filename)) {
         QFile::remove(filename);
     }
@@ -84,14 +84,14 @@ void Autorun::disableAutorun()
 bool Autorun::checkAutorun()
 {
 #ifdef Q_OS_LINUX
-    QString filename = QDir::homePath() + "/.config/autostart/Timecamp Desktop.desktop";
+    QString filename = QDir::homePath() + "/.config/autostart/TimeCamp Desktop.desktop";
     return QFile::exists(filename);
 #elif defined(Q_OS_WIN)
     QSettings settings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
     settings.sync();
     return settings.contains(APPLICATION_NAME);
 #else // macOS
-    QString filename = QDir::homePath() + "/Library/LaunchAgents/TimecampDesktop.autorun.plist";
+    QString filename = QDir::homePath() + "/Library/LaunchAgents/TimeCampDesktop.autorun.plist";
     return QFile::exists(filename);
 #endif
 }

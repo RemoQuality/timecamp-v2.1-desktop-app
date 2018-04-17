@@ -2,16 +2,16 @@
 # add Qt bin to your $PATH, and change path to the cmake-generated.app file
 
 # copied from StackOverflow and improved: https://stackoverflow.com/questions/27952111/unable-to-sign-app-bundle-using-qt-frameworks-on-os-x-10-10
-BUNDLE_NAME="Timecamp Desktop.app"
-DMG_NAME="Timecamp-Desktop-1.0.dmg"
+BUNDLE_NAME="TimeCamp Desktop.app"
+DMG_NAME="TimeCamp-Desktop-1.0.dmg"
 TARGET="cmake-build-relwithdebinfo"
 
 rm -rf $TARGET/"${BUNDLE_NAME}"
 rm -rf $TARGET/${DMG_NAME} # dmg HAS TO BE DELETED
 
 mkdir -p $TARGET
-cmake --build $TARGET --target TimecampDesktop --
-mv $TARGET/"TimecampDesktop.app" $TARGET/"Timecamp Desktop.app"
+cmake --build $TARGET --target TimeCampDesktop --
+mv $TARGET/"TimeCampDesktop.app" $TARGET/"TimeCamp Desktop.app"
 
 cd $TARGET
 

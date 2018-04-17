@@ -2,9 +2,9 @@
 # add Qt bin to your $PATH
 
 SRC="cmake-build-relwithdebinfo-gcc"
-TARGET="linuxdeployqt/TimecampDesktop.AppDir"
-CMAKE_NAME="TimecampDesktop"
-BUNDLE_NAME="TimecampDesktop"
+TARGET="linuxdeployqt/TimeCampDesktop.AppDir"
+CMAKE_NAME="TimeCampDesktop"
+BUNDLE_NAME="TimeCampDesktop"
 
 ARCH="amd64"
 VERSION="1.0.1"
@@ -12,7 +12,7 @@ TARGET_DEB="linuxdeployqt/deb"
 
 function deb_control_template(){
 cat <<-EOF
-Package: Timecamp-Desktop
+Package: TimeCamp-Desktop
 Version: $VERSION
 Section: contrib/comm
 Priority: optional
@@ -41,9 +41,9 @@ cp "res/AppIcon128.png" $TARGET_DEB"/usr/share/${BUNDLE_NAME}/${BUNDLE_NAME}.png
 cp res"/${BUNDLE_NAME}.desktop" $TARGET_DEB"/usr/share/${BUNDLE_NAME}/${BUNDLE_NAME}.desktop" # copy app.desktop file
 
 # fix .desktop file paths
-sed -i.bak "s/Name=TimecampDesktop/Name=Timecamp Desktop/g" $TARGET_DEB"/usr/share/${BUNDLE_NAME}/${BUNDLE_NAME}.desktop"
-sed -i.bak "s/Icon=TimecampDesktop/Icon=\/usr\/share\/${BUNDLE_NAME}\/${BUNDLE_NAME}.png/g" $TARGET_DEB"/usr/share/${BUNDLE_NAME}/${BUNDLE_NAME}.desktop"
-sed -i.bak "s/Icon=TimecampDesktop/Icon=\/usr\/share\/${BUNDLE_NAME}\/${BUNDLE_NAME}.png/g" $TARGET_DEB"/usr/share/${BUNDLE_NAME}/${BUNDLE_NAME}.desktop"
+sed -i.bak "s/Name=TimeCampDesktop/Name=TimeCamp Desktop/g" $TARGET_DEB"/usr/share/${BUNDLE_NAME}/${BUNDLE_NAME}.desktop"
+sed -i.bak "s/Icon=TimeCampDesktop/Icon=\/usr\/share\/${BUNDLE_NAME}\/${BUNDLE_NAME}.png/g" $TARGET_DEB"/usr/share/${BUNDLE_NAME}/${BUNDLE_NAME}.desktop"
+sed -i.bak "s/Icon=TimeCampDesktop/Icon=\/usr\/share\/${BUNDLE_NAME}\/${BUNDLE_NAME}.png/g" $TARGET_DEB"/usr/share/${BUNDLE_NAME}/${BUNDLE_NAME}.desktop"
 
 rm $TARGET_DEB"/usr/share/${BUNDLE_NAME}/${BUNDLE_NAME}.desktop.bak" # copy app.desktop file
 
@@ -55,7 +55,7 @@ ln -s "../../../../share/${BUNDLE_NAME}/${BUNDLE_NAME}.png" $TARGET_DEB"/usr/sha
 
 find $TARGET_DEB -type d -exec chmod 0755 {} \;
 find $TARGET_DEB -type f -exec chmod 0644 {} \;
-chmod a+x $TARGET_DEB/usr/bin/TimecampDesktop
+chmod a+x $TARGET_DEB/usr/bin/TimeCampDesktop
 
 fakeroot dpkg --build $TARGET_DEB ./
 

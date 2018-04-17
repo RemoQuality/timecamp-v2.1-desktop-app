@@ -2,9 +2,9 @@
 # add Qt bin to your $PATH
 
 SRC="cmake-build-relwithdebinfo-gcc-48"
-TARGET="linuxdeployqt/TimecampDesktop.AppDir"
-CMAKE_NAME="TimecampDesktop"
-BUNDLE_NAME="TimecampDesktop"
+TARGET="linuxdeployqt/TimeCampDesktop.AppDir"
+CMAKE_NAME="TimeCampDesktop"
+BUNDLE_NAME="TimeCampDesktop"
 LinuxDeployQtExec="/home/karololszak/Downloads/linuxdeployqt-continuous-x86_64.AppImage"
 AppImageToolExec="/home/karololszak/Downloads/appimagetool-x86_64.AppImage"
 

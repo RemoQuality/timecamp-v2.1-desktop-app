@@ -1,5 +1,5 @@
 # Set project information
-set(PRODUCT_NAME "Timecamp Desktop") # the nice visible name
+set(PRODUCT_NAME "TimeCamp Desktop") # the nice visible name
 set(PRODUCT_VERSION 2.0.0.0)
 set(COMPANY "Time Solutions")
 set(IDENTIFIER "com.TimeSolutions.${PROJECT_NAME}")

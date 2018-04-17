@@ -1,10 +1,10 @@
 [Desktop Entry]
 Version=1.0
-Comment=Timecamp Desktop Application
+Comment=TimeCamp Desktop Application
 Type=Application
-Name=TimecampDesktop
-Exec=TimecampDesktop
-Icon=TimecampDesktop
+Name=TimeCampDesktop
+Exec=TimeCampDesktop
+Icon=TimeCampDesktop
 StartupNotify=false
 Terminal=false
 Categories=Office;ProjectManagement;Monitor;Network;
