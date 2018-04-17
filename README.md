@@ -1,6 +1,6 @@
 # TimeCamp Desktop
 
-Manage your tasks and timesheet on TimeCamp, right from your desktop.  
+Manage your tasks and timesheet on [TimeCamp](https://www.timecamp.com/), right from your desktop.  
 Start timers, create projects, do everything that can be done on the web version.
 
 ---
