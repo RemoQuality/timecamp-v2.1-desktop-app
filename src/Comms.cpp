@@ -29,7 +29,9 @@ void Comms::timedUpdates()
 {
     lastSync = settings.value(SETT_LAST_SYNC, 0).toLongLong(); // set our variable to value from settings (so it works between app restarts)
 
-    qDebug() << "[AppList] last sync: " << lastSync;
+    QDateTime timestamp;
+    timestamp.setTime_t(lastSync/1000);
+    qDebug() << "[AppList] last sync: " << timestamp.toString(Qt::ISODate);
 
     setCurrentTime(QDateTime::currentMSecsSinceEpoch()); // time of DB fetch is passed, so we can update to it if successful
 
