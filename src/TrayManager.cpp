@@ -131,7 +131,7 @@ void TrayManager::createActions(QMenu *menu)
 {
     openAct = new QAction(tr("Show"), this);
     openAct->setStatusTip(tr("Opens TimeCamp interface"));
-    openAct->setShortcut(QKeySequence("ctrl+alt+/"));
+    openAct->setShortcut(QKeySequence(KB_SHORTCUTS_OPEN_WINDOW));
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
     openAct->setShortcutVisibleInContextMenu(true);
 #endif
@@ -140,7 +140,7 @@ void TrayManager::createActions(QMenu *menu)
 
     startTaskAct = new QAction(tr("Start timer"), this);
     startTaskAct->setStatusTip(tr("Go to task selection screen"));
-    startTaskAct->setShortcut(QKeySequence("ctrl+alt+N"));
+    startTaskAct->setShortcut(QKeySequence(KB_SHORTCUTS_START_TIMER));
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
     startTaskAct->setShortcutVisibleInContextMenu(true);
 #endif
@@ -149,7 +149,7 @@ void TrayManager::createActions(QMenu *menu)
 
     stopTaskAct = new QAction(tr("Stop timer"), this);
     stopTaskAct->setStatusTip(tr("Stop currently running timer"));
-    stopTaskAct->setShortcut(QKeySequence("ctrl+alt+M"));
+    stopTaskAct->setShortcut(QKeySequence(KB_SHORTCUTS_STOP_TIMER));
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
     stopTaskAct->setShortcutVisibleInContextMenu(true);
 #endif

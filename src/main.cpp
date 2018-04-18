@@ -155,13 +155,13 @@ int main(int argc, char *argv[])
     QObject::connect(&mainWidget, &MainWidget::checkIsIdle, windowEventsManager->getCaptureEventsThread(), &WindowEvents::checkIdleStatus); // Qt5
 
 
-    auto hotkeyNewTimer = new QHotkey(QKeySequence("ctrl+alt+N"), true, &app);
+    auto hotkeyNewTimer = new QHotkey(QKeySequence(KB_SHORTCUTS_START_TIMER), true, &app);
     QObject::connect(hotkeyNewTimer, &QHotkey::activated, &mainWidget, &MainWidget::startTask);
 
-    auto hotkeyStopTimer = new QHotkey(QKeySequence("ctrl+alt+M"), true, &app);
+    auto hotkeyStopTimer = new QHotkey(QKeySequence(KB_SHORTCUTS_STOP_TIMER), true, &app);
     QObject::connect(hotkeyStopTimer, &QHotkey::activated, &mainWidget, &MainWidget::stopTask);
 
-    auto hotkeyOpenWindow = new QHotkey(QKeySequence("ctrl+alt+/"), true, &app);
+    auto hotkeyOpenWindow = new QHotkey(QKeySequence(KB_SHORTCUTS_OPEN_WINDOW), true, &app);
     QObject::connect(hotkeyOpenWindow, &QHotkey::activated, trayManager, &TrayManager::openCloseWindowAction);
 
     // everything connected via QObject, now heavy lifting
