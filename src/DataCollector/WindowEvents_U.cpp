@@ -152,6 +152,7 @@ void WindowEvents_U::run()
                     continue;
                 }
                 if(pid == nullptr){
+                    qInfo("[WindowEvents_U] Error: pid was NULL");
                     continue;
                 }
 
