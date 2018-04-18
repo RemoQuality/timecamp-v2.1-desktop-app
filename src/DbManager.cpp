@@ -41,13 +41,13 @@ bool DbManager::isOpen() const
 
 bool DbManager::createTable()
 {
-    bool success = false;
+    bool success = true;
 
     QSqlQuery query;
     query.prepare("CREATE TABLE \"apps\" ( `ID` INTEGER PRIMARY KEY AUTOINCREMENT, `app_name` TEXT, `window_name` TEXT, `additional_info` TEXT, `start_time` INTEGER NOT NULL, `end_time` INTEGER NOT NULL )");
 
     if (!query.exec()) {
-        qDebug() << "Couldn't create the table: one might already exist.";
+        qDebug() << "[DB] Couldn't create the table: one might already exist.";
         success = false;
     }
 
