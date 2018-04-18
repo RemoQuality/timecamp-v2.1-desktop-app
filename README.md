@@ -105,7 +105,7 @@ We already checked these:
     * GCC
     * Clang
         * Qt precompiled with gcc is available for download on qt.io,  
-        but you can use it with clang as well, as it is ABI compatible;  
+        but you can use it with clang as well, as it is [mostly GCC compatible](https://clang.llvm.org/docs/UsersManual.html#introduction); _("In most cases, code "just works".")_ 
         * or you can [compile Qt with clang yourself](http://doc.qt.io/qt-5/configure-options.html#compiler-options)!
 
 
