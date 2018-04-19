@@ -22,7 +22,14 @@ void WindowEvents_W::logAppName(QString appName, QString windowName, HWND passed
 {
     appName = appName.replace(".exe", "");
     WindowDetails *details = new WindowDetails();
-    QString additionalInfo = details->GetAdditionalInfo(appName, passedHwnd);
+
+    QString additionalInfo = "";
+    if (details->isBrowser(appName)) {
+        additionalInfo = details->GetInfoFromBrowser(passedHwnd);
+    } else if (appName.toLower().contains(QRegExp("firefox"))) {
+        additionalInfo = details->GetInfoFromFirefox(passedHwnd);
+    }
+    
     WindowEvents::logAppName(appName, windowName, additionalInfo);
 }
 
@@ -346,23 +353,13 @@ WindowDetails::WindowDetails()
     URL_REGEX = QRegExp(URL_REGEX_STR);
 }
 
-QString WindowDetails::GetAdditionalInfo(QString processName, HWND passedHwnd)
+bool WindowDetails::isBrowser(QString processName)
 {
-    processName = processName.toLower();
-    if (passedHwnd == NULL) {
-        currenthwnd = GetForegroundWindow();
-    } else {
-        currenthwnd = passedHwnd;
-    }
-
-    bool browser = false;
-    auto pointerMagic = &WindowDetails::standardAccCallback;
-
     // iexplore gets only first tab (!)
     // all others were not checked
     if (processName.toLower().contains(QRegExp("iexplore|mosaic|maxthon|safari"))) {
         pointerMagic = &WindowDetails::standardAccCallback;
-        browser = true;
+        return true;
     }
 
     /*
@@ -376,7 +373,7 @@ QString WindowDetails::GetAdditionalInfo(QString processName, HWND passedHwnd)
      */
     if (processName.toLower().contains(QRegExp("chrome|epic|opera|cent|slimjet|sleipnir|silk|blisk|yandex|iron"))) {
         pointerMagic = &WindowDetails::chromeAccCallback;
-        browser = true;
+        return true;
     }
 
     /*
@@ -392,44 +389,59 @@ QString WindowDetails::GetAdditionalInfo(QString processName, HWND passedHwnd)
      */
     if (processName.toLower().contains(QRegExp("microsoftedge|netscp6|mozilla|netscape|vivaldi|brave|ucbrowser|browser"))) {
         pointerMagic = &WindowDetails::operaAccCallback;
-        browser = true;
+        return true;
     }
 
-    if (browser) {
-        QString res("");
-        QElapsedTimer timer;
-        timer.start();
-        AccControlIterator iterator;
-        iterator.iterate(currenthwnd, this, pointerMagic, (void *) &res, true);
-
-        qDebug() << "[ACC] " << res;
-
-        if (res == "" && WindowEvents_W::getWindowsVersion() <= 6.0) {
-            UIAControlIterator iterator2;
-            iterator2.iterate(currenthwnd, this, pointerMagic, (void *) &res, true);
-            qDebug() << "[UIA] " << res;// << "\r\n";
-        }
-
-        QUrl url(res);
-        QString host = url.host();
-        qDebug() << "[HOST]" << host << "(" << timer.elapsed() << ")" << "ms" << "\r\n";
-        return res;
-    }
-
-    if (processName.toLower().contains(QRegExp("firefox"))) {
-        QElapsedTimer timer;
-        timer.start();
-        QString res = QString::fromStdWString(FirefoxURL::GetFirefoxURL(currenthwnd));
-
-        qDebug() << "[FX_W]" << res;
-        QUrl url(res);
-        QString host = url.host();
-        qDebug() << "[HOST]" << host << "(" << timer.elapsed() << ")" << "ms" << "\r\n";
-        return res; // we do [HOST] here for debug only, but we save full URL to DB
-    }
-
-    return "";
+    return false;
 }
+
+QString WindowDetails::GetInfoFromFirefox(HWND passedHwnd)
+{
+    if (passedHwnd == NULL) {
+        currenthwnd = GetForegroundWindow();
+    } else {
+        currenthwnd = passedHwnd;
+    }
+    
+    QElapsedTimer timer;
+    timer.start();
+    QString res = QString::fromStdWString(FirefoxURL::GetFirefoxURL(currenthwnd));
+
+    qDebug() << "[FX_W]" << res;
+    QUrl url(res);
+    QString host = url.host();
+    qDebug() << "[HOST]" << host << "(" << timer.elapsed() << ")" << "ms" << "\r\n";
+    return res; // we do [HOST] here for debug only, but we save full URL to DB
+}
+
+QString WindowDetails::GetInfoFromBrowser(HWND passedHwnd)
+{
+    if (passedHwnd == NULL) {
+        currenthwnd = GetForegroundWindow();
+    } else {
+        currenthwnd = passedHwnd;
+    }
+    
+    QString res("");
+    QElapsedTimer timer;
+    timer.start();
+    AccControlIterator iterator;
+    iterator.iterate(currenthwnd, this, pointerMagic, (void *) &res, true);
+
+    qDebug() << "[ACC] " << res;
+
+    if (res == "" && WindowEvents_W::getWindowsVersion() <= 6.0) {
+        UIAControlIterator iterator2;
+        iterator2.iterate(currenthwnd, this, pointerMagic, (void *) &res, true);
+        qDebug() << "[UIA] " << res;// << "\r\n";
+    }
+
+    QUrl url(res);
+    QString host = url.host();
+    qDebug() << "[HOST]" << host << "(" << timer.elapsed() << ")" << "ms" << "\r\n";
+    return res;
+}
+
 const QRegExp &WindowDetails::getURL_REGEX() const
 {
     return URL_REGEX;

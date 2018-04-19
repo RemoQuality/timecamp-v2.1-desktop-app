@@ -59,8 +59,13 @@ public:
     bool chromeAccCallback(IControlItem *node, void *userData);
     bool operaAccCallback(IControlItem *node, void *userData);
 
-    QString GetAdditionalInfo(QString processName, HWND passedHwnd);
+    QString GetInfoFromBrowser(HWND passedHwnd);
+    QString GetInfoFromFirefox(HWND passedHwnd);
     bool startsWithGoodProtocol(QString checkedStr);
+    bool isBrowser(QString processName);
+
+    typedef bool(WindowDetails::*DetailsCallback)(IControlItem *node, void *userData);
+    DetailsCallback pointerMagic = &WindowDetails::standardAccCallback;
 
     const QRegExp &getURL_REGEX() const;
     void setURL_REGEX(const QRegExp &URL_REGEX);
