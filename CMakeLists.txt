@@ -74,7 +74,6 @@ list(APPEND SOURCE_FILES
         "src/Comms.cpp"
         "src/AppData.cpp"
         "src/Autorun.cpp"
-        "src/FirefoxUtils.cpp"
         "src/WindowEventsManager.cpp"
         "src/TrayManager.cpp"
         "third-party/mozilla_lz4/lz4.c"
@@ -104,6 +103,7 @@ endif ()
 
 if (UNIX AND NOT APPLE)
     list(APPEND SOURCE_FILES
+            "src/FirefoxUtils.cpp"
             "src/DataCollector/WindowEvents_U.cpp"
             )
 
@@ -114,6 +114,7 @@ endif ()
 
 if (APPLE)
     list(APPEND SOURCE_FILES
+            "src/FirefoxUtils.cpp"
             "src/DataCollector/WindowEvents_M.mm"
             "src/Utils_M.mm"
             "src/Widget/Widget_M.mm"
