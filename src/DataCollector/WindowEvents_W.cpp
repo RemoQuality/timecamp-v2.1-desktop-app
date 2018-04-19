@@ -21,16 +21,15 @@ unsigned long WindowEvents_W::getIdleTime()
 void WindowEvents_W::logAppName(QString appName, QString windowName, HWND passedHwnd)
 {
     appName = appName.replace(".exe", "");
-    WindowDetails *details = new WindowDetails();
 
     AppData *app;
     QString additionalInfo = "";
-    if (details->isBrowser(appName)) {
+    if (WindowDetails::instance().isBrowser(appName)) {
         app = WindowEvents::logAppName(appName, windowName, appName); // set additionalInfo to appName for now
-        additionalInfo = details->GetInfoFromBrowser(passedHwnd); // get real URL
+        additionalInfo = WindowDetails::instance().GetInfoFromBrowser(passedHwnd); // get real URL
     } else if (appName.toLower().contains(QRegExp("firefox"))) {
         app = WindowEvents::logAppName(appName, windowName, appName); // same like above, just to skip the "Internet" checker
-        additionalInfo = details->GetInfoFromFirefox(passedHwnd); // get real URL from Firefox
+        additionalInfo = WindowDetails::instance().GetInfoFromFirefox(passedHwnd); // get real URL from Firefox
     }
     if(additionalInfo != "") {
         app->setAdditionalInfo(additionalInfo); // after we get the URL, update additionalInfo
@@ -328,6 +327,12 @@ bool WindowDetails::operaAccCallback(IControlItem *node, void *userData)
     return true;
 }
 
+WindowDetails &WindowDetails::instance()
+{
+    static WindowDetails _instance;
+    return _instance;
+}
+
 WindowDetails::WindowDetails()
 {
     URL_REGEX_STR = QString("^") + QString("(?:") +
@@ -408,7 +413,7 @@ QString WindowDetails::GetInfoFromFirefox(HWND passedHwnd)
     } else {
         currenthwnd = passedHwnd;
     }
-    
+
     QElapsedTimer timer;
     timer.start();
     QString res = QString::fromStdWString(FirefoxURL::GetFirefoxURL(currenthwnd));
@@ -427,7 +432,7 @@ QString WindowDetails::GetInfoFromBrowser(HWND passedHwnd)
     } else {
         currenthwnd = passedHwnd;
     }
-    
+
     QString res("");
     QElapsedTimer timer;
     timer.start();

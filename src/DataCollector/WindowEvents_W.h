@@ -51,8 +51,11 @@ private:
 
 class WindowDetails
 {
+    Q_DISABLE_COPY(WindowDetails)
 public:
-    WindowDetails();
+//    WindowDetails();
+    static WindowDetails &instance();
+    explicit WindowDetails();
     HWND currenthwnd;
 
     bool standardAccCallback(IControlItem *node, void *userData);
