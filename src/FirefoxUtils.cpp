@@ -233,12 +233,7 @@ QString getFirefoxConfigFilePath()
 QString getCurrentURLFromFirefoxConfig(QString &jsonConfig)
 {
 
-//    qDebug() << "JSON file: ";
-//    qDebug() << jsonConfig;
-
-    return "";
-/*
-    QJsonParseError error;
+    QJsonParseError error{};
     auto json = QJsonDocument::fromJson(jsonConfig.toUtf8(), &error);
     if(error.error != QJsonParseError::NoError){
         qDebug() << "JSON parse error: " << error.errorString();
@@ -248,7 +243,7 @@ QString getCurrentURLFromFirefoxConfig(QString &jsonConfig)
     auto jsonArray = jsonObject.value("properties").toArray();
 
     auto selectedWindowJson = jsonObject.value("selectedWindow");
-    if (selectedWindowJson == NULL) {
+    if (selectedWindowJson.isNull() || selectedWindowJson.isUndefined()) {
         qDebug() << "Failed getting 'selectedWindow'";
         return "";
     }
@@ -256,7 +251,7 @@ QString getCurrentURLFromFirefoxConfig(QString &jsonConfig)
     int selectedWindow = selectedWindowJson.toInt() - 1;
 
     auto windowsJsonArray = jsonObject.value("windows");
-    if (windowsJsonArray == NULL) {
+    if (windowsJsonArray.isNull() || windowsJsonArray.isUndefined()) {
         qDebug() << "Failed getting 'windows'";
         return "";
     }
@@ -311,7 +306,6 @@ QString getCurrentURLFromFirefoxConfig(QString &jsonConfig)
     QString result(urlJson.toString());
 
     return result;
-    */
 }
 
 QString getCurrentURLFromFirefox()
