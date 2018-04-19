@@ -39,4 +39,8 @@
 #define MAX_LOG_TEXT_LENGTH 150
 #define LOG_FILENAME "log.txt"
 
+#define KB_SHORTCUTS_START_TIMER "ctrl+alt+shift+."
+#define KB_SHORTCUTS_STOP_TIMER "ctrl+alt+shift+,"
+#define KB_SHORTCUTS_OPEN_WINDOW "ctrl+alt+shift+/"
+
 #endif //THEGUI_SETTINGS_H

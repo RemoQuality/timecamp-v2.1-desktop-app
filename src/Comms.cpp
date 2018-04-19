@@ -33,7 +33,13 @@ void Comms::timedUpdates()
 
     setCurrentTime(QDateTime::currentMSecsSinceEpoch()); // time of DB fetch is passed, so we can update to it if successful
 
-    QVector<AppData *> appList = DbManager::instance().getAppsSinceLastSync(lastSync); // get apps since last sync
+    QVector<AppData *> appList;
+    try {
+        appList = DbManager::instance().getAppsSinceLastSync(lastSync); // get apps since last sync
+    } catch (...) {
+        qInfo("[AppList] DB fail");
+        return;
+    }
 
     qDebug() << "[AppList] length: " << appList.length();
     // send only if there is anything to send (0 is if "computer activities" are disabled, 1 is sometimes only with "IDLE" - don't send that)
@@ -78,10 +84,16 @@ void Comms::saveApp(AppData *app)
     if (needsReporting) {
         qint64 now = QDateTime::currentMSecsSinceEpoch();
         lastApp->setEnd(now); // it already has start, now we only update end
-        DbManager::instance().saveAppToDb(lastApp);
+
+        try {
+            DbManager::instance().saveAppToDb(lastApp);
+        } catch (...) {
+            qInfo("[DBSAVE] DB fail");
+            return;
+        }
 
         app->setStart(now);
-        qDebug("DBSAVED: %lds - %s | %s\nADD_INFO: %s \n",
+        qDebug("[DBSAVE] %lds - %s | %s\nADD_INFO: %s \n",
                (lastApp->getEnd() - lastApp->getStart())/1000,
                lastApp->getAppName().toLatin1().constData(),
                lastApp->getWindowName().toLatin1().constData(),
