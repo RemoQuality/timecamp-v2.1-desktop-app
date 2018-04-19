@@ -103,6 +103,7 @@ endif ()
 
 if (UNIX AND NOT APPLE)
     list(APPEND SOURCE_FILES
+            "src/ChromeUtils.cpp"
             "src/FirefoxUtils.cpp"
             "src/DataCollector/WindowEvents_U.cpp"
             )
@@ -114,6 +115,7 @@ endif ()
 
 if (APPLE)
     list(APPEND SOURCE_FILES
+            "src/ChromeUtils.cpp"
             "src/FirefoxUtils.cpp"
             "src/DataCollector/WindowEvents_M.mm"
             "src/Utils_M.mm"

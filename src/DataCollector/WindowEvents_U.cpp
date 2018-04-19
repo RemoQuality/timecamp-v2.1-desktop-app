@@ -6,6 +6,7 @@
 #include <X11/extensions/scrnsaver.h>
 
 #include <src/FirefoxUtils.h>
+#include <src/ChromeUtils.h>
 
 unsigned long WindowEvents_U::getIdleTime()
 {
@@ -43,7 +44,11 @@ void WindowEvents_U::logAppName(QString appName, QString windowName)
 {
     QString additionalInfo("");
     if(appName == "firefox"){
+        // somewhat unreliable - data is usually a few seconds late into the file
         additionalInfo = getCurrentURLFromFirefox();
+    }else if(appName == "chrome"){
+        // somewhat unreliable - might not get the URL
+        additionalInfo = getCurrentURLFromChrome(windowName);
     }
     WindowEvents::logAppName(appName, windowName, additionalInfo);
 }
