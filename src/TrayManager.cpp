@@ -62,7 +62,7 @@ void TrayManager::setupTray(MainWidget *parent)
 
 void TrayManager::setupSettings()
 {
-    qDebug() << "Setting up settings";
+    qDebug() << "[Tray] Update checkboxes (Settings)";
     // set checkboxes
     autoStartAct->setDisabled(false);
     autoStartAct->setChecked(Autorun::checkAutorun());
