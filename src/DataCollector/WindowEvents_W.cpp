@@ -23,14 +23,20 @@ void WindowEvents_W::logAppName(QString appName, QString windowName, HWND passed
     appName = appName.replace(".exe", "");
     WindowDetails *details = new WindowDetails();
 
+    AppData *app;
     QString additionalInfo = "";
     if (details->isBrowser(appName)) {
-        additionalInfo = details->GetInfoFromBrowser(passedHwnd);
+        app = WindowEvents::logAppName(appName, windowName, appName); // set additionalInfo to appName for now
+        additionalInfo = details->GetInfoFromBrowser(passedHwnd); // get real URL
     } else if (appName.toLower().contains(QRegExp("firefox"))) {
-        additionalInfo = details->GetInfoFromFirefox(passedHwnd);
+        app = WindowEvents::logAppName(appName, windowName, appName); // same like above, just to skip the "Internet" checker
+        additionalInfo = details->GetInfoFromFirefox(passedHwnd); // get real URL from Firefox
     }
-    
-    WindowEvents::logAppName(appName, windowName, additionalInfo);
+    if(additionalInfo != "") {
+        app->setAdditionalInfo(additionalInfo); // after we get the URL, update additionalInfo
+    } else {
+        WindowEvents::logAppName(appName, windowName, additionalInfo);
+    }
 }
 
 void WindowEvents_W::run()
