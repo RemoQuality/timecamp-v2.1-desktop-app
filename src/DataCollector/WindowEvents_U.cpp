@@ -5,6 +5,8 @@
 #include <X11/Xatom.h>
 #include <X11/extensions/scrnsaver.h>
 
+#include <src/FirefoxUtils.h>
+
 unsigned long WindowEvents_U::getIdleTime()
 {
     XScreenSaverInfo *info = XScreenSaverAllocInfo();
@@ -39,7 +41,11 @@ std::string WindowEvents_U::execCommand(const char *cmd)
 
 void WindowEvents_U::logAppName(QString appName, QString windowName)
 {
-    WindowEvents::logAppName(appName, windowName, "");
+    QString additionalInfo("");
+    if(appName == "firefox"){
+        additionalInfo = getCurrentURLFromFirefox();
+    }
+    WindowEvents::logAppName(appName, windowName, additionalInfo);
 }
 
 void WindowEvents_U::run()
