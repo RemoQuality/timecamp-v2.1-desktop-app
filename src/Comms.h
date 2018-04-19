@@ -44,6 +44,7 @@ private:
     int user_id;
     int root_group_id;
     int primary_group_id;
+    QNetworkAccessManager qnam;
 
 signals:
 

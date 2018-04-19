@@ -23,6 +23,7 @@ Comms &Comms::instance()
 Comms::Comms(QObject *parent) : QObject(parent)
 {
     apiKey = settings.value(SETT_APIKEY).toString();
+    qnam.setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
 }
 
 void Comms::timedUpdates()
@@ -383,9 +384,7 @@ void Comms::settingsReply(QNetworkReply *reply)
 
 void Comms::netRequest(QNetworkRequest request, QNetworkAccessManager::Operation netOp, ReplyHandler callback, QByteArray data)
 {
-    auto *qnam = new QNetworkAccessManager();
-    qnam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
-    connect(qnam, &QNetworkAccessManager::finished, this, callback);
+    QMetaObject::Connection conn1 = QObject::connect(&qnam, &QNetworkAccessManager::finished, this, callback);
 
     QString requestUrl = request.url().toString();
     requestUrl.truncate(MAX_LOG_TEXT_LENGTH);
@@ -393,19 +392,19 @@ void Comms::netRequest(QNetworkRequest request, QNetworkAccessManager::Operation
     QNetworkReply *reply = nullptr;
     if(netOp == QNetworkAccessManager::GetOperation) {
         qDebug() << "[GET] URL: " << requestUrl;
-        reply = qnam->get(request);
+        reply = qnam.get(request);
     }else if(netOp == QNetworkAccessManager::PostOperation) {
         qDebug() << "[POST] URL: " << requestUrl;
-        reply = qnam->post(request, data);
+        reply = qnam.post(request, data);
         data.truncate(MAX_LOG_TEXT_LENGTH);
         qDebug() << "[POST] Data: " << data;
     }
 
     QEventLoop loop;
     connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-    loop.exec();
-    delete reply;
-    delete qnam;
-//    reply->deleteLater(); // this was sometimes deleting wrong reply!
-//    qnam->deleteLater(); // and this was dropping wrong qnam...
+    loop.exec(); // wait in this function till we get a Network Reply; callback from conn1 gets called in async manner
+
+    QObject::disconnect(conn1); // unhook callback - so that next run of this func can set a new callback
+
+    reply->deleteLater();
 }
