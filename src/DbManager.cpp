@@ -20,7 +20,7 @@ DbManager::DbManager(QObject *parent) : QObject(parent)
     m_db.setDatabaseName(QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first() + "/" + DB_FILENAME);
 
     if (!m_db.open()) {
-        qInfo() << "[DB] Error: connection with database fail";
+        qInfo() << "[DB] ERROR0: connection with database fail";
     } else {
         qDebug() << "[DB] Database: connection ok";
         createTable();
@@ -41,22 +41,27 @@ bool DbManager::isOpen() const
 
 bool DbManager::createTable()
 {
-    bool success = true;
+    bool TableCreated = true;
 
     QSqlQuery query;
     query.prepare("CREATE TABLE \"apps\" ( `ID` INTEGER PRIMARY KEY AUTOINCREMENT, `app_name` TEXT, `window_name` TEXT, `additional_info` TEXT, `start_time` INTEGER NOT NULL, `end_time` INTEGER NOT NULL )");
 
     if (!query.exec()) {
-        qDebug() << "[DB] Couldn't create the table: one might already exist.";
-        success = false;
+        qDebug() << "[DB] Warning: Couldn't create the table: one might already exist.";
+        TableCreated = false;
     }
 
-    return success;
+    return TableCreated;
 }
 
 bool DbManager::saveAppToDb(AppData *app)
 {
     bool success = false;
+    if (!this->isOpen()) {
+        qInfo("[DB] ERROR1 can't query yet - DB is not opened");
+        return success;
+    }
+
     QString appName = app->getAppName();
     QString windowName = app->getWindowName();
     QString additionalInfo = app->getAdditionalInfo();
@@ -76,10 +81,10 @@ bool DbManager::saveAppToDb(AppData *app)
 //            qDebug() << "[DB] app added successfully";
             success = true;
         } else {
-            qInfo() << "[DB] adding failed: " << queryAdd.lastError();
+            qInfo() << "[DB] ERROR3 adding failed: " << queryAdd.lastError();
         }
     } else {
-        qInfo() << "[DB] adding failed: missing values!";
+        qInfo() << "[DB] ERROR4 adding failed: missing values!";
     }
 
     return success;
@@ -87,12 +92,17 @@ bool DbManager::saveAppToDb(AppData *app)
 
 QVector<AppData *> DbManager::getAppsSinceLastSync(qint64 last_sync)
 {
+    QVector<AppData *> appList;
+    if (!this->isOpen()) {
+        qInfo("[DB] ERROR2 can't query yet - DB is not opened");
+        return appList; // return empty appList if DB is not opened
+    }
+
     QSqlQuery querySelect;
     querySelect.prepare("SELECT app_name, window_name, additional_info, start_time, end_time FROM apps WHERE start_time > :lastSync LIMIT :maxCount");
     querySelect.bindValue(":lastSync", last_sync);
     querySelect.bindValue(":maxCount", MAX_ACTIVITIES_BATCH_SIZE);
 
-    QVector<AppData *> appList;
 
     if (querySelect.exec()) {
         int qSize = querySelect.size(); // get count of activities
