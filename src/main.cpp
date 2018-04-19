@@ -1,8 +1,10 @@
+#include <ctime>
+#include <iomanip>
+#include <iostream>
+
 #include <QApplication>
 #include <QTimer>
 #include <QStandardPaths>
-#include <ctime>
-#include <iomanip>
 #include <QLibraryInfo>
 
 #ifdef Q_OS_MACOS
@@ -75,6 +77,7 @@ void myMessageHandler(QtMsgType type, const QMessageLogContext &, const QString 
     outFile.open(QIODevice::WriteOnly | QIODevice::Append);
     QTextStream ts(&outFile);
     ts << txt << endl;
+    std::cout << txt.toStdString() << endl;
 }
 
 int main(int argc, char *argv[])
