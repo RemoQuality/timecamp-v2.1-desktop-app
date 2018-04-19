@@ -77,7 +77,7 @@ void myMessageHandler(QtMsgType type, const QMessageLogContext &, const QString 
     outFile.open(QIODevice::WriteOnly | QIODevice::Append);
     QTextStream ts(&outFile);
     ts << txt << endl;
-    std::cout << txt.toStdString() << endl;
+    std::cout << txt.toStdString() << std::endl;
 }
 
 int main(int argc, char *argv[])
