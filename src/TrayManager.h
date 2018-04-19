@@ -35,7 +35,10 @@ public:
     void setupSettings();
 
     void updateStopMenu(bool, QString);
+    void updateWidget(bool, QString);
     void loginLogout(bool, QString);
+
+    bool wasLoggedIn = false;
 
 signals:
     void pcActivitiesValueChanged(bool);

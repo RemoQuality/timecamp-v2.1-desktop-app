@@ -196,23 +196,13 @@ void TrayManager::createActions(QMenu *menu)
     menu->addAction(quitAct);
 }
 
-void TrayManager::loginLogout(bool loggedIn, QString tooltipText)
+void TrayManager::updateWidget(bool loggedIn, QString tooltipText)
 {
-    qDebug() << "[Browser] Page changed; update whether logged in or not";
-    startTaskAct->setEnabled(loggedIn);
-    stopTaskAct->setEnabled(loggedIn);
-    trackerAct->setEnabled(loggedIn);
 #ifdef _WIDGET_EXISTS_
     widgetAct->setEnabled(loggedIn);
     if (!loggedIn) {
         widget->hideMe();
     }
-#endif
-#ifndef Q_OS_MACOS
-    trayIcon->setToolTip(tooltipText); // we don't use trayIcon on macOS
-#endif
-
-#ifdef _WIDGET_EXISTS_
     if (stopTaskAct->isEnabled()) { // if timer is running
         QString maybeTime = tooltipText.mid(0, 8); // first 8 chars: 12:23:45
         bool ok;
@@ -222,12 +212,30 @@ void TrayManager::loginLogout(bool loggedIn, QString tooltipText)
         } else {
             widget->setText(NO_TIMER_TEXT);
         }
+        this->widgetToggl(widgetAct->isChecked());
     }
 #endif
+}
 
-    if (loggedIn) {
-        this->setupSettings(); // make context menu settings, again (after we logged in)
+void TrayManager::loginLogout(bool isLoggedIn, QString tooltipText)
+{
+    qDebug() << "[Browser] Page changed; update whether logged in or not";
+
+    this->updateWidget(isLoggedIn, tooltipText);
+    startTaskAct->setEnabled(isLoggedIn);
+    stopTaskAct->setEnabled(isLoggedIn);
+    trackerAct->setEnabled(isLoggedIn);
+#ifndef Q_OS_MACOS
+    trayIcon->setToolTip(tooltipText); // we don't use trayIcon on macOS
+#endif
+
+    if (isLoggedIn) {
+        if(!wasLoggedIn) {
+            // if wasn't logged in, but is now:
+            this->setupSettings(); // make context menu settings, again (after we logged in)
+        }
     } else {
         emit pcActivitiesValueChanged(false); // don't track PC activities when not logged in, despite the setting
     }
+    wasLoggedIn = isLoggedIn;
 }
