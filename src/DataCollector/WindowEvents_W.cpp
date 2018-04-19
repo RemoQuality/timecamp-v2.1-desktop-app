@@ -1,7 +1,6 @@
 #include "WindowEvents_W.h"
 #include "src/ControlIterator/AccControlIterator.h"
 #include "src/ControlIterator/UIAControlIterator.h"
-#include "src/FirefoxUtils.h"
 #include <QElapsedTimer>
 #include <QUrl>
 
@@ -21,7 +20,7 @@ unsigned long WindowEvents_W::getIdleTime()
 
 void WindowEvents_W::logAppName(QString appName, QString windowName, HWND passedHwnd)
 {
-    appName.replace(".exe", "");
+    appName = appName.replace(".exe", "");
     WindowDetails *details = new WindowDetails();
     QString additionalInfo = details->GetAdditionalInfo(appName, passedHwnd);
     WindowEvents::logAppName(appName, windowName, additionalInfo);

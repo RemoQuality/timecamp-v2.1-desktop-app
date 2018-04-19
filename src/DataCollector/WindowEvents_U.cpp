@@ -5,6 +5,9 @@
 #include <X11/Xatom.h>
 #include <X11/extensions/scrnsaver.h>
 
+#include <src/FirefoxUtils.h>
+#include <src/ChromeUtils.h>
+
 unsigned long WindowEvents_U::getIdleTime()
 {
     XScreenSaverInfo *info = XScreenSaverAllocInfo();
@@ -39,7 +42,15 @@ std::string WindowEvents_U::execCommand(const char *cmd)
 
 void WindowEvents_U::logAppName(QString appName, QString windowName)
 {
-    WindowEvents::logAppName(appName, windowName, "");
+    QString additionalInfo("");
+    if(appName == "firefox"){
+        // somewhat unreliable - data is usually a few seconds late into the file
+        additionalInfo = getCurrentURLFromFirefox();
+    }else if(appName == "chrome"){
+        // somewhat unreliable - might not get the URL
+        additionalInfo = getCurrentURLFromChrome(windowName);
+    }
+    WindowEvents::logAppName(appName, windowName, additionalInfo);
 }
 
 void WindowEvents_U::run()
@@ -152,6 +163,7 @@ void WindowEvents_U::run()
                     continue;
                 }
                 if(pid == nullptr){
+                    qInfo("[WindowEvents_U] Error: pid was NULL");
                     continue;
                 }
 

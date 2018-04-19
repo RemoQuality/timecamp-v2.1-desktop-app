@@ -1,8 +1,10 @@
+#include <ctime>
+#include <iomanip>
+#include <iostream>
+
 #include <QApplication>
 #include <QTimer>
 #include <QStandardPaths>
-#include <ctime>
-#include <iomanip>
 #include <QLibraryInfo>
 
 #ifdef Q_OS_MACOS
@@ -75,6 +77,7 @@ void myMessageHandler(QtMsgType type, const QMessageLogContext &, const QString 
     outFile.open(QIODevice::WriteOnly | QIODevice::Append);
     QTextStream ts(&outFile);
     ts << txt << endl;
+    std::cout << txt.toStdString() << std::endl;
 }
 
 int main(int argc, char *argv[])
@@ -119,8 +122,12 @@ int main(int argc, char *argv[])
     firstRun();
 
     QIcon appIcon = QIcon(MAIN_ICON);
-//    appIcon.addFile(":/Icons/AppIcon32.png");
-//    appIcon.addFile(":/Icons/AppIcon128.png");
+    appIcon.addFile(":/Icons/AppIcon_16.png");
+    appIcon.addFile(":/Icons/AppIcon_32.png");
+    appIcon.addFile(":/Icons/AppIcon_48.png");
+    appIcon.addFile(":/Icons/AppIcon_64.png");
+    appIcon.addFile(":/Icons/AppIcon_128.png");
+    appIcon.addFile(":/Icons/AppIcon_256.png");
     QApplication::setWindowIcon(appIcon);
 
 
@@ -129,6 +136,7 @@ int main(int argc, char *argv[])
 
     // create main widget
     MainWidget mainWidget;
+    mainWidget.setWindowIcon(appIcon);
 
     // create tray manager
     auto *trayManager = new TrayManager();

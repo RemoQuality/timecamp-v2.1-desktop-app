@@ -1,7 +1,11 @@
 <RCC>
     <qresource prefix="/Icons">
-        <file>AppIcon32.png</file>
-        <file>AppIcon128.png</file>
+        <file>AppIcon_16.png</file>
+        <file>AppIcon_32.png</file>
+        <file>AppIcon_48.png</file>
+        <file>AppIcon_64.png</file>
+        <file>AppIcon_128.png</file>
+        <file>AppIcon_256.png</file>
         <file>AppIcon.ico</file>
         <file>AppIcon.icns</file>
         <file>AppIcon_Dark.png</file>
