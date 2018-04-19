@@ -23,7 +23,13 @@ cd ../
 cmake --build $SRC --target "${CMAKE_NAME}" -- # build
 cp $SRC/"${CMAKE_NAME}" $TARGET"/usr/bin/""${BUNDLE_NAME}" # copy the binary
 cp res"/${BUNDLE_NAME}.desktop" $TARGET"/usr/share/applications/${BUNDLE_NAME}.desktop" # copy app.desktop file
-cp "res/AppIcon128.png" $TARGET"/usr/share/icons/hicolor/48x48/${BUNDLE_NAME}.png" # copy app.desktop file
+# copy icons
+cp "res/AppIcon_16.png" $TARGET"/usr/share/icons/hicolor/16x16/${BUNDLE_NAME}.png"
+cp "res/AppIcon_32.png" $TARGET"/usr/share/icons/hicolor/32x32/${BUNDLE_NAME}.png"
+cp "res/AppIcon_48.png" $TARGET"/usr/share/icons/hicolor/48x48/${BUNDLE_NAME}.png"
+cp "res/AppIcon_64.png" $TARGET"/usr/share/icons/hicolor/64x64/${BUNDLE_NAME}.png"
+cp "res/AppIcon_128.png" $TARGET"/usr/share/icons/hicolor/128x128/${BUNDLE_NAME}.png"
+cp "res/AppIcon_256.png" $TARGET"/usr/share/icons/hicolor/256x256/${BUNDLE_NAME}.png"
 
 #source /opt/qt*/bin/qt*-env.sh ## call it from shell yourself
 

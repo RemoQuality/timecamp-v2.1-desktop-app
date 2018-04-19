@@ -122,8 +122,12 @@ int main(int argc, char *argv[])
     firstRun();
 
     QIcon appIcon = QIcon(MAIN_ICON);
-//    appIcon.addFile(":/Icons/AppIcon32.png");
-//    appIcon.addFile(":/Icons/AppIcon128.png");
+    appIcon.addFile(":/Icons/AppIcon_16.png");
+    appIcon.addFile(":/Icons/AppIcon_32.png");
+    appIcon.addFile(":/Icons/AppIcon_48.png");
+    appIcon.addFile(":/Icons/AppIcon_64.png");
+    appIcon.addFile(":/Icons/AppIcon_128.png");
+    appIcon.addFile(":/Icons/AppIcon_256.png");
     QApplication::setWindowIcon(appIcon);
 
 
@@ -132,6 +136,7 @@ int main(int argc, char *argv[])
 
     // create main widget
     MainWidget mainWidget;
+    mainWidget.setWindowIcon(appIcon);
 
     // create tray manager
     auto *trayManager = new TrayManager();
