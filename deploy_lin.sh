@@ -13,7 +13,12 @@ rm -rf $TARGET
 mkdir -p $TARGET/usr/bin
 mkdir -p $TARGET/usr/lib
 mkdir -p $TARGET/usr/share/applications # app.desktop file path
+mkdir -p $TARGET/usr/share/icons/hicolor/16x16 # icons
+mkdir -p $TARGET/usr/share/icons/hicolor/32x32 # icons
 mkdir -p $TARGET/usr/share/icons/hicolor/48x48 # icons
+mkdir -p $TARGET/usr/share/icons/hicolor/64x64 # icons
+mkdir -p $TARGET/usr/share/icons/hicolor/128x128 # icons
+mkdir -p $TARGET/usr/share/icons/hicolor/256x256 # icons
 
 rm -rf $SRC
 mkdir -p $SRC
