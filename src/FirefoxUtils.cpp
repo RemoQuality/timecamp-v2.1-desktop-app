@@ -4,7 +4,7 @@
 //
 //  Created by Aleksey Dvoryanskiy on 20.06.16
 //  Modified by Georgiy Jenkovszky on 05.11.17
-//  Ported to Qt by Karol Olszacki on 06/02/18
+//  Ported to Qt by Karol Olszacki on 06.02.18
 //
 
 #include "FirefoxUtils.h"

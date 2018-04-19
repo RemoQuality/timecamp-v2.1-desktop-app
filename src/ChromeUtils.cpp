@@ -3,7 +3,7 @@
 //  TimeCamp
 //
 //  Created by Aleksey Dvoryanskiy on 20.06.16
-//  Ported to Qt by Karol Olszacki on 06/02/18
+//  Ported to Qt by Karol Olszacki on 19.04.18
 //
 
 #include "ChromeUtils.h"
