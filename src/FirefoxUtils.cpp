@@ -256,7 +256,7 @@ QString getCurrentURLFromFirefoxConfig(QString &jsonConfig)
         return "";
     }
 
-    auto windowJson = windowsJsonArray[selectedWindow];
+    auto windowJson = windowsJsonArray.toArray()[selectedWindow];
     if (windowJson.isNull() || windowJson.isUndefined()) {
         qDebug() << "Failed getting selected window";
         return "";
