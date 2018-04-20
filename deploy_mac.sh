@@ -3,7 +3,7 @@
 
 # copied from StackOverflow and improved: https://stackoverflow.com/questions/27952111/unable-to-sign-app-bundle-using-qt-frameworks-on-os-x-10-10
 BUNDLE_NAME="TimeCamp Desktop.app"
-DMG_NAME="TimeCamp-Desktop-1.0.dmg"
+DMG_NAME="TimeCamp-Desktop-2.0.dmg"
 TARGET="cmake-build-relwithdebinfo"
 
 rm -rf $TARGET/"${BUNDLE_NAME}"
