@@ -208,7 +208,12 @@ void TrayManager::updateWidget(bool loggedIn, QString tooltipText)
         bool ok;
         maybeTime.mid(0, 2).toInt(&ok, 10); // take first two and try to make it int; if failed then it's not time
         if (ok) {
-            widget->setText(maybeTime);
+            QTime time = QTime::fromString(maybeTime, "hh:mm:ss");
+            if(time.hour() > 0){
+                widget->setText(time.toString("H:mm:ss"));
+            }else {
+                widget->setText(time.toString("m:ss"));
+            }
         } else {
             widget->setText(NO_TIMER_TEXT);
         }
