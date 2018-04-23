@@ -51,20 +51,20 @@ void MainWidget::init()
 {
     this->setWindowTitle(WINDOW_NAME);
     this->setupWebview(); // starts the embedded webpage
-    this->wasTheWindowLeftOpened();
     MainWidgetWasInitialised = true;
+    this->wasTheWindowLeftOpened();
 }
 
 void MainWidget::handleSpacingEvents()
 {
-    qInfo("Size: %d x %d", size().width(), size().height());
-    this->setUpdatesEnabled(false);
-    if(MainWidgetWasInitialised) {
+//    qInfo("Size: %d x %d", size().width(), size().height());
+    if (MainWidgetWasInitialised) {
+        this->setUpdatesEnabled(false);
         QTWEView->resize(size()); // resize webview
+        settings.setValue("mainWindowGeometry", saveGeometry()); // save window position
+        settings.sync();
+        this->setUpdatesEnabled(true);
     }
-    settings.setValue("mainWindowGeometry", saveGeometry()); // save window position
-    settings.sync();
-    this->setUpdatesEnabled(true);
 }
 
 void MainWidget::moveEvent(QMoveEvent *event)
