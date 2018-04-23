@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QSqlDatabase>
 #include <QVector>
+#include <QSqlQuery>
 
 #include "AppData.h"
 
@@ -18,6 +19,8 @@ public:
     ~DbManager() override;
 
     bool isOpen() const;
+
+    void prepareQueries();
 
     /**
      * @brief Creates a new table if it doesn't already exist
@@ -35,6 +38,8 @@ public:
 
 private:
     QSqlDatabase m_db;
+    QSqlQuery addAppQuery;
+    QSqlQuery getAppsQuery;
 };
 
 #endif // DBMANAGER_H

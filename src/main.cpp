@@ -17,6 +17,7 @@
 #include "Autorun.h"
 #include "MainWidget.h"
 #include "Comms.h"
+#include "DbManager.h"
 #include "TrayManager.h"
 #include "DataCollector/WindowEvents.h"
 #include "WindowEventsManager.h"
@@ -173,6 +174,7 @@ int main(int argc, char *argv[])
     QObject::connect(hotkeyOpenWindow, &QHotkey::activated, trayManager, &TrayManager::openCloseWindowAction);
 
     // everything connected via QObject, now heavy lifting
+    DbManager::instance();
     trayManager->setupTray(&mainWidget); // create tray
     mainWidget.init(); // init the WebView
     Comms::instance().timedUpdates(); // fetch userInfo, userSettings, send apps since last update

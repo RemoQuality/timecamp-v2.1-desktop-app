@@ -1,7 +1,6 @@
 #include "DbManager.h"
 #include "Settings.h"
 
-#include <QSqlQuery>
 #include <QSqlError>
 #include <QSqlRecord>
 #include <QDebug>
@@ -20,10 +19,12 @@ DbManager::DbManager(QObject *parent) : QObject(parent)
     m_db.setDatabaseName(QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first() + "/" + DB_FILENAME);
 
     if (!m_db.open()) {
-        qInfo() << "[DB] ERROR0: connection with database fail";
+        qWarning() << "[DB] ERROR0: connection with database fail";
+        qWarning() << __FUNCTION__ << m_db.lastError().text();
     } else {
         qDebug() << "[DB] Database: connection ok";
         createTable();
+        prepareQueries();
     }
 }
 
@@ -39,14 +40,24 @@ bool DbManager::isOpen() const
     return m_db.isOpen();
 }
 
+void DbManager::prepareQueries()
+{
+    // sorry for making a mess and separating prepared queries from data
+    // but this will hopefully prevent crashes
+    addAppQuery = QSqlQuery(m_db);
+    getAppsQuery = QSqlQuery(m_db);
+    addAppQuery.prepare("INSERT INTO apps (ID, app_name, window_name, additional_info, start_time, end_time) VALUES (NULL, ?, ?, ?, ?, ?)");
+    getAppsQuery.prepare("SELECT app_name, window_name, additional_info, start_time, end_time FROM apps WHERE start_time > :lastSync LIMIT :maxCount");
+}
+
 bool DbManager::createTable()
 {
     bool TableCreated = true;
 
-    QSqlQuery query;
-    query.prepare("CREATE TABLE \"apps\" ( `ID` INTEGER PRIMARY KEY AUTOINCREMENT, `app_name` TEXT, `window_name` TEXT, `additional_info` TEXT, `start_time` INTEGER NOT NULL, `end_time` INTEGER NOT NULL )");
+    QSqlQuery createTableQuery;
+    createTableQuery.prepare("CREATE TABLE \"apps\" ( `ID` INTEGER PRIMARY KEY AUTOINCREMENT, `app_name` TEXT, `window_name` TEXT, `additional_info` TEXT, `start_time` INTEGER NOT NULL, `end_time` INTEGER NOT NULL )");
 
-    if (!query.exec()) {
+    if (!createTableQuery.exec()) {
         qDebug() << "[DB] Warning: Couldn't create the table: one might already exist.";
         TableCreated = false;
     }
@@ -69,19 +80,17 @@ bool DbManager::saveAppToDb(AppData *app)
     qint64 end = app->getEnd();
 
     if (start > 0 && end > 0) {
-        QSqlQuery queryAdd;
-        queryAdd.prepare("INSERT INTO apps (ID, app_name, window_name, additional_info, start_time, end_time) VALUES (NULL, ?, ?, ?, ?, ?)");
-        queryAdd.addBindValue(appName);
-        queryAdd.addBindValue(windowName);
-        queryAdd.addBindValue(additionalInfo);
-        queryAdd.addBindValue(start);
-        queryAdd.addBindValue(end);
+        addAppQuery.addBindValue(appName);
+        addAppQuery.addBindValue(windowName);
+        addAppQuery.addBindValue(additionalInfo);
+        addAppQuery.addBindValue(start);
+        addAppQuery.addBindValue(end);
 
-        if (queryAdd.exec()) {
+        if (addAppQuery.exec()) {
 //            qDebug() << "[DB] app added successfully";
             success = true;
         } else {
-            qInfo() << "[DB] ERROR3 adding failed: " << queryAdd.lastError();
+            qInfo() << "[DB] ERROR3 adding failed: " << addAppQuery.lastError();
         }
     } else {
         qInfo() << "[DB] ERROR4 adding failed: missing values!";
@@ -98,26 +107,23 @@ QVector<AppData *> DbManager::getAppsSinceLastSync(qint64 last_sync)
         return appList; // return empty appList if DB is not opened
     }
 
-    QSqlQuery querySelect;
-    querySelect.prepare("SELECT app_name, window_name, additional_info, start_time, end_time FROM apps WHERE start_time > :lastSync LIMIT :maxCount");
-    querySelect.bindValue(":lastSync", last_sync);
-    querySelect.bindValue(":maxCount", MAX_ACTIVITIES_BATCH_SIZE);
+    getAppsQuery.bindValue(":lastSync", last_sync);
+    getAppsQuery.bindValue(":maxCount", MAX_ACTIVITIES_BATCH_SIZE);
 
-
-    if (querySelect.exec()) {
-        int qSize = querySelect.size(); // get count of activities
+    if (getAppsQuery.exec()) {
+        int qSize = getAppsQuery.size(); // get count of activities
 
         if(qSize != -1){
             appList.reserve(qSize + 1); // reserve memory space for the count
         }
 
-        while (querySelect.next()) {
+        while (getAppsQuery.next()) {
             AppData *tempApp = new AppData();
-            tempApp->setAppName(querySelect.value("app_name").toString());
-            tempApp->setWindowName(querySelect.value("window_name").toString());
-            tempApp->setAdditionalInfo(querySelect.value("additional_info").toString());
-            tempApp->setStart(querySelect.value("start_time").toLongLong());
-            tempApp->setEnd(querySelect.value("end_time").toLongLong());
+            tempApp->setAppName(getAppsQuery.value("app_name").toString());
+            tempApp->setWindowName(getAppsQuery.value("window_name").toString());
+            tempApp->setAdditionalInfo(getAppsQuery.value("additional_info").toString());
+            tempApp->setStart(getAppsQuery.value("start_time").toLongLong());
+            tempApp->setEnd(getAppsQuery.value("end_time").toLongLong());
             appList.push_back(tempApp);
         }
         appList.squeeze(); // finally remove empty elements (because reserve is just a hint)
