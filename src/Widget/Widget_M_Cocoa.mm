@@ -6,23 +6,23 @@
 - (id)init {
     self = [super init];
 
-    if (self) {
+    if (self != nullptr) {
         widget = [[NSStatusBar.systemStatusBar statusItemWithLength:NSVariableStatusItemLength] retain]; //90 to optymalny rozmiar
 
-        widgetText = @"";
+        NSWidgetText = @"";
         [widget setHighlightMode:YES];
         [widget setEnabled:YES];
-        [widget setTitle:@""];
+//        [widget setTitle:@""];
 
         stdFont = [NSFont fontWithName:@"Courier" size:16];
-        if ([NSFont respondsToSelector:@selector(monospacedDigitSystemFontOfSize:weight:)]) {
+        if ([NSFont respondsToSelector:@selector(monospacedDigitSystemFontOfSize:weight:)] != 0) {
             stdFont = [NSFont monospacedDigitSystemFontOfSize:14 weight:NSFontWeightRegular];
         }
         attributesStd = @{NSFontAttributeName: stdFont};
 
-        attributedWidgetText = [NSAttributedString.alloc initWithString:widgetText attributes:attributesStd];
+        attributedWidgetEmpty = [NSAttributedString.alloc initWithString:@"" attributes:attributesStd];
 
-        [widget setAttributedTitle:attributedWidgetText];
+        [widget setAttributedTitle:[NSAttributedString.alloc initWithString:NSWidgetText attributes:attributesStd]];
 
         [attributedWidgetText release];
     }
@@ -31,7 +31,8 @@
 }
 
 - (void)SetText:(QString)text {
-    widgetText = text.toNSString();
+    widgetText = text;
+    NSWidgetText = widgetText.toNSString();
 //    [widget.button setTitle:widgetText];
 }
 
@@ -52,21 +53,28 @@
 }
 
 - (void)ShowMe {
-    attributedWidgetText = [NSAttributedString.alloc initWithString:widgetText attributes:attributesStd];
-    [widget setAttributedTitle:attributedWidgetText];
-    [attributedWidgetText release];
-    isHidden = false;
+    @autoreleasepool {
+//        if(NSWidgetText == nil || [NSWidgetText length] == 0) {
+            NSWidgetText = widgetText.toNSString();
+//        }
+
+        NSLog(@"WIGET_TEXT: %@", NSWidgetText);
+        [widget setAttributedTitle:[NSAttributedString.alloc initWithString:NSWidgetText attributes:attributesStd]];
+//        [attributedWidgetText release];
+        isHidden = false;
 //    [widget setTitle:widgetText];
 //    [widget setLength:NSVariableStatusItemLength];
+    }
 }
 
 - (void)HideMe {
-    attributedWidgetEmpty = [NSAttributedString.alloc initWithString:@"" attributes:attributesStd];
-    [widget setAttributedTitle:attributedWidgetEmpty];
-    [attributedWidgetEmpty release];
-    isHidden = true;
+    @autoreleasepool {
+        [widget setAttributedTitle:attributedWidgetEmpty];
+//        [attributedWidgetEmpty release];
+        isHidden = true;
 //    [widget setTitle:@""];
 //    [widget setLength:0];
+    }
 }
 
 - (bool)IsHidden {

@@ -15,7 +15,8 @@
 @interface Widget_M_Cocoa : NSObject
 {
     NSStatusItem *widget;
-    NSString *widgetText;
+    QString widgetText;
+    NSString *NSWidgetText;
 
     NSFont *stdFont;
     NSDictionary *attributesStd;

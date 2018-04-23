@@ -12,11 +12,13 @@
 Widget_M::Widget_M()
 {
     macWidget = [[Widget_M_Cocoa alloc] init];
+    qDebug() << "[Widget_M] created";
 }
 
 Widget_M::~Widget_M()
 {
     [macWidget release];
+    qDebug() << "[Widget_M] destroyed";
 }
 
 void Widget_M::setIcon(QString iconPath)
