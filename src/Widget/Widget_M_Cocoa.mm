@@ -54,26 +54,17 @@
 
 - (void)ShowMe {
     @autoreleasepool {
-//        if(NSWidgetText == nil || [NSWidgetText length] == 0) {
-            NSWidgetText = widgetText.toNSString();
-//        }
+        NSWidgetText = widgetText.toNSString();
 
-        NSLog(@"WIGET_TEXT: %@", NSWidgetText);
         [widget setAttributedTitle:[NSAttributedString.alloc initWithString:NSWidgetText attributes:attributesStd]];
-//        [attributedWidgetText release];
         isHidden = false;
-//    [widget setTitle:widgetText];
-//    [widget setLength:NSVariableStatusItemLength];
     }
 }
 
 - (void)HideMe {
     @autoreleasepool {
         [widget setAttributedTitle:attributedWidgetEmpty];
-//        [attributedWidgetEmpty release];
         isHidden = true;
-//    [widget setTitle:@""];
-//    [widget setLength:0];
     }
 }
 
