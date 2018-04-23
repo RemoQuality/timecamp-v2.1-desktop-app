@@ -133,20 +133,21 @@ int main(int argc, char *argv[])
 
 
     // create events manager
-    auto *windowEventsManager = new WindowEventsManager();
+    WindowEventsManager *windowEventsManager = &WindowEventsManager::instance();
 
     // create main widget
     MainWidget mainWidget;
     mainWidget.setWindowIcon(appIcon);
 
     // create tray manager
-    auto *trayManager = new TrayManager();
+//    auto *trayManager = new TrayManager();
+    TrayManager *trayManager = &TrayManager::instance();
     QObject::connect(&mainWidget, &MainWidget::pageStatusChanged, trayManager, &TrayManager::loginLogout);
     QObject::connect(&mainWidget, &MainWidget::timerStatusChanged, trayManager, &TrayManager::updateStopMenu);
     QObject::connect(trayManager, &TrayManager::pcActivitiesValueChanged, windowEventsManager, &WindowEventsManager::startOrStopThread);
 
     // send updates from DB to server
-    auto *comms = new Comms();
+    Comms *comms = &Comms::instance();
     auto *syncDBtimer = new QTimer();
     //QObject::connect(timer, SIGNAL(timeout()), &Comms::instance(), SLOT(timedUpdates())); // Qt4
     QObject::connect(syncDBtimer, &QTimer::timeout, comms, &Comms::timedUpdates); // Qt5
