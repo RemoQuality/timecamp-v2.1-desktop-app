@@ -36,7 +36,7 @@ public:
 
     QVector<AppData *> getAppsSinceLastSync(qint64 last_sync);
 
-private:
+protected:
     QSqlDatabase m_db;
     QSqlQuery addAppQuery;
     QSqlQuery getAppsQuery;
