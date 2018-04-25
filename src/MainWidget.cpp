@@ -1,4 +1,7 @@
 #include <QEventLoop>
+#include <QtCore/QJsonDocument>
+#include <QtCore/QJsonArray>
+#include <QtCore/QJsonObject>
 #include "MainWidget.h"
 #include "ui_MainWidget.h"
 
@@ -102,6 +105,7 @@ void MainWidget::twoSecTimerTimeout()
     if (loggedIn) {
         emit checkIsIdle();
         checkIsTimerRunning();
+        fetchRecentTasks();
         if (settings.value(SETT_APIKEY).toString().isEmpty()) {
             fetchAPIkey();
         }
@@ -336,6 +340,25 @@ void MainWidget::checkIsTimerRunning()
     {
 //        qDebug() << "Timer running: " << v.toString();
         setIsTimerRunning(v.toBool());
+    });
+}
+
+void MainWidget::fetchRecentTasks()
+{
+    QTWEPage->runJavaScript("JSON.stringify(TC.TimeTracking.Lasts)", [this](const QVariant &v)
+    {
+//        LastTasks.clear(); // don't need to clear a QHash
+
+//        qDebug() << v.toString();
+        QJsonDocument itemDoc = QJsonDocument::fromJson(v.toByteArray());
+
+        QJsonArray rootArray = itemDoc.array();
+        for (QJsonValueRef val: rootArray) {
+            QJsonObject obj = val.toObject();
+//            qDebug() << obj.value("task_id").toString().toInt() << ": " << obj.value("name").toString();
+            LastTasks.insert(obj.value("name").toString(), obj.value("task_id").toString().toInt());
+        }
+        emit lastTasksChanged(LastTasks);
     });
 }
 

@@ -41,6 +41,7 @@ signals:
     void timerStatusChanged(bool, QString);
     void checkIsIdle();
     void windowStatusChanged(bool);
+    void lastTasksChanged(QHash<QString, int>);
 
 protected:
     void handleSpacingEvents();
@@ -82,6 +83,7 @@ private:
     void runJSinPage(QString js);
     void forceLoadUrl(QString url);
     void checkIsTimerRunning();
+    void fetchRecentTasks();
     void fetchAPIkey();
     void fetchTimerName();
     bool checkIfOnTimerPage();
@@ -97,6 +99,7 @@ private:
     bool MainWidgetWasInitialised = false;
     bool loggedIn;
     QString timerName;
+    QHash<QString, int> LastTasks;
 
     void setApiKey(const QString &apiKey);
     void setTimerName(const QString &timerName);

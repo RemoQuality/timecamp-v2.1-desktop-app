@@ -144,6 +144,7 @@ int main(int argc, char *argv[])
     TrayManager *trayManager = &TrayManager::instance();
     QObject::connect(&mainWidget, &MainWidget::pageStatusChanged, trayManager, &TrayManager::loginLogout);
     QObject::connect(&mainWidget, &MainWidget::timerStatusChanged, trayManager, &TrayManager::updateStopMenu);
+    QObject::connect(&mainWidget, &MainWidget::lastTasksChanged, trayManager, &TrayManager::updateRecentTasks);
     QObject::connect(trayManager, &TrayManager::pcActivitiesValueChanged, windowEventsManager, &WindowEventsManager::startOrStopThread);
 
     // send updates from DB to server

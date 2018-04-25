@@ -1,6 +1,7 @@
 #include <QSystemTrayIcon>
 #include <QMessageBox>
 #include <QDesktopServices>
+#include <unordered_map>
 
 #include "Settings.h"
 #include "TrayManager.h"
@@ -74,6 +75,38 @@ void TrayManager::setupSettings()
     // act on the saved settings
     this->autoStart(autoStartAct->isChecked());
     this->tracker(trackerAct->isChecked());
+}
+
+void TrayManager::updateRecentTasks(QHash<QString, int> LastTasks)
+{
+    // remove old actions from menu
+    for (QAction *oldAction : recentTasksActions) {
+        trayMenu->removeAction(oldAction);
+        oldAction->deleteLater();
+    }
+    // clear array of old actions
+    recentTasksActions.clear();
+
+    // add LastTasks
+    QHash<QString, int>::iterator i;
+    for (i = LastTasks.begin(); i != LastTasks.end(); ++i) {
+        QAction *temp;
+        temp = new QAction(i.key(), this);
+//        qDebug() << temp;
+        qDebug() << "key: " << i.key() << ", value: " << i.value();
+        QObject::connect(temp, &QAction::triggered, this, [i]()
+        {
+//            qDebug() << "key: " << i.key() << ", value: " << i.value();
+        });
+        recentTasksActions.append(temp);
+    }
+
+    // add separator
+    QAction *separator = new QAction();
+    separator->setSeparator(true);
+    recentTasksActions.append(separator);
+
+    trayMenu->insertActions(stopTaskAct, recentTasksActions);
 }
 
 void TrayManager::updateStopMenu(bool canBeStopped, QString timerName)

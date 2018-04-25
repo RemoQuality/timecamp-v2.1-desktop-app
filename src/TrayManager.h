@@ -47,6 +47,7 @@ public slots:
     void iconActivated(QSystemTrayIcon::ActivationReason);
     void autoStart(bool checked);
     void tracker(bool checked);
+    void updateRecentTasks(QHash<QString, int> LastTasks);
     void openCloseWindowAction();
     void contactSupport();
 #ifdef _WIDGET_EXISTS_
@@ -68,6 +69,8 @@ private:
     QAction *widgetAct;
     QAction *helpAct;
     QAction *quitAct;
+
+    QList<QAction*> recentTasksActions;
 
     MainWidget *mainWidget;
 
