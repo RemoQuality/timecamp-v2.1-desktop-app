@@ -15,6 +15,7 @@ init:
 before_build:
   - md Output
   - cp CMakeProjectConfig.cmake.example CMakeProjectConfig.cmake
+  - md Release
 
 build_script:
   - cd Output
@@ -23,8 +24,10 @@ build_script:
   - cmake --build Output --target TimeCampDesktop -- # build
 
 after_build:
-  - windeployqt Output/TimeCampDesktop.exe
+  - copy "Output\TimeCampDesktop.exe" "Release\TimeCampDesktop.exe"
+  - copy "src\resources\programicon.ico" "Release\resources\programicon.ico"
+  - windeployqt Release\TimeCampDesktop.exe
 
 artifacts:
-  - path: Output
+  - path: Release
     type: zip
