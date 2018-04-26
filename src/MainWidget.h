@@ -15,6 +15,7 @@
 #include <QSystemTrayIcon>
 #include <QMessageBox>
 #include <QSettings>
+#include <QJsonDocument>
 
 #include "Overrides/TCRequestInterceptor.h"
 #include "Overrides/TCWebEngineView.h"
@@ -35,13 +36,15 @@ public:
     void init();
 
     void twoSecTimerTimeout();
+    QHash<QString, int> LastTasks;
+    QJsonDocument LastTasksCache;
 
 signals:
     void pageStatusChanged(bool, QString);
     void timerStatusChanged(bool, QString);
     void checkIsIdle();
     void windowStatusChanged(bool);
-    void lastTasksChanged(QHash<QString, int>);
+    void lastTasksChanged();
 
 protected:
     void handleSpacingEvents();
@@ -61,6 +64,7 @@ public slots:
     void open();
     //void status();
     void startTask();
+    void startTaskByID(int);
     void stopTask();
     void quit();
 
@@ -89,6 +93,7 @@ private:
     bool checkIfOnTimerPage();
     void goToTimerPage();
     void refreshTimerPageData();
+    void pressStartTimerButton();
 
     void checkIfLoggedIn(QString title);
     void setupWebview();
@@ -99,7 +104,6 @@ private:
     bool MainWidgetWasInitialised = false;
     bool loggedIn;
     QString timerName;
-    QHash<QString, int> LastTasks;
 
     void setApiKey(const QString &apiKey);
     void setTimerName(const QString &timerName);

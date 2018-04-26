@@ -7,6 +7,7 @@
 #include <QSystemTrayIcon>
 #include <QMessageBox>
 #include <QSettings>
+#include <QSignalMapper>
 
 #include "Widget/Widget.h"
 
@@ -42,12 +43,14 @@ public:
 
 signals:
     void pcActivitiesValueChanged(bool);
+    void taskSelected(int);
 
 public slots:
     void iconActivated(QSystemTrayIcon::ActivationReason);
+    void menuActionHandler(QAction *action);
     void autoStart(bool checked);
     void tracker(bool checked);
-    void updateRecentTasks(QHash<QString, int> LastTasks);
+    void updateRecentTasks();
     void openCloseWindowAction();
     void contactSupport();
 #ifdef _WIDGET_EXISTS_
@@ -61,6 +64,7 @@ private:
     QSettings settings;
 
     void createActions(QMenu *);
+    void assignActions(QMenu *);
     QAction *openAct;
     QAction *startTaskAct;
     QAction *stopTaskAct;
@@ -69,8 +73,6 @@ private:
     QAction *widgetAct;
     QAction *helpAct;
     QAction *quitAct;
-
-    QList<QAction*> recentTasksActions;
 
     MainWidget *mainWidget;
 

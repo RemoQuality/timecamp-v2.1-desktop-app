@@ -23,8 +23,7 @@ void TrayManager::setupTray(MainWidget *parent)
 {
     mainWidget = parent;
     if (!QSystemTrayIcon::isSystemTrayAvailable()) {
-        QMessageBox::critical(mainWidget,
-                              "No tray",
+        QMessageBox::critical(mainWidget, "No tray",
 
                               "We couldn't detect system tray. Please contact us at desktopapp@timecamp.com "
                               "with information about your Operating System, Desktop Environment you use (KDE, Gnome, MATE, etc) "
@@ -35,6 +34,7 @@ void TrayManager::setupTray(MainWidget *parent)
 
     trayMenu = new QMenu(parent);
     createActions(trayMenu);
+    assignActions(trayMenu);
 
 #ifndef Q_OS_MACOS
     trayIcon = new QSystemTrayIcon(parent);
@@ -77,36 +77,9 @@ void TrayManager::setupSettings()
     this->tracker(trackerAct->isChecked());
 }
 
-void TrayManager::updateRecentTasks(QHash<QString, int> LastTasks)
+void TrayManager::updateRecentTasks()
 {
-    // remove old actions from menu
-    for (QAction *oldAction : recentTasksActions) {
-        trayMenu->removeAction(oldAction);
-        oldAction->deleteLater();
-    }
-    // clear array of old actions
-    recentTasksActions.clear();
-
-    // add LastTasks
-    QHash<QString, int>::iterator i;
-    for (i = LastTasks.begin(); i != LastTasks.end(); ++i) {
-        QAction *temp;
-        temp = new QAction(i.key(), this);
-//        qDebug() << temp;
-        qDebug() << "key: " << i.key() << ", value: " << i.value();
-        QObject::connect(temp, &QAction::triggered, this, [i]()
-        {
-//            qDebug() << "key: " << i.key() << ", value: " << i.value();
-        });
-        recentTasksActions.append(temp);
-    }
-
-    // add separator
-    QAction *separator = new QAction();
-    separator->setSeparator(true);
-    recentTasksActions.append(separator);
-
-    trayMenu->insertActions(stopTaskAct, recentTasksActions);
+    this->assignActions(trayMenu);
 }
 
 void TrayManager::updateStopMenu(bool canBeStopped, QString timerName)
@@ -212,9 +185,43 @@ void TrayManager::createActions(QMenu *menu)
     quitAct->setStatusTip(tr("Close the app"));
     connect(quitAct, &QAction::triggered, mainWidget, &MainWidget::quit);
 
+    connect(menu, &QMenu::triggered, this, &TrayManager::menuActionHandler);
+}
+
+void TrayManager::menuActionHandler(QAction *action)
+{
+    bool wasOK;
+    int taskID = action->data().toInt(&wasOK);
+    if(wasOK){
+        emit taskSelected(taskID);
+    }
+}
+
+void TrayManager::assignActions(QMenu *menu)
+{
+    menu->clear();
 
     menu->addAction(openAct);
     menu->addSeparator();
+
+    QFont x = QFont();
+    QFontMetrics metrix(x);
+    int width = 150; // pixels
+
+    // add LastTasks
+    QHash<QString, int>::iterator i;
+    for (i = mainWidget->LastTasks.begin(); i != mainWidget->LastTasks.end(); ++i) {
+        QAction *temp;
+        temp = new QAction(metrix.elidedText(i.key(), Qt::ElideRight, width), this);
+        temp->setData(i.value());
+        menu->addAction(temp);
+//        qDebug() << "ADDED key: " << i.key() << ", value: " << i.value();
+    }
+
+    if (mainWidget->LastTasks.size() > 0) {
+        menu->addSeparator();
+    }
+
     menu->addAction(startTaskAct);
     menu->addAction(stopTaskAct);
     menu->addSeparator();
@@ -242,9 +249,9 @@ void TrayManager::updateWidget(bool loggedIn, QString tooltipText)
         maybeTime.mid(0, 2).toInt(&ok, 10); // take first two and try to make it int; if failed then it's not time
         if (ok) {
             QTime time = QTime::fromString(maybeTime, "hh:mm:ss");
-            if(time.hour() > 0){
+            if (time.hour() > 0) {
                 widget->setText(time.toString("H:mm:ss"));
-            }else {
+            } else {
                 widget->setText(time.toString("m:ss"));
             }
         } else {
@@ -268,7 +275,7 @@ void TrayManager::loginLogout(bool isLoggedIn, QString tooltipText)
 #endif
 
     if (isLoggedIn) {
-        if(!wasLoggedIn) {
+        if (!wasLoggedIn) {
             // if wasn't logged in, but is now:
             this->setupSettings(); // make context menu settings, again (after we logged in)
         }
@@ -276,4 +283,5 @@ void TrayManager::loginLogout(bool isLoggedIn, QString tooltipText)
         emit pcActivitiesValueChanged(false); // don't track PC activities when not logged in, despite the setting
     }
     wasLoggedIn = isLoggedIn;
+    this->assignActions(trayMenu);
 }

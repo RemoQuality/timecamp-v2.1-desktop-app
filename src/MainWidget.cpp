@@ -303,9 +303,13 @@ void MainWidget::startTask()
     this->goToTimerPage();
     this->stopTask(); // stop the last timer
     this->open();
+    this->pressStartTimerButton();
 //    emit windowStatusChanged(true);
+}
 
-    // if on manual page, switch to "start timer" page
+void MainWidget::pressStartTimerButton()
+{
+    // if on manual time adding, switch to "start timer" button
     this->runJSinPage("if($('.btn-timer').text().trim().toLowerCase() == 'add time entry') { "
                       "$('.btn-timer').siblings('.btn-link').click();"
                       "}"
@@ -317,12 +321,23 @@ void MainWidget::startTask()
                       "}"); // start new timer
 
 //    this->runJSinPage("$('#timer-task-picker').click();"); // task picker toggle is now launched atuomatically
+
 }
 
 void MainWidget::stopTask()
 {
     this->goToTimerPage();
     this->runJSinPage("if($('.btn-timer').text().trim().toLowerCase() == 'stop timer') { $('.btn-timer').click(); }");
+}
+
+
+void MainWidget::startTaskByID(int taskID)
+{
+    this->goToTimerPage();
+    this->runJSinPage("$('#timer-task-picker').click();");
+    this->runJSinPage("$(\".widgetSelectTask[data-task-id='"+ QString::number(taskID) +"'\")[0].click()");
+    QThread::msleep(128);
+    this->pressStartTimerButton();
 }
 
 void MainWidget::refreshTimerPageData()
@@ -351,14 +366,16 @@ void MainWidget::fetchRecentTasks()
 
 //        qDebug() << v.toString();
         QJsonDocument itemDoc = QJsonDocument::fromJson(v.toByteArray());
-
-        QJsonArray rootArray = itemDoc.array();
-        for (QJsonValueRef val: rootArray) {
-            QJsonObject obj = val.toObject();
+        if(itemDoc != LastTasksCache) {
+            QJsonArray rootArray = itemDoc.array();
+            for (QJsonValueRef val: rootArray) {
+                QJsonObject obj = val.toObject();
 //            qDebug() << obj.value("task_id").toString().toInt() << ": " << obj.value("name").toString();
-            LastTasks.insert(obj.value("name").toString(), obj.value("task_id").toString().toInt());
+                LastTasks.insert(obj.value("name").toString(), obj.value("task_id").toString().toInt());
+            }
+            emit lastTasksChanged();
+            LastTasksCache = itemDoc;
         }
-        emit lastTasksChanged(LastTasks);
     });
 }
 
