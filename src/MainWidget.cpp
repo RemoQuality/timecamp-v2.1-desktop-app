@@ -237,6 +237,7 @@ void MainWidget::open()
     settings.setValue(SETT_WAS_WINDOW_LEFT_OPENED, true); // save if window was opened
     settings.sync();
     restoreGeometry(settings.value("mainWindowGeometry").toByteArray());
+    QTWEView->resize(size()); // resize webview
     show();
     setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
     raise();  // for MacOS
