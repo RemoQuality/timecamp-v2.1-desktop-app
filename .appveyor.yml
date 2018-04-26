@@ -1,4 +1,4 @@
-version: 1.0.{build}
+version: 2.0.{build}
 image: Visual Studio 2017
 
 branches:
@@ -25,7 +25,7 @@ build_script:
 
 after_build:
   - copy "Output\TimeCampDesktop.exe" "Release\TimeCampDesktop.exe"
-  - copy "src\resources\programicon.ico" "Release\resources\programicon.ico"
+  - copy "src\localdb.sqlite" "Release\localdb.sqlite"
   - windeployqt Release\TimeCampDesktop.exe
 
 artifacts:
