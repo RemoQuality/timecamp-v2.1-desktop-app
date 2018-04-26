@@ -1,0 +1,24 @@
+version: 1.0.{build}
+image: Visual Studio 2017
+
+branches:
+  only:
+    - master
+
+install:
+  - set QTDIR=C:\Qt\5.10.1\msvc2017_64
+  - set PATH=%QTDIR%\bin;%PATH%;"
+
+before_build:
+  - md Output
+  - cp CMakeProjectConfig.cmake.example CMakeProjectConfig.cmake
+
+build_script:
+  - cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -G "Ninja" "../"
+  - cd ../
+  - cmake --build Output --target TimeCampDesktop -- # build
+
+#artifacts:
+#  - path: Output\TimeCampDesktop
+#  - path: release
+#    type: zip
