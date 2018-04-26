@@ -9,13 +9,16 @@ install:
   - set QTDIR=C:\Qt\5.10.1\msvc2017_64
   - set PATH=%QTDIR%\bin;%PATH%;"
 
+init:
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
+
 before_build:
   - md Output
   - cp CMakeProjectConfig.cmake.example CMakeProjectConfig.cmake
 
 build_script:
   - cd Output
-  - cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -G "Ninja" "../"
+  - cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -G "NMake Makefiles" "../"
   - cd ../
   - cmake --build Output --target TimeCampDesktop -- # build
 
