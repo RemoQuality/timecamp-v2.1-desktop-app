@@ -22,7 +22,9 @@ build_script:
   - cd ../
   - cmake --build Output --target TimeCampDesktop -- # build
 
-#artifacts:
-#  - path: Output\TimeCampDesktop
-#  - path: release
-#    type: zip
+after_build:
+  - windeployqt Output/TimeCampDesktop.exe
+
+artifacts:
+  - path: Output
+    type: zip
