@@ -335,6 +335,8 @@ void MainWidget::stopTask()
 void MainWidget::startTaskByID(int taskID)
 {
     this->goToTimerPage();
+    this->stopTask();
+    QThread::msleep(128);
     this->runJSinPage("$('#timer-task-picker').click();");
     this->runJSinPage("$(\".widgetSelectTask[data-task-id='"+ QString::number(taskID) +"'\")[0].click()");
     QThread::msleep(128);
