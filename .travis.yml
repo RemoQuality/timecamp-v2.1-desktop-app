@@ -12,7 +12,7 @@ before_install:
   - sudo apt-get update -qq
 
 install:
-  - sudo apt-get -y install qt59base
+  - sudo apt-get -y install qt59base qt59webengine qt59x11extras
   - source /opt/qt*/bin/qt*-env.sh
   - export PATH=/opt/qt59/bin:$PATH
   - SRC="cmake-build-relwithdebinfo"
