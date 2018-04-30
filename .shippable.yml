@@ -21,6 +21,7 @@ build:
     - SRC="cmake-build-relwithdebinfo"
     - CMAKE_NAME="TimeCampDesktop"
     - cp CMakeProjectConfig.cmake.example CMakeProjectConfig.cmake
+    - mkdir -p $SRC
     - cd $SRC
     - cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -G "Unix Makefiles" "../"
     - cd ../
