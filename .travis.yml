@@ -2,7 +2,7 @@ language: cpp
 dist: trusty
 sudo: require
 compiler:
-  - clang
+#  - clang # no need for it now
   - gcc
 git:
   depth: 5
@@ -19,7 +19,7 @@ install:
   - TARGET="linuxdeployqt/TimeCampDesktop.AppDir"
   - CMAKE_NAME="TimeCampDesktop"
   - BUNDLE_NAME="TimeCampDesktop"
-  - LinuxDeployQtExec="linuxdeployqt-continuous-x86_64.AppImage"
+  - LinuxDeployQtExec="./linuxdeployqt-continuous-x86_64.AppImage"
 
 before_script:
   - # as in https://github.com/probonopd/linuxdeployqt#simplest-example
@@ -63,6 +63,8 @@ after_success:
 after_script:
   - echo "Unbundled dependant libs (they need to be in the system!):"
   - find $TARGET -executable -type f -exec ldd {} \; | grep -v "timecamp-desktop" | cut -d " " -f 2-3  | sort | uniq
+  - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
+  - bash upload.sh ${BUNDLE_NAME}*.AppImage*
 
 branches:
   except:
