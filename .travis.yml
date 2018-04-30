@@ -18,6 +18,7 @@ script:
   - TARGET="linuxdeployqt/TimeCampDesktop.AppDir"
   - CMAKE_NAME="TimeCampDesktop"
   - BUNDLE_NAME="TimeCampDesktop"
+  - LinuxDeployQtExec="linuxdeployqt-continuous-x86_64.AppImage"
   - # as in https://github.com/probonopd/linuxdeployqt#simplest-example
   - mkdir -p $TARGET/usr/bin
   - mkdir -p $TARGET/usr/lib
