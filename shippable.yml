@@ -12,7 +12,7 @@ build:
 install:
   - shippable_retry sudo add-apt-repository ppa:beineri/opt-qt593-trusty -y
   - shippable_retry sudo apt-get -y -qq update
-  - shippable_retry sudo apt-get -y install cmake extra-cmake-modules qt59base qt59webengine qt59x11extras
+  - shippable_retry sudo apt-get -y install cmake qt59base qt59webengine qt59x11extras
   - source /opt/qt*/bin/qt*-env.sh
   - export PATH=/opt/qt59/bin:$PATH
   - SRC="cmake-build-relwithdebinfo"
