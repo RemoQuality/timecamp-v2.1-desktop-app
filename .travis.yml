@@ -12,13 +12,14 @@ before_install:
 install:
   - sudo apt-get -y install qt59base
   - source /opt/qt*/bin/qt*-env.sh
-
-script:
+  - export PATH=/opt/qt59/bin;$PATH;
   - SRC="cmake-build-relwithdebinfo"
   - TARGET="linuxdeployqt/TimeCampDesktop.AppDir"
   - CMAKE_NAME="TimeCampDesktop"
   - BUNDLE_NAME="TimeCampDesktop"
   - LinuxDeployQtExec="linuxdeployqt-continuous-x86_64.AppImage"
+
+before_script:
   - # as in https://github.com/probonopd/linuxdeployqt#simplest-example
   - mkdir -p $TARGET/usr/bin
   - mkdir -p $TARGET/usr/lib
@@ -30,10 +31,15 @@ script:
   - mkdir -p $TARGET/usr/share/icons/hicolor/128x128 # icons
   - mkdir -p $TARGET/usr/share/icons/hicolor/256x256 # icons
   - mkdir -p $SRC
+  - cp CMakeProjectConfig.cmake.example CMakeProjectConfig.cmake
+
+script:
   - cd $SRC
   - cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -G "Unix Makefiles" "../"
   - cd ../
   - cmake --build $SRC --target "${CMAKE_NAME}" -- # build
+
+after_success:
   - cp $SRC/"${CMAKE_NAME}" $TARGET"/usr/bin/""${BUNDLE_NAME}" # copy the binary
   - cp res"/${BUNDLE_NAME}.desktop" $TARGET"/usr/share/applications/${BUNDLE_NAME}.desktop" # copy app.desktop file
   - cp "res/AppIcon_16.png" $TARGET"/usr/share/icons/hicolor/16x16/${BUNDLE_NAME}.png"
@@ -52,7 +58,7 @@ script:
   - ${LinuxDeployQtExec} $TARGET"/usr/share/applications/${BUNDLE_NAME}.desktop" -bundle-non-qt-libs -extra-plugins=sqldrivers,iconengines -verbose=2
   - ${LinuxDeployQtExec} $TARGET"/usr/share/applications/${BUNDLE_NAME}.desktop" -appimage -verbose=2
 
-after_success:
+after_script:
   - echo "Unbundled dependant libs (they need to be in the system!):"
   - find $TARGET -executable -type f -exec ldd {} \; | grep -v "timecamp-desktop" | cut -d " " -f 2-3  | sort | uniq
 
