@@ -3,6 +3,11 @@
 Manage your tasks and timesheet on [TimeCamp](https://www.timecamp.com/), right from your desktop.  
 Start timers, create projects, do everything that can be done on the web version.
 
+
+| Linux | Windows |
+| ------------- | ------------- |
+| ![Travis](https://img.shields.io/travis/karololszak/timecamp-desktop.svg) | ![AppVeyor](https://img.shields.io/appveyor/ci/karololszak/timecamp-desktop.svg) |
+
 ---
 
 ## Repository structure
