@@ -3,6 +3,10 @@
 Manage your tasks and timesheet on [TimeCamp](https://www.timecamp.com/), right from your desktop.  
 Start timers, create projects, do everything that can be done on the web version.
 
+
+| Linux/macOS (Travis) | Linux (Shippable) | Windows |
+| --- | --- | --- |
+| [![Travis](https://img.shields.io/travis/karololszak/timecamp-desktop.svg)](https://travis-ci.org/karololszak/timecamp-desktop/builds) | [![Shippable](https://img.shields.io/shippable/5ae6e71cb5dd7d0700c9afba.svg)](https://app.shippable.com/github/karololszak/timecamp-desktop) | [![AppVeyor](https://img.shields.io/appveyor/ci/karololszak/timecamp-desktop.svg)](https://ci.appveyor.com/project/karololszak/timecamp-desktop/history) |
 ---
 
 ## Repository structure
