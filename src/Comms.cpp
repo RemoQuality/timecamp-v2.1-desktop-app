@@ -86,21 +86,29 @@ void Comms::saveApp(AppData *app)
 
     if (needsReporting) {
         qint64 now = QDateTime::currentMSecsSinceEpoch();
-        lastApp->setEnd(now); // it already has start, now we only update end
+        lastApp->setEnd(now - 1); // it already has start, now we only update end
 
-        try {
-            DbManager::instance().saveAppToDb(lastApp);
-        } catch (...) {
-            qInfo("[DBSAVE] DB fail");
-            return;
+        if((lastApp->getEnd() - lastApp->getStart()) > 1000) { // if activity is longer than 1sec
+            try {
+                DbManager::instance().saveAppToDb(lastApp);
+            } catch (...) {
+                qInfo("[DBSAVE] DB fail");
+                return;
+            }
+
+            qDebug("[DBSAVE] %lds - %s | %s\nADD_INFO: %s \n",
+                   (lastApp->getEnd() - lastApp->getStart())/1000,
+                   lastApp->getAppName().toLatin1().constData(),
+                   lastApp->getWindowName().toLatin1().constData(),
+                   lastApp->getAdditionalInfo().toLatin1().constData());
+        } else {
+            qDebug("[DBSAVE] Activity too short (%ldms) - %s",
+                   lastApp->getEnd() - lastApp->getStart(),
+                   lastApp->getAppName().toLatin1().constData()
+            );
         }
 
         app->setStart(now);
-        qDebug("[DBSAVE] %lds - %s | %s\nADD_INFO: %s \n",
-               (lastApp->getEnd() - lastApp->getStart())/1000,
-               lastApp->getAppName().toLatin1().constData(),
-               lastApp->getWindowName().toLatin1().constData(),
-               lastApp->getAdditionalInfo().toLatin1().constData());
         lastApp = app; // update app reference
     }
 }
