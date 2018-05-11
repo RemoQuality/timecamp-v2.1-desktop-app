@@ -102,7 +102,7 @@ void Comms::saveApp(AppData *app)
                    lastApp->getWindowName().toLatin1().constData(),
                    lastApp->getAdditionalInfo().toLatin1().constData());
         } else {
-            qDebug("[DBSAVE] Activity too short (%ldms) - %s",
+            qInfo("[DBSAVE] Activity too short (%ldms) - %s",
                    lastApp->getEnd() - lastApp->getStart(),
                    lastApp->getAppName().toLatin1().constData()
             );
