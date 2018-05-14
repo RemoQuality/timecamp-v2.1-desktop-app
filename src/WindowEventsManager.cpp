@@ -100,6 +100,14 @@ void WindowEventsManager::startThread()
 void WindowEventsManager::stopThread()
 {
     captureEventsThread->requestInterruption(); // if it checks for isInterruptionRequested
+
+    int i = 0; // 8 - 1s, 16 - 2s, 24 - 3s, 32 - 4s
+    while (captureEventsThread->isRunning() && i < 32) {
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 128); // process whatever user wants for 128ms
+        captureEventsThread->wait(128); // then halt this thread for 128ms, until capture thread is stopped or 4secs pass
+        i++;
+    }
+
     if (captureEventsThread->isRunning()) {
         captureEventsThread->exit(); // if it uses QEventLoop
         if (captureEventsThread->isRunning()) {
@@ -107,6 +115,7 @@ void WindowEventsManager::stopThread()
         }
     }
 }
+
 WindowEvents *WindowEventsManager::getCaptureEventsThread() const
 {
     return captureEventsThread;
