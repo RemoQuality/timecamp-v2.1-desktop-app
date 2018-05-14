@@ -131,6 +131,8 @@ int main(int argc, char *argv[])
     appIcon.addFile(":/Icons/AppIcon_256.png");
     QApplication::setWindowIcon(appIcon);
 
+    // create DB Manager instance early, as it needs some time to prepare queries etc
+    DbManager::instance();
 
     // create events manager
     WindowEventsManager *windowEventsManager = &WindowEventsManager::instance();
@@ -177,7 +179,6 @@ int main(int argc, char *argv[])
     QObject::connect(hotkeyOpenWindow, &QHotkey::activated, trayManager, &TrayManager::openCloseWindowAction);
 
     // everything connected via QObject, now heavy lifting
-    DbManager::instance();
     trayManager->setupTray(&mainWidget); // create tray
     mainWidget.init(); // init the WebView
     Comms::instance().timedUpdates(); // fetch userInfo, userSettings, send apps since last update
