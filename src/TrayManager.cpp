@@ -144,6 +144,9 @@ void TrayManager::createActions(QMenu *menu)
 //    connect(openAct, &QAction::triggered, mainWidget, &MainWidget::open);
     connect(openAct, &QAction::triggered, this, &TrayManager::openCloseWindowAction);
 
+    recentTasksTitleAct = new QAction(tr("Start recent task: "), this);
+    recentTasksTitleAct->setEnabled(false);
+
     startTaskAct = new QAction(tr("Start timer"), this);
     startTaskAct->setStatusTip(tr("Go to task selection screen"));
     startTaskAct->setShortcut(QKeySequence(KB_SHORTCUTS_START_TIMER));
@@ -207,6 +210,10 @@ void TrayManager::assignActions(QMenu *menu)
     QFont x = QFont();
     QFontMetrics metrix(x);
     int width = 150; // pixels
+
+    if (mainWidget->LastTasks.size() > 0) {
+        menu->addAction(recentTasksTitleAct);
+    }
 
     // add LastTasks
     QHash<QString, int>::iterator i;

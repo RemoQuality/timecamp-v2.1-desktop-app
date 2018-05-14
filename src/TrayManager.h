@@ -67,6 +67,7 @@ private:
     void createActions(QMenu *);
     void assignActions(QMenu *);
     QAction *openAct;
+    QAction *recentTasksTitleAct;
     QAction *startTaskAct;
     QAction *stopTaskAct;
     QAction *trackerAct;
