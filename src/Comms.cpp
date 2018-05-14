@@ -101,14 +101,17 @@ void Comms::saveApp(AppData *app)
                    lastApp->getAppName().toLatin1().constData(),
                    lastApp->getWindowName().toLatin1().constData(),
                    lastApp->getAdditionalInfo().toLatin1().constData());
+
+            app->setStart(now); // saved OK, so new App starts "NOW"
         } else {
             qInfo("[DBSAVE] Activity too short (%ldms) - %s",
                    lastApp->getEnd() - lastApp->getStart(),
                    lastApp->getAppName().toLatin1().constData()
             );
+
+            app->setStart(lastApp->getStart()); // not saved, so new App starts when the old one has started
         }
 
-        app->setStart(now);
         lastApp = app; // update app reference
     }
 }
