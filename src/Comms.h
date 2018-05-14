@@ -15,7 +15,6 @@ Q_OBJECT
 public:
 
     static Comms &instance();
-    explicit Comms(QObject *parent = nullptr);
     ~Comms() override = default;
 
     void saveApp(AppData *app);
@@ -31,6 +30,9 @@ public:
                     void (Comms::*)(QNetworkReply *), QByteArray);
 
     bool isApiKeyOK();
+
+protected:
+    explicit Comms(QObject *parent = nullptr);
 
 private:
     AppData *lastApp;

@@ -15,7 +15,6 @@ Q_OBJECT
 
 public:
     static DbManager &instance();
-    explicit DbManager(QObject *parent = nullptr);
     ~DbManager() override;
 
     bool isOpen() const;
@@ -37,6 +36,7 @@ public:
     QVector<AppData *> getAppsSinceLastSync(qint64 last_sync);
 
 protected:
+    explicit DbManager(QObject *parent = nullptr);
     QSqlDatabase m_db;
     QSqlQuery addAppQuery;
     QSqlQuery getAppsQuery;

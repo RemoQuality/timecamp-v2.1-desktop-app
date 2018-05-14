@@ -55,7 +55,6 @@ class WindowDetails
 public:
 //    WindowDetails();
     static WindowDetails &instance();
-    explicit WindowDetails();
     HWND currenthwnd;
 
     bool standardAccCallback(IControlItem *node, void *userData);
@@ -74,6 +73,8 @@ public:
     void setURL_REGEX(const QRegExp &URL_REGEX);
 
 protected:
+    explicit WindowDetails();
+
 private:
     QString URL_REGEX_STR;
     QRegExp URL_REGEX;

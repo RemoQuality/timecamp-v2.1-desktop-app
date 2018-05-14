@@ -11,7 +11,6 @@ Q_OBJECT
 public:
 
     static WindowEventsManager &instance();
-    explicit WindowEventsManager(QObject *parent = nullptr);
     virtual ~WindowEventsManager() = default;
     WindowEvents *getCaptureEventsThread() const;
 
@@ -22,6 +21,9 @@ signals:
 public slots:
     void startOrStopThread(bool startOrStop);
     void noLongerAway(unsigned long);
+
+protected:
+    explicit WindowEventsManager(QObject *parent = nullptr);
 
 private:
     WindowEvents *captureEventsThread;

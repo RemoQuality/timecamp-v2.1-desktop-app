@@ -29,7 +29,6 @@ Q_OBJECT
 public:
 
     static TrayManager &instance();
-    explicit TrayManager(QObject *parent = nullptr);
     virtual ~TrayManager() {}
 
     void setupTray(MainWidget *);
@@ -57,6 +56,8 @@ public slots:
     void widgetToggl(bool checked);
 #endif
 
+protected:
+    explicit TrayManager(QObject *parent = nullptr);
 
 private:
     QSystemTrayIcon *trayIcon;
