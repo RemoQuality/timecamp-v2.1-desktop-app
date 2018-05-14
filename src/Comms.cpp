@@ -60,6 +60,11 @@ void Comms::timedUpdates()
     getSettings();
 }
 
+void Comms::clearLastApp()
+{
+    lastApp = nullptr;
+}
+
 void Comms::saveApp(AppData *app)
 {
     if (lastApp == nullptr) {

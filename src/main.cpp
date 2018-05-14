@@ -160,6 +160,9 @@ int main(int argc, char *argv[])
     QObject::connect(windowEventsManager, &WindowEventsManager::updateAfterAwayTime, comms, &Comms::timedUpdates);
     QObject::connect(windowEventsManager, &WindowEventsManager::openAwayTimeManagement, &mainWidget, &MainWidget::goToAwayPage);
 
+    // Stopped logging bind
+    QObject::connect(windowEventsManager, &WindowEventsManager::dataCollectingStopped, comms, &Comms::clearLastApp);
+
 
     // 2 sec timer for updating submenu and other features
     auto *twoSecondTimer = new QTimer();

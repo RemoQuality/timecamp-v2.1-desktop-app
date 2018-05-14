@@ -55,6 +55,7 @@ public slots:
     void userInfoReply(QNetworkReply *reply);
     void settingsReply(QNetworkReply *reply);
     void checkBatchSize();
+    void clearLastApp();
 };
 
 typedef void (Comms::*ReplyHandler)(QNetworkReply *reply);

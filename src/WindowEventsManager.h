@@ -15,6 +15,7 @@ public:
     WindowEvents *getCaptureEventsThread() const;
 
 signals:
+    void dataCollectingStopped();
     void updateAfterAwayTime();
     void openAwayTimeManagement();
 

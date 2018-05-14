@@ -114,6 +114,8 @@ void WindowEventsManager::stopThread()
             captureEventsThread->terminate(); // force close
         }
     }
+
+    emit dataCollectingStopped();
 }
 
 WindowEvents *WindowEventsManager::getCaptureEventsThread() const
