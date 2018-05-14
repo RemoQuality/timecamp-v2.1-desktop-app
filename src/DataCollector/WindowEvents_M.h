@@ -15,10 +15,12 @@ class WindowEvents_M : public WindowEvents
 {
 Q_OBJECT
 public:
-    static QString GetProcWindowName(QString processName);
-    QString GetProcNameFromPath(QString processName);
+    QString GetProcWindowName(QString processName);
+//    QString GetProcNameFromPath(QString processName);
     QString GetAdditionalInfo(QString processName);
     const void didActivateApp(void *anNSnotification) const;
+    void *getWindowScriptObj;
+    void initAppleScript();
 
 public slots:
     void GetActiveApp(QString processName = "");
