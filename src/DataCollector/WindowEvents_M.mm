@@ -87,11 +87,11 @@ void WindowEvents_M::run()
         if (!isIdle) {
             this->GetActiveApp();
         }
-        QThread::msleep(2 * 1000); // 2 seconds sleep, like in old app
+        QThread::msleep(1536); // ~1.5 seconds sleep but pow of 2, almost like in old app
     }
 
-    [(NSAppleScript *) getWindowScriptObj release];
     [(MDWorkspaceWatcher *) this->workspaceWatcher release];
+    [(NSAppleScript *) getWindowScriptObj release];
 
     qInfo("thread stopped");
 }
@@ -177,7 +177,11 @@ void WindowEvents_M::GetActiveApp(QString processName)
 
 QString WindowEvents_M::GetProcWindowName(QString processName)
 {
-    QString appTitle;
+    QString appTitle("");
+
+    if(getWindowScriptObj == nil){
+        return appTitle;
+    }
     @autoreleasepool {
         NSString *windowName = @"";
         NSDictionary *errorDict;
