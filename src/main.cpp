@@ -1,7 +1,3 @@
-#include <ctime>
-#include <iomanip>
-#include <iostream>
-
 #include <QApplication>
 #include <QTimer>
 #include <QStandardPaths>
@@ -23,7 +19,7 @@
 #include "WindowEventsManager.h"
 
 #include "third-party/vendor/de/skycoder42/qhotkey/QHotkey/qhotkey.h"
-
+#include "third-party/QTLogRotation/logutils.h"
 
 void firstRun()
 {
@@ -38,53 +34,8 @@ void firstRun()
     settings.setValue(SETT_IS_FIRST_RUN, false);
 }
 
-void myMessageHandler(QtMsgType type, const QMessageLogContext &, const QString &msg)
-{
-    const std::time_t stdtime = std::time(nullptr);
-//    std::cout << "UTC:       " << std::put_time(std::gmtime(&stdtime), "%H:%M:%S") << '\n';
-//    std::cout << "local:     " << std::put_time(std::localtime(&stdtime), "%H:%M:%S") << '\n';
-    char timestring[100];
-
-#ifdef Q_OS_WIN
-    struct tm buf;
-    gmtime_s(&buf, &stdtime);
-    std::strftime(timestring, sizeof(timestring), "%H:%M:%S", &buf);
-#else
-    std::strftime(timestring, sizeof(timestring), "%H:%M:%S", std::gmtime(&stdtime)); // UTC, localtime for local
-#endif
-
-    QString txt;
-    txt += "[";
-    txt += timestring;
-    txt += "] ";
-    switch (type) {
-        case QtDebugMsg:
-            txt += QString("Debug:\t%1").arg(msg);
-            break;
-        case QtInfoMsg:
-            txt += QString("Info:\t%1").arg(msg);
-            break;
-        case QtWarningMsg:
-            txt += QString("Warning:\t%1").arg(msg);
-            break;
-        case QtCriticalMsg:
-            txt += QString("Critical:\t%1").arg(msg);
-            break;
-        case QtFatalMsg:
-            txt += QString("Fatal:\t%1").arg(msg);
-            break;
-    }
-    QFile outFile(QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first() + "/" + LOG_FILENAME);
-    outFile.open(QIODevice::WriteOnly | QIODevice::Append);
-    QTextStream ts(&outFile);
-    ts << txt << endl;
-    std::cout << txt.toStdString() << std::endl;
-}
-
 int main(int argc, char *argv[])
 {
-    // install log handler
-    qInstallMessageHandler(myMessageHandler);
 
     // Caches are saved in %localappdata%/org_name/APPLICATION_NAME
     // Eg. C:\Users\timecamp\AppData\Local\Time Solutions\TimeCamp Desktop
@@ -94,6 +45,9 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationDomain(ORGANIZATION_DOMAIN);
     QCoreApplication::setApplicationName(APPLICATION_NAME);
     QCoreApplication::setApplicationVersion(APPLICATION_VERSION);
+
+    // install log handler
+    LOGUTILS::initLogging();
 
     // Enable high dpi support
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);

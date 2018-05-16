@@ -77,6 +77,7 @@ list(APPEND SOURCE_FILES
         "src/WindowEventsManager.cpp"
         "src/TrayManager.cpp"
         "third-party/mozilla_lz4/lz4.c"
+        "third-party/QTLogRotation/logutils.cpp"
         "src/DataCollector/WindowEvents.cpp"
         "src/Widget/Widget.cpp"
         )
