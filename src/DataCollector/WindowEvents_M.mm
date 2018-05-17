@@ -80,17 +80,17 @@ void WindowEvents_M::run()
 //    timer->stop();
 
 
-    this->workspaceWatcher = [[MDWorkspaceWatcher alloc] initWithMyClass:this];
+//    this->workspaceWatcher = [[MDWorkspaceWatcher alloc] initWithMyClass:this];
     this->initAppleScript();
     while (!QThread::currentThread()->isInterruptionRequested()) {
         // empty loop, waiting for stopping the thread
         if (!isIdle) {
             this->GetActiveApp();
         }
-        QThread::msleep(1536); // ~1.5 seconds sleep but pow of 2, almost like in old app
+        QThread::msleep(1024); // ~1.5 seconds sleep but pow of 2, almost like in old app
     }
 
-    [(MDWorkspaceWatcher *) this->workspaceWatcher release];
+//    [(MDWorkspaceWatcher *) this->workspaceWatcher release];
     [(NSAppleScript *) getWindowScriptObj release];
 
     qInfo("thread stopped");
