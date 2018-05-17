@@ -79,7 +79,7 @@ bool DbManager::saveAppToDb(AppData *app)
     qint64 start = app->getStart();
     qint64 end = app->getEnd();
 
-    if (start > 0 && end > 0) {
+    if (start > 0 && end > 0 && !appName.isEmpty()) {
         addAppQuery.addBindValue(appName);
         addAppQuery.addBindValue(windowName);
         addAppQuery.addBindValue(additionalInfo);
