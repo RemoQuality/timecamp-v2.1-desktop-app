@@ -169,13 +169,11 @@ void WindowEvents_M::GetActiveApp(QString processName)
 
     AppData *app;
 
-    app = WindowEvents::logAppName(processName, appTitle, processName);
+    app = WindowEvents::logAppName(processName, appTitle, additionalInfo);
     additionalInfo = GetAdditionalInfo(processName.toLower());
 
     if(additionalInfo != "") {
         app->setAdditionalInfo(additionalInfo); // after we get the URL, update additionalInfo
-    } else {
-        WindowEvents::logAppName(processName, appTitle, additionalInfo);
     }
 }
 
