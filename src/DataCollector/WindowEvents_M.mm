@@ -167,12 +167,16 @@ void WindowEvents_M::GetActiveApp(QString processName)
     //Get Window Name or
     appTitle = GetProcWindowName(processName);
 
-    //Get URL from browsers
-//    processName = processName.toLower();
-    additionalInfo = GetAdditionalInfo(processName.toLower());
-//    qDebug() << "additional info: " << additionalInfo;
+    AppData *app;
 
-    WindowEvents::logAppName(processName, appTitle, additionalInfo);
+    app = WindowEvents::logAppName(processName, appTitle, processName);
+    additionalInfo = GetAdditionalInfo(processName.toLower());
+
+    if(additionalInfo != "") {
+        app->setAdditionalInfo(additionalInfo); // after we get the URL, update additionalInfo
+    } else {
+        WindowEvents::logAppName(processName, appTitle, additionalInfo);
+    }
 }
 
 QString WindowEvents_M::GetProcWindowName(QString processName)
