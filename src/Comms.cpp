@@ -93,25 +93,36 @@ void Comms::saveApp(AppData *app)
         qint64 now = QDateTime::currentMSecsSinceEpoch();
         lastApp->setEnd(now - 1); // it already has start, now we only update end
 
-        if((lastApp->getEnd() - lastApp->getStart()) > 1000) { // if activity is longer than 1sec
-            try {
-                emit DbSaveApp(lastApp);
-            } catch (...) {
-                qInfo("[DBSAVE] DB fail");
-                return;
+        if(lastApp->getStart() < lastApp->getEnd()) {
+            if((lastApp->getEnd() - lastApp->getStart()) > 1000) { // if activity is longer than 1sec
+                try {
+                    emit DbSaveApp(lastApp);
+                } catch (...) {
+                    qInfo("[DBSAVE] DB fail");
+                    return;
+                }
+
+                qDebug("[DBSAVE] %lds - %s | %s\nADD_INFO: %s \n",
+                       (lastApp->getEnd() - lastApp->getStart()) / 1000,
+                       lastApp->getAppName().toLatin1().constData(),
+                       lastApp->getWindowName().toLatin1().constData(),
+                       lastApp->getAdditionalInfo().toLatin1().constData()
+                );
+
+                app->setStart(now); // saved OK, so new App starts "NOW"
+            } else {
+                qInfo("[DBSAVE] Activity too short (%ldms) - %s",
+                      lastApp->getEnd() - lastApp->getStart(),
+                      lastApp->getAppName().toLatin1().constData()
+                );
+
+                app->setStart(lastApp->getStart()); // not saved, so new App starts when the old one has started
             }
-
-            qDebug("[DBSAVE] %lds - %s | %s\nADD_INFO: %s \n",
-                   (lastApp->getEnd() - lastApp->getStart())/1000,
-                   lastApp->getAppName().toLatin1().constData(),
-                   lastApp->getWindowName().toLatin1().constData(),
-                   lastApp->getAdditionalInfo().toLatin1().constData());
-
-            app->setStart(now); // saved OK, so new App starts "NOW"
         } else {
-            qInfo("[DBSAVE] Activity too short (%ldms) - %s",
-                   lastApp->getEnd() - lastApp->getStart(),
-                   lastApp->getAppName().toLatin1().constData()
+            qInfo("[DBSAVE] Activity (%s) broken: from %ld, to %ld",
+                  lastApp->getAppName().toLatin1().constData(),
+                  lastApp->getStart(),
+                  lastApp->getEnd()
             );
 
             app->setStart(lastApp->getStart()); // not saved, so new App starts when the old one has started
