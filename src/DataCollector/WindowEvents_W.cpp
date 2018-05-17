@@ -24,6 +24,7 @@ void WindowEvents_W::logAppName(QString appName, QString windowName, HWND passed
 
     AppData *app;
     QString additionalInfo = "";
+
     if (WindowDetails::instance().isBrowser(appName)) {
         app = WindowEvents::logAppName(appName, windowName, appName); // set additionalInfo to appName for now
         additionalInfo = WindowDetails::instance().GetInfoFromBrowser(passedHwnd); // get real URL
@@ -31,6 +32,7 @@ void WindowEvents_W::logAppName(QString appName, QString windowName, HWND passed
         app = WindowEvents::logAppName(appName, windowName, appName); // same like above, just to skip the "Internet" checker
         additionalInfo = WindowDetails::instance().GetInfoFromFirefox(passedHwnd); // get real URL from Firefox
     }
+
     if(additionalInfo != "") {
         app->setAdditionalInfo(additionalInfo); // after we get the URL, update additionalInfo
     } else {

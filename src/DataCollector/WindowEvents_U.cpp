@@ -42,15 +42,22 @@ std::string WindowEvents_U::execCommand(const char *cmd)
 
 void WindowEvents_U::logAppName(QString appName, QString windowName)
 {
-    QString additionalInfo("");
-    if(appName == "firefox"){
-        // somewhat unreliable - data is usually a few seconds late into the file
-        additionalInfo = getCurrentURLFromFirefox();
-    }else if(appName == "chrome"){
-        // somewhat unreliable - might not get the URL
-        additionalInfo = getCurrentURLFromChrome(windowName);
+    AppData *app;
+    QString additionalInfo = "";
+
+    if (appName == "firefox") {
+        app = WindowEvents::logAppName(appName, windowName, appName); // set additionalInfo to appName for now
+        additionalInfo = getCurrentURLFromFirefox(); // somewhat unreliable - data is usually a few seconds late into the file
+    } else if (appName == "chrome") {
+        app = WindowEvents::logAppName(appName, windowName, appName); // same as above, just to skip the "Internet" checker
+        additionalInfo = getCurrentURLFromChrome(windowName); // somewhat unreliable - might not get the URL
     }
-    WindowEvents::logAppName(appName, windowName, additionalInfo);
+
+    if (additionalInfo != "") {
+        app->setAdditionalInfo(additionalInfo); // after we get the URL, update additionalInfo
+    } else {
+        WindowEvents::logAppName(appName, windowName, additionalInfo);
+    }
 }
 
 void WindowEvents_U::run()
