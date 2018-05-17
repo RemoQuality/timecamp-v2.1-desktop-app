@@ -179,7 +179,7 @@ void WindowEvents_U::run()
 
                 app_name = execCommand(command.c_str());
 
-                logAppName(QString::fromStdString(app_name).trimmed(), QString::fromUtf8((char*)window_name));
+                logAppName(QString::fromStdString(app_name), QString::fromUtf8((char*)window_name));
             }
         }
     }
