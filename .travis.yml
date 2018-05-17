@@ -56,6 +56,7 @@ after_success:
   - cp /lib/x86_64-linux-gnu/libssl.so.1.0.0  $TARGET"/usr/lib/"
   - cp /lib/x86_64-linux-gnu/libcrypto.so.1.0.0  $TARGET"/usr/lib/"
   - cp /lib/x86_64-linux-gnu/libbsd.so.0 $TARGET"/usr/lib/"
+  - cp -r /usr/lib/x86_64-linux-gnu/nss $TARGET"/usr/lib/"
   - export VERSION=$(git rev-parse --short HEAD) # linuxdeployqt uses this for naming the file
   - ${LinuxDeployQtExec} $TARGET"/usr/share/applications/${BUNDLE_NAME}.desktop" -bundle-non-qt-libs -extra-plugins=sqldrivers,iconengines -verbose=2
   - ${LinuxDeployQtExec} $TARGET"/usr/share/applications/${BUNDLE_NAME}.desktop" -appimage -verbose=2
