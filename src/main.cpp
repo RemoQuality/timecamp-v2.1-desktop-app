@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
     QApplication::setWindowIcon(appIcon);
 
     // create DB Manager instance early, as it needs some time to prepare queries etc
-    DbManager::instance();
+    DbManager *dbManager = &DbManager::instance();
 
     // create events manager
     WindowEventsManager *windowEventsManager = &WindowEventsManager::instance();
@@ -117,6 +117,9 @@ int main(int argc, char *argv[])
     // Stopped logging bind
     QObject::connect(windowEventsManager, &WindowEventsManager::dataCollectingStopped, comms, &Comms::clearLastApp);
 
+    // Save apps to sqlite on signal-slot basis
+    QObject::connect(comms, &Comms::DbSaveApp, dbManager, &DbManager::saveAppToDb);
+
 
     // 2 sec timer for updating submenu and other features
     auto *twoSecondTimer = new QTimer();
@@ -138,7 +141,7 @@ int main(int argc, char *argv[])
     // everything connected via QObject, now heavy lifting
     trayManager->setupTray(&mainWidget); // create tray
     mainWidget.init(); // init the WebView
-    Comms::instance().timedUpdates(); // fetch userInfo, userSettings, send apps since last update
+    comms->timedUpdates(); // fetch userInfo, userSettings, send apps since last update
 
     // now timers
     syncDBtimer->start(30 * 1000); // sync DB every 30s

@@ -49,6 +49,7 @@ private:
     QNetworkAccessManager qnam;
 
 signals:
+    void DbSaveApp(AppData *);
 
 public slots:
     void appDataReply(QNetworkReply *reply);

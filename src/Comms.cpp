@@ -96,6 +96,7 @@ void Comms::saveApp(AppData *app)
         if((lastApp->getEnd() - lastApp->getStart()) > 1000) { // if activity is longer than 1sec
             try {
                 DbManager::instance().saveAppToDb(lastApp);
+                emit DbSaveApp(lastApp);
             } catch (...) {
                 qInfo("[DBSAVE] DB fail");
                 return;

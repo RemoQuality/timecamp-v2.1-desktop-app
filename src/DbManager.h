@@ -8,7 +8,7 @@
 
 #include "AppData.h"
 
-class DbManager : QObject
+class DbManager : public QObject
 {
 Q_OBJECT
     Q_DISABLE_COPY(DbManager)
@@ -27,13 +27,14 @@ public:
      */
     bool createTable();
 
+    QVector<AppData *> getAppsSinceLastSync(qint64 last_sync);
+
+public slots:
     /**
      * @brief Add data to db
      * @return true - person added successfully, false - person not added
      */
     bool saveAppToDb(AppData *app);
-
-    QVector<AppData *> getAppsSinceLastSync(qint64 last_sync);
 
 protected:
     explicit DbManager(QObject *parent = nullptr);
