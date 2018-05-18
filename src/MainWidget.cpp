@@ -192,14 +192,15 @@ void MainWidget::webpageTitleChanged(QString title)
 //    qInfo("[NEW_TC]: Webpage title changed: ");
 //    qInfo(title.toLatin1().constData());
     checkIfLoggedIn(title);
-    emit pageStatusChanged(loggedIn, title);
-    this->setWindowTitle(title); // https://trello.com/c/J8dCKeV2/43-niech-tytul-apki-desktopowej-sie-zmienia-
-    this->setAttribute(Qt::WA_TranslucentBackground);
-    if(!loggedIn){
+    if (!loggedIn) {
+        this->runJSinPage("jQuery('#about .news').parent().parent().attr('class', 'hidden').siblings().first().attr('class', 'col-xs-12 col-sm-10 col-sm-push-1 col-md-8 col-md-push-2 col-lg-6 col-lg-push-3')");
         LastTasks.clear(); // clear last tasks
         LastTasksCache = QJsonDocument(); // clear the cache
         emit lastTasksChanged();
     }
+    emit pageStatusChanged(loggedIn, title);
+    this->setWindowTitle(title); // https://trello.com/c/J8dCKeV2/43-niech-tytul-apki-desktopowej-sie-zmienia-
+    this->setAttribute(Qt::WA_TranslucentBackground);
 }
 
 void MainWidget::clearCache()
@@ -283,10 +284,15 @@ void MainWidget::goToTimerPage()
                 loop.quit();
             }
         });
+        QMetaObject::Connection conn3 = QObject::connect(QTWEPage, &QWebEnginePage::iconUrlChanged, [&]()
+        {
+            this->webpageTitleChanged(QTWEPage->title());
+        });
         QTWEPage->load(QUrl(APPLICATION_URL));
         loop.exec();
         QObject::disconnect(conn1);
         QObject::disconnect(conn2);
+        QObject::disconnect(conn3);
         QThread::msleep(128);
 
         this->webpageTitleChanged(QTWEPage->title());
