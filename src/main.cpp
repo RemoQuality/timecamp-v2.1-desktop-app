@@ -138,6 +138,22 @@ int main(int argc, char *argv[])
     auto hotkeyOpenWindow = new QHotkey(QKeySequence(KB_SHORTCUTS_OPEN_WINDOW), true, &app);
     QObject::connect(hotkeyOpenWindow, &QHotkey::activated, trayManager, &TrayManager::openCloseWindowAction);
 
+    //
+    QObject::connect(&mainWidget, &MainWidget::pageStatusChanged, [&](bool loggedIn, QString title)
+    {
+        if (!loggedIn) {
+            if(syncDBtimer->isActive()) {
+                qInfo("Stopping DB Sync timer");
+                syncDBtimer->stop();
+            }
+        } else {
+            if(!syncDBtimer->isActive()) {
+                qInfo("Restarting DB Sync timer");
+                syncDBtimer->start();
+            }
+        }
+    });
+
     // everything connected via QObject, now heavy lifting
     trayManager->setupTray(&mainWidget); // create tray
     mainWidget.init(); // init the WebView
