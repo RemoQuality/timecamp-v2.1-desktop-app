@@ -195,6 +195,11 @@ void MainWidget::webpageTitleChanged(QString title)
     emit pageStatusChanged(loggedIn, title);
     this->setWindowTitle(title); // https://trello.com/c/J8dCKeV2/43-niech-tytul-apki-desktopowej-sie-zmienia-
     this->setAttribute(Qt::WA_TranslucentBackground);
+    if(!loggedIn){
+        LastTasks.clear(); // clear last tasks
+        LastTasksCache = QJsonDocument(); // clear the cache
+        emit lastTasksChanged();
+    }
 }
 
 void MainWidget::clearCache()
@@ -376,8 +381,8 @@ void MainWidget::fetchRecentTasks()
 //            qDebug() << obj.value("task_id").toString().toInt() << ": " << obj.value("name").toString();
                 LastTasks.insert(obj.value("name").toString(), obj.value("task_id").toString().toInt());
             }
-            emit lastTasksChanged();
             LastTasksCache = itemDoc;
+            emit lastTasksChanged();
         }
     });
 }
