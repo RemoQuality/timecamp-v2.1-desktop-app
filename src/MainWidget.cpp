@@ -230,7 +230,7 @@ void MainWidget::webviewFullscreen()
 
 void MainWidget::checkIfLoggedIn(QString title)
 {
-    if (!title.toLower().contains(QRegExp("log in|login|register|create free account|create account|time tracking software"))) {
+    if (!title.toLower().contains(QRegExp("log in|login|register|create free account|create account|time tracking software|blog"))) {
         loggedIn = true;
     } else {
         loggedIn = false; // when we log out, we need to set this variable again
