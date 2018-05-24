@@ -132,8 +132,10 @@ void Comms::saveApp(AppData *app)
     }
 }
 
-bool Comms::isApiKeyOK()
+bool Comms::updateApiKeyFromSettings()
 {
+    apiKey = settings.value(SETT_APIKEY).toString();
+
     if (apiKey.isEmpty()) {
         qInfo() << "[EMPTY API KEY !!!]";
         return false;
@@ -143,10 +145,7 @@ bool Comms::isApiKeyOK()
 
 void Comms::sendAppData(QVector<AppData *> *appList)
 {
-    // read api key from settings
-    apiKey = settings.value(SETT_APIKEY).toString();
-
-    if (!isApiKeyOK()) {
+    if (!updateApiKeyFromSettings()) {
         return;
     }
 
@@ -271,10 +270,7 @@ void Comms::setCurrentTime(qint64 current_time)
 
 void Comms::getUserInfo()
 {
-    // read api key from settings
-    apiKey = settings.value(SETT_APIKEY).toString();
-
-    if (!isApiKeyOK()) {
+    if (!updateApiKeyFromSettings()) {
         return;
     }
 
@@ -319,10 +315,7 @@ void Comms::userInfoReply(QNetworkReply *reply)
 
 void Comms::getSettings()
 {
-    // read api key from settings
-    apiKey = settings.value(SETT_APIKEY).toString();
-
-    if (!isApiKeyOK()) {
+    if (!updateApiKeyFromSettings()) {
         return;
     }
 

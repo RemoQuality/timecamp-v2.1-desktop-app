@@ -29,7 +29,7 @@ public:
     void netRequest(QNetworkRequest, QNetworkAccessManager::Operation,
                     void (Comms::*)(QNetworkReply *), QByteArray);
 
-    bool isApiKeyOK();
+    bool updateApiKeyFromSettings();
 
 protected:
     explicit Comms(QObject *parent = nullptr);
