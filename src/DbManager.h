@@ -7,9 +7,9 @@
 #include <QSqlQuery>
 
 #include "AppData.h"
+#include "Task.h"
 
-class DbManager : public QObject
-{
+class DbManager : public QObject {
 Q_OBJECT
     Q_DISABLE_COPY(DbManager)
 
@@ -29,7 +29,15 @@ public:
 
     QVector<AppData *> getAppsSinceLastSync(qint64 last_sync);
 
+    QVector<Task> taskList; // maybe QSet or QMap later?
+
+    const QVector<Task> &getTaskList() const;
+    void setTaskList(const QVector<Task> &taskList);
+    void addToTaskList(const Task &);
+    void clearTaskList();
+
 public slots:
+
     /**
      * @brief Add data to db
      * @return true - person added successfully, false - person not added
@@ -38,6 +46,7 @@ public slots:
 
 protected:
     explicit DbManager(QObject *parent = nullptr);
+
     QSqlDatabase m_db;
     QSqlQuery addAppQuery;
     QSqlQuery getAppsQuery;

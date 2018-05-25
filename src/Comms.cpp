@@ -58,6 +58,7 @@ void Comms::timedUpdates()
     }
     getUserInfo();
     getSettings();
+    getTasks();
 }
 
 void Comms::clearLastApp()
@@ -400,6 +401,52 @@ void Comms::settingsReply(QNetworkReply *reply)
             << settings.value(QString("SETT_WEB_") + QString("dontCollectComputerActivity")).toBool();
     qDebug() << "SETT collectWindowTitles: "
             << settings.value(QString("SETT_WEB_") + QString("collectWindowTitles")).toBool();
+}
+
+void Comms::getTasks()
+{
+    if (!updateApiKeyFromSettings()) {
+        return;
+    }
+
+    QUrl serviceURL("https://www.timecamp.com/third_party/api/tasks/api_token/" + apiKey + "/format/json");
+    QNetworkRequest request(serviceURL);
+    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+
+    // set up connection parameters
+    // identify as our app
+    request.setRawHeader("User-Agent", CONN_USER_AGENT);
+    request.setRawHeader(CONN_CUSTOM_HEADER_NAME, CONN_CUSTOM_HEADER_VALUE);
+
+    this->netRequest(request, QNetworkAccessManager::GetOperation, &Comms::tasksReply, "");
+}
+
+void Comms::tasksReply(QNetworkReply *reply)
+{
+    if(reply->error() != QNetworkReply::NoError){
+        qInfo() << "Network error: " << reply->errorString();
+        return;
+    }
+
+    QByteArray buffer = reply->readAll();
+    QJsonDocument itemDoc = QJsonDocument::fromJson(buffer);
+
+    buffer.truncate(MAX_LOG_TEXT_LENGTH);
+    qDebug() << "Tasks Response: " << buffer;
+
+    DbManager::instance().clearTaskList();
+
+    QJsonObject rootObject = itemDoc.object();
+    for (auto oneTaskJSON: rootObject) {
+        QJsonObject oneTask = oneTaskJSON.toObject();
+        int task_id = oneTaskJSON.toObject().value("task_id").toString().toInt();
+        QString name = oneTaskJSON.toObject().value("name").toString();
+        QString tags = oneTaskJSON.toObject().value("tags").toString();
+        Task impTask(task_id);
+        impTask.setName(name);
+        impTask.setKeywords(tags);
+        DbManager::instance().addToTaskList(impTask);
+    }
 }
 
 void Comms::netRequest(QNetworkRequest request, QNetworkAccessManager::Operation netOp, ReplyHandler callback, QByteArray data)

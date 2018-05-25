@@ -75,6 +75,7 @@ list(APPEND SOURCE_FILES
         "src/Overrides/TCWebEngineView.cpp"
         "src/Comms.cpp"
         "src/AppData.cpp"
+        "src/Task.cpp"
         "src/Autorun.cpp"
         "src/WindowEventsManager.cpp"
         "src/TrayManager.cpp"

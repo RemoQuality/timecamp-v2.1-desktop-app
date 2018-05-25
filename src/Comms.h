@@ -6,6 +6,7 @@
 #include <QNetworkReply>
 
 #include "AppData.h"
+#include "Task.h"
 
 class Comms : public QObject
 {
@@ -21,6 +22,7 @@ public:
     void sendAppData(QVector<AppData *> *appList);
     void getUserInfo();
     void getSettings();
+    void getTasks();
 
     qint64 getCurrentTime() const;
     void setCurrentTime(qint64 current_time);
@@ -55,6 +57,7 @@ public slots:
     void appDataReply(QNetworkReply *reply);
     void userInfoReply(QNetworkReply *reply);
     void settingsReply(QNetworkReply *reply);
+    void tasksReply(QNetworkReply *reply);
     void checkBatchSize();
     void clearLastApp();
 };
