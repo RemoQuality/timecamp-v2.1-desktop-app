@@ -132,10 +132,7 @@ if (APPLE)
             )
     set_source_files_properties(src/*.mm PROPERTIES COMPILE_FLAGS "-x objective-c++")
 
-    list(APPEND TC_LIBS
-            Qt5::MacExtras
-            )
-    set(Qt5_OS_LIBRARIES Qt5::macextras)
+    set(Qt5_OS_LIBRARIES Qt5::MacExtras)
 endif ()
 
 # QHotkey
