@@ -63,7 +63,9 @@ endforeach ()
 
 ADD_DEFINITIONS(-DUNICODE -D_UNICODE -DPSAPI_VERSION=1 -DQHOTKEY_LIB -DQHOTKEY_LIB_BUILD -DQT_USE_QSTRINGBUILDER)
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-limit-debug-info")
+if ("${CMAKE_CXX_COMPILER}" MATCHES "clang")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-limit-debug-info")
+endif()
 
 list(APPEND SOURCE_FILES
         "src/Settings.h" # a header without cpp file
