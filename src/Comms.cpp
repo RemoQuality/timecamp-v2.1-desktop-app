@@ -36,7 +36,7 @@ void Comms::timedUpdates()
 
     setCurrentTime(QDateTime::currentMSecsSinceEpoch()); // time of DB fetch is passed, so we can update to it if successful
 
-    QVector<AppData *> appList;
+    QVector<AppData> appList;
     try {
         appList = DbManager::instance().getAppsSinceLastSync(lastSync); // get apps since last sync
     } catch (...) {
@@ -46,7 +46,7 @@ void Comms::timedUpdates()
 
     qDebug() << "[AppList] length: " << appList.length();
     // send only if there is anything to send (0 is if "computer activities" are disabled, 1 is sometimes only with "IDLE" - don't send that)
-    if (appList.length() > 1 || (appList.length() == 1 && appList.first()->getAppName() != "IDLE")) {
+    if (appList.length() > 1 || (appList.length() == 1 && appList.first().getAppName() != "IDLE")) {
         sendAppData(&appList);
         if(appList.length() >= MAX_ACTIVITIES_BATCH_SIZE){
             qInfo() << "[AppList] was big";
@@ -144,7 +144,7 @@ bool Comms::updateApiKeyFromSettings()
     return true;
 }
 
-void Comms::sendAppData(QVector<AppData *> *appList)
+void Comms::sendAppData(QVector<AppData> *appList)
 {
     if (!updateApiKeyFromSettings()) {
         return;
@@ -159,7 +159,7 @@ void Comms::sendAppData(QVector<AppData *> *appList)
 
     int count = 0;
 
-    for (AppData *app: *appList) {
+    for (AppData app: *appList) {
 //    qDebug() << "[NOTIFY OF APP]";
 //    qDebug() << "getAppName: " << app->getAppName();
 //    qDebug() << "getWindowName: " << app->getWindowName();
@@ -168,21 +168,21 @@ void Comms::sendAppData(QVector<AppData *> *appList)
 //    qDebug() << "getStart: " << app->getStart();
 //    qDebug() << "getEnd: " << app->getEnd();
 
-        if (app->getAppName() != "IDLE" && app->getWindowName() != "IDLE") {
+        if (app.getAppName() != "IDLE" && app.getWindowName() != "IDLE") {
             QString base_str = QString("computer_activities") + QString("[") + QString::number(count) + QString("]");
 
             if (canSendActivityInfo) {
-                QString tempAppName = app->getAppName();
+                QString tempAppName = app.getAppName();
                 if(tempAppName == ""){
                     tempAppName = "explorer2";
                 }
                 params.addQueryItem(base_str + QString("[application_name]"), tempAppName);
                 if (canSendWindowTitles) {
-                    params.addQueryItem(base_str + QString("[window_title]"), app->getWindowName());
+                    params.addQueryItem(base_str + QString("[window_title]"), app.getWindowName());
 
                     // "Web Browser App" when appName is Internet but no domain
-                    if (app->getAdditionalInfo() != "") {
-                        params.addQueryItem(base_str + QString("[website_domain]"), app->getDomainFromAdditionalInfo());
+                    if (app.getAdditionalInfo() != "") {
+                        params.addQueryItem(base_str + QString("[website_domain]"), app.getDomainFromAdditionalInfo());
                     }
                 } else {
                     params.addQueryItem(base_str + QString("[window_title]"), "");
@@ -192,16 +192,16 @@ void Comms::sendAppData(QVector<AppData *> *appList)
                 params.addQueryItem(base_str + QString("[window_title]"), "");
             }
 
-            QString start_time = QDateTime::fromMSecsSinceEpoch(app->getStart()).toString(Qt::ISODate).replace("T", " ");
+            QString start_time = QDateTime::fromMSecsSinceEpoch(app.getStart()).toString(Qt::ISODate).replace("T", " ");
             params.addQueryItem(base_str + QString("[start_time]"), start_time);
 //            qDebug() << "converted start_time: " << start_time;
 
-            QString end_time = QDateTime::fromMSecsSinceEpoch(app->getEnd()).toString(Qt::ISODate).replace("T", " ");
+            QString end_time = QDateTime::fromMSecsSinceEpoch(app.getEnd()).toString(Qt::ISODate).replace("T", " ");
             params.addQueryItem(base_str + QString("[end_time]"), end_time);
 //            qDebug() << "converted end_time: " << end_time;
             count++;
         }
-        lastSync = app->getEnd(); // set our internal variable to value from last app
+        lastSync = app.getEnd(); // set our internal variable to value from last app
     }
 
 //    qDebug() << "--------------";

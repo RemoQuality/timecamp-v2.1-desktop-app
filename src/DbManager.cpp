@@ -73,9 +73,9 @@ bool DbManager::saveAppToDb(AppData *app)
         return success;
     }
 
-    QString appName = app->getAppName();
-    QString windowName = app->getWindowName();
-    QString additionalInfo = app->getAdditionalInfo();
+    const QString &appName = app->getAppName();
+    const QString &windowName = app->getWindowName();
+    const QString &additionalInfo = app->getAdditionalInfo();
     qint64 start = app->getStart();
     qint64 end = app->getEnd();
 
@@ -99,9 +99,9 @@ bool DbManager::saveAppToDb(AppData *app)
     return success;
 }
 
-QVector<AppData *> DbManager::getAppsSinceLastSync(qint64 last_sync)
+QVector<AppData> DbManager::getAppsSinceLastSync(qint64 last_sync)
 {
-    QVector<AppData *> appList;
+    QVector<AppData> appList;
     if (!this->isOpen()) {
         qInfo("[DB] ERROR2 can't query yet - DB is not opened");
         return appList; // return empty appList if DB is not opened
@@ -118,12 +118,12 @@ QVector<AppData *> DbManager::getAppsSinceLastSync(qint64 last_sync)
         }
 
         while (getAppsQuery.next()) {
-            AppData *tempApp = new AppData();
-            tempApp->setAppName(getAppsQuery.value("app_name").toString());
-            tempApp->setWindowName(getAppsQuery.value("window_name").toString());
-            tempApp->setAdditionalInfo(getAppsQuery.value("additional_info").toString());
-            tempApp->setStart(getAppsQuery.value("start_time").toLongLong());
-            tempApp->setEnd(getAppsQuery.value("end_time").toLongLong());
+            AppData tempApp;
+            tempApp.setAppName(getAppsQuery.value("app_name").toString());
+            tempApp.setWindowName(getAppsQuery.value("window_name").toString());
+            tempApp.setAdditionalInfo(getAppsQuery.value("additional_info").toString());
+            tempApp.setStart(getAppsQuery.value("start_time").toLongLong());
+            tempApp.setEnd(getAppsQuery.value("end_time").toLongLong());
             appList.push_back(tempApp);
         }
         appList.squeeze(); // finally remove empty elements (because reserve is just a hint)

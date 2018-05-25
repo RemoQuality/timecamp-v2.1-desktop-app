@@ -19,7 +19,7 @@ public:
     ~Comms() override = default;
 
     void saveApp(AppData *app);
-    void sendAppData(QVector<AppData *> *appList);
+    void sendAppData(QVector<AppData> *appList);
     void getUserInfo();
     void getSettings();
     void getTasks();

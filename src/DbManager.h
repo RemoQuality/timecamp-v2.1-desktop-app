@@ -27,7 +27,7 @@ public:
      */
     bool createTable();
 
-    QVector<AppData *> getAppsSinceLastSync(qint64 last_sync);
+    QVector<AppData> getAppsSinceLastSync(qint64 last_sync);
 
     QVector<Task> taskList; // maybe QSet or QMap later?
 
