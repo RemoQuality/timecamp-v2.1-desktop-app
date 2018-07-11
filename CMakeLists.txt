@@ -105,7 +105,7 @@ if (WIN32)
             "user32.lib"
             "comsuppw.lib"
             )
-    set(Qt5_OS_LIBRARIES Qt5::winextras)
+    set(Qt5_OS_LIBRARIES Qt5::WinExtras)
 endif ()
 
 if (UNIX AND NOT APPLE)
