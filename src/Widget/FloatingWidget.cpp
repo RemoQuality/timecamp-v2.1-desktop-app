@@ -18,6 +18,7 @@ FloatingWidget::FloatingWidget(QWidget *parent)
     this->setMinimumSize(150, 20);
     this->setMaximumSize(600, 64);
     this->setStyleSheet("background-color:green;");
+    this->hide();
 
     FloatingWidgetWasInitialised = true;
 }
