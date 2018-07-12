@@ -103,7 +103,6 @@ private:
 
     bool MainWidgetWasInitialised = false;
     bool loggedIn;
-    QString timerName;
 
     void setApiKey(const QString &apiKey);
     void setTimerName(const QString &timerName);

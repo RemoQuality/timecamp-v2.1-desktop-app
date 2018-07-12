@@ -15,7 +15,8 @@ TrayManager &TrayManager::instance()
     return _instance;
 }
 
-TrayManager::TrayManager(QObject *parent) : QObject(parent)
+TrayManager::TrayManager(QObject *parent)
+    : QObject(parent)
 {
 }
 
@@ -69,7 +70,7 @@ void TrayManager::setupSettings()
     trackerAct->setChecked(settings.value(SETT_TRACK_PC_ACTIVITIES, false).toBool());
 #ifdef _WIDGET_EXISTS_
     widgetAct->setChecked(settings.value(SETT_SHOW_WIDGET, true).toBool());
-    this->widgetToggl(widgetAct->isChecked());
+//    this->widgetToggl(widgetAct->isChecked());
 #endif
     // act on the saved settings
     this->autoStart(autoStartAct->isChecked());
@@ -84,15 +85,20 @@ void TrayManager::updateRecentTasks()
 void TrayManager::updateStopMenu(bool canBeStopped, QString timerName)
 {
     if (!canBeStopped) {
-        timerName = "timer";
+        timerName = "Stop timer";
+    } else {
+        QFont x = QFont();
+        QFontMetrics metrics(x);
+        int width = 100; // pixels
+        timerName = "Stop " + metrics.elidedText(timerName, Qt::ElideRight, width);
     }
-    stopTaskAct->setText("Stop " + timerName);
+    stopTaskAct->setText(timerName);
     stopTaskAct->setEnabled(canBeStopped);
 }
 
 void TrayManager::updateWidgetStatus(bool canBeStopped, QString timerName)
 {
-    if (!canBeStopped) {
+    if (!canBeStopped || timerName.isEmpty()) {
         timerName = "No task";
     }
     widget->setTaskText(timerName);
@@ -205,7 +211,7 @@ void TrayManager::menuActionHandler(QAction *action)
 {
     bool wasOK;
     int taskID = action->data().toInt(&wasOK);
-    if(wasOK){
+    if (wasOK) {
         emit taskSelected(taskID);
     }
 }
