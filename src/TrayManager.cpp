@@ -55,10 +55,9 @@ void TrayManager::setupTray(MainWidget *parent)
     widget = new Widget_M();
     widget->setMenu(trayMenu);
     widget->setIcon(":/Icons/AppIcon_Dark.png");
-    widget->setText(""); // at the start there should be no timer text
+    widget->setTimerText(""); // at the start there should be no timer text
 #endif
     settings.sync();
-    this->setupSettings();
 }
 
 void TrayManager::setupSettings()
@@ -257,12 +256,12 @@ void TrayManager::updateWidget(bool loggedIn, QString tooltipText)
         if (ok) {
             QTime time = QTime::fromString(maybeTime, "hh:mm:ss");
             if (time.hour() > 0) {
-                widget->setText(time.toString("H:mm:ss"));
+                widget->setTimerText(time.toString("H:mm:ss"));
             } else {
-                widget->setText(time.toString("m:ss"));
+                widget->setTimerText(time.toString("m:ss"));
             }
         } else {
-            widget->setText(NO_TIMER_TEXT);
+            widget->setTimerText(NO_TIMER_TEXT);
         }
         this->widgetToggl(widgetAct->isChecked());
     }
@@ -291,4 +290,9 @@ void TrayManager::loginLogout(bool isLoggedIn, QString tooltipText)
     }
     wasLoggedIn = isLoggedIn;
     this->assignActions(trayMenu);
+}
+
+void TrayManager::setWidget(Widget *widget)
+{
+    TrayManager::widget = widget;
 }

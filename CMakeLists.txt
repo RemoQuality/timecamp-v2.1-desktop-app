@@ -85,6 +85,7 @@ list(APPEND SOURCE_FILES
         "third-party/QTLogRotation/logutils.cpp"
         "src/DataCollector/WindowEvents.cpp"
         "src/Widget/Widget.cpp"
+        "src/Widget/FloatingWidget.cpp"
         )
 
 

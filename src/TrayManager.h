@@ -17,6 +17,10 @@
 #define _WIDGET_EXISTS_
 
 #else
+
+#include "Widget/FloatingWidget.h"
+#define _WIDGET_EXISTS_
+
 #endif
 
 class MainWidget;
@@ -80,6 +84,8 @@ private:
 
 #ifdef _WIDGET_EXISTS_
     Widget *widget;
+public:
+    void setWidget(Widget *widget);
 #endif
 };
 

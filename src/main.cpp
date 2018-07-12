@@ -17,6 +17,7 @@
 #include "TrayManager.h"
 #include "DataCollector/WindowEvents.h"
 #include "WindowEventsManager.h"
+#include "Widget/FloatingWidget.h"
 
 #include "third-party/vendor/de/skycoder42/qhotkey/QHotkey/qhotkey.h"
 #include "third-party/QTLogRotation/logutils.h"
@@ -156,12 +157,19 @@ int main(int argc, char *argv[])
 
     // everything connected via QObject, now heavy lifting
     trayManager->setupTray(&mainWidget); // create tray
+    FloatingWidget *theWidget = new FloatingWidget();
+//    theWidget->setWindowFlags(Qt::Tool | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    trayManager->setWidget(theWidget);
+    trayManager->setupSettings();
     mainWidget.init(); // init the WebView
     comms->timedUpdates(); // fetch userInfo, userSettings, send apps since last update
 
     // now timers
     syncDBtimer->start(30 * 1000); // sync DB every 30s
     twoSecondTimer->start(2 * 1000);
+
+//    FloatingWidget theWidget;
+
 
     return QApplication::exec();
 }
