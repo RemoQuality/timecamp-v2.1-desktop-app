@@ -39,6 +39,7 @@ public:
     void setupSettings();
 
     void updateStopMenu(bool, QString);
+    void updateWidgetStatus(bool, QString);
     void updateWidget(bool, QString);
     void loginLogout(bool, QString);
 

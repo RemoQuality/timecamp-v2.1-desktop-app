@@ -100,6 +100,7 @@ int main(int argc, char *argv[])
 //    auto *trayManager = new TrayManager();
     TrayManager *trayManager = &TrayManager::instance();
     QObject::connect(&mainWidget, &MainWidget::pageStatusChanged, trayManager, &TrayManager::loginLogout);
+    QObject::connect(&mainWidget, &MainWidget::timerStatusChanged, trayManager, &TrayManager::updateWidgetStatus);
     QObject::connect(&mainWidget, &MainWidget::timerStatusChanged, trayManager, &TrayManager::updateStopMenu);
     QObject::connect(&mainWidget, &MainWidget::lastTasksChanged, trayManager, &TrayManager::updateRecentTasks);
     QObject::connect(trayManager, &TrayManager::taskSelected, &mainWidget, &MainWidget::startTaskByID);

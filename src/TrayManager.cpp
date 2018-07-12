@@ -83,8 +83,19 @@ void TrayManager::updateRecentTasks()
 
 void TrayManager::updateStopMenu(bool canBeStopped, QString timerName)
 {
+    if (!canBeStopped) {
+        timerName = "timer";
+    }
     stopTaskAct->setText("Stop " + timerName);
     stopTaskAct->setEnabled(canBeStopped);
+}
+
+void TrayManager::updateWidgetStatus(bool canBeStopped, QString timerName)
+{
+    if (!canBeStopped) {
+        timerName = "No task";
+    }
+    widget->setTaskText(timerName);
 }
 
 void TrayManager::autoStart(bool checked)

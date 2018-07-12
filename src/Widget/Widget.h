@@ -8,6 +8,7 @@ class Widget
 {
 public:
     virtual void setTimerText(QString) = 0;
+    virtual void setTaskText(QString) = 0;
     virtual void setMenu(QMenu *) = 0;
     virtual void setIcon(QString iconPath) = 0;
     virtual void showMe() = 0;

@@ -47,6 +47,10 @@ void Widget_M::setTimerText(QString title)
     [macWidget SetText:title];
 }
 
+void Widget_M::setTaskText(QString title)
+{
+}
+
 void Widget_M::showMe()
 {
     [macWidget ShowMe];

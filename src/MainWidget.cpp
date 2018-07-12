@@ -438,6 +438,6 @@ void MainWidget::setIsTimerRunning(bool isTimerRunning)
     if (isTimerRunning) {
         fetchTimerName(); // this will make menu say "Stop XYZ timer"
     } else { // no timer running
-        emit timerStatusChanged(false, "timer"); // disable the option - gray it out;  make the option say "Stop timer"
+        emit timerStatusChanged(false, ""); // disable the option - gray it out;
     }
 }
