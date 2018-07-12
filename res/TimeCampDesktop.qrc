@@ -10,7 +10,4 @@
         <file>AppIcon.icns</file>
         <file>AppIcon_Dark.png</file>
     </qresource>
-    <qresource>
-        <file>widget.png</file>
-    </qresource>
 </RCC>
