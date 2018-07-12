@@ -15,7 +15,7 @@ FloatingWidget::FloatingWidget(QWidget *parent)
     this->background = QPixmap(MAIN_ICON);
     this->radius = 4;
     this->gripSize = QSize(15, 15);
-    this->setMinimumSize(150, 20);
+    this->setMinimumSize(180, 20);
     this->setMaximumSize(600, 64);
     this->setStyleSheet("background-color:green;");
     this->hide();
