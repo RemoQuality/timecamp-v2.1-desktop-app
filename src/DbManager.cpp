@@ -16,7 +16,9 @@ DbManager::DbManager(QObject *parent) : QObject(parent)
 {
     qDebug() << "[DB] Starting DB manager!";
     m_db = QSqlDatabase::addDatabase("QSQLITE");
-    m_db.setDatabaseName(QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first() + "/" + DB_FILENAME);
+    QString dbLocation = QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation).first() + "/" + DB_FILENAME;
+    qDebug() << "[DB] Location: " << dbLocation;
+    m_db.setDatabaseName(dbLocation);
 
     if (!m_db.open()) {
         qWarning() << "[DB] ERROR0: connection with database fail";
