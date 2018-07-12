@@ -42,7 +42,7 @@ private:
     int radius;
     bool resizing;
     QPixmap background;
-    QString timerText = "11:22:33";
+    QString timerText;
     QPoint dragPosition;
     QPoint oldPos;
     QSize gripSize;
