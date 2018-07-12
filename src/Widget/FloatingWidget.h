@@ -23,6 +23,7 @@ public slots:
     void showMe();
     void hideMe();
     void setTimerText(QString text);
+    void setTaskText(QString text);
     void setMenu(QMenu *);
     void setIcon(QString iconPath);
     bool isHidden();
@@ -42,6 +43,7 @@ private:
     int radius;
     bool resizing;
     QPixmap background;
+    QString taskText;
     QString timerText;
     QPoint dragPosition;
     QPoint oldPos;

@@ -129,8 +129,17 @@ void FloatingWidget::paintEvent(QPaintEvent *)
     painter.setPen(usedPen);
 
     QFontMetrics metrics(usedFont);
-    painter.drawText(this->width() - metrics.boundingRect(timerText).width() - 4,
-                     (this->height() + fontSize) / 2 - (fontSize / 12),
+
+    int margin = 4;
+    int textPosH = (this->height() + fontSize) / 2 - (fontSize / 12) - 2;
+    int iconWidth = background.scaledToHeight(scaleToFit(this->height())).width();
+
+    painter.drawText(iconWidth + margin,
+                     textPosH,
+                     taskText);
+
+    painter.drawText(this->width() - metrics.boundingRect(timerText).width() - margin,
+                     textPosH,
                      timerText);
 }
 
@@ -180,6 +189,13 @@ void FloatingWidget::setTimerText(QString text)
     this->timerText = text;
     this->update();
 }
+
+void FloatingWidget::setTaskText(QString text)
+{
+    this->taskText = text;
+    this->update();
+}
+
 void FloatingWidget::setMenu(QMenu *)
 {
 
