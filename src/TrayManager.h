@@ -88,6 +88,8 @@ private:
 public:
     void setWidget(Widget *widget);
 #endif
+
+    bool areMenusEqual(QMenu *menu1, QMenu *menu2);
 };
 
 
