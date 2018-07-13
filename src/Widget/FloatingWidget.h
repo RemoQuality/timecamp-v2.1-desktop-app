@@ -27,6 +27,7 @@ public slots:
     void setMenu(QMenu *);
     void setIcon(QString iconPath);
     bool isHidden();
+    void showContextMenu(const QPoint &);
 
 signals:
     void taskNameClicked();
@@ -55,6 +56,7 @@ private:
 
     ClickableLabel *taskTextLabel;
     ClickableLabel *timerTextLabel;
+    QMenu *contextMenu;
 };
 
 #endif //TIMECAMPDESKTOP_FLOATINGWIDGET_H

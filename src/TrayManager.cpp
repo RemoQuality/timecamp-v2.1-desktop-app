@@ -323,4 +323,5 @@ void TrayManager::loginLogout(bool isLoggedIn, QString tooltipText) {
 
 void TrayManager::setWidget(Widget *widget) {
     TrayManager::widget = widget;
+    widget->setMenu(trayMenu);
 }

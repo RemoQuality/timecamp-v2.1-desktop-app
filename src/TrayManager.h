@@ -44,6 +44,7 @@ public:
     void loginLogout(bool, QString);
 
     bool wasLoggedIn = false;
+    QMenu *getTrayMenu() const;
 
 signals:
     void pcActivitiesValueChanged(bool);

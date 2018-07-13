@@ -30,6 +30,15 @@ FloatingWidget::FloatingWidget(QWidget *parent)
     {
         emit taskNameClicked();
     });
+    this->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    QMetaObject::Connection conn2 = QObject::connect(this, &FloatingWidget::customContextMenuRequested,
+                                                     this, &FloatingWidget::showContextMenu);
+}
+
+void FloatingWidget::showContextMenu(const QPoint &pos)
+{
+    contextMenu->exec(mapToGlobal(pos));
 }
 
 void FloatingWidget::handleSpacingEvents()
@@ -185,9 +194,8 @@ void FloatingWidget::setTaskText(QString text)
     this->update();
 }
 
-void FloatingWidget::setMenu(QMenu *)
-{
-
+void FloatingWidget::setMenu(QMenu *contextMenu) {
+    FloatingWidget::contextMenu = contextMenu;
 }
 void FloatingWidget::setIcon(QString iconPath)
 {
