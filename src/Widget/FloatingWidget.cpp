@@ -144,7 +144,7 @@ void FloatingWidget::open()
 {
     qDebug(__FUNCTION__);
     settings.sync();
-//    restoreGeometry(settings.value("floatingWidgetGeometry").toByteArray());
+    restoreGeometry(settings.value("floatingWidgetGeometry").toByteArray());
     show();
     raise();
     setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
