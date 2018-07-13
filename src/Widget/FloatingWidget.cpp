@@ -21,6 +21,15 @@ FloatingWidget::FloatingWidget(QWidget *parent)
     this->hide();
 
     FloatingWidgetWasInitialised = true;
+
+    taskTextLabel = new ClickableLabel(this);
+    timerTextLabel = new ClickableLabel(this);
+
+    QMetaObject::Connection conn1 = QObject::connect(taskTextLabel, &ClickableLabel::clicked,
+        [&]()
+    {
+        emit taskNameClicked();
+    });
 }
 
 void FloatingWidget::handleSpacingEvents()
@@ -98,30 +107,32 @@ void FloatingWidget::paintEvent(QPaintEvent *)
     painter.drawPixmap(1, this->height() - scaleToFit(this->height()),
                        background.scaledToHeight(scaleToFit(this->height()) - 2,
                        Qt::SmoothTransformation));
-    painter.setRenderHint(QPainter::Antialiasing);
+//    painter.setRenderHint(QPainter::Antialiasing);
 
     QFont usedFont = painter.font();
     int fontSize = scaleToFit((pow(this->height(), 1.0/3.0) * 12) - 20);
     usedFont.setPixelSize(fontSize);
-    painter.setFont(usedFont);
-
-    QPen usedPen = painter.pen();
-    usedPen.setColor(QColor(255, 255, 255)); // white font color
-    painter.setPen(usedPen);
 
     QFontMetrics metrics(usedFont);
 
     int margin = 4;
-    int textPosH = (this->height() + fontSize) / 2 - (fontSize / 12) - 2;
     int iconWidth = background.scaledToHeight(scaleToFit(this->height())).width();
 
-    painter.drawText(iconWidth + margin,
-                     textPosH,
-                     taskText);
+    taskTextLabel->setFont(usedFont);
+    taskTextLabel->setText(taskText);
+    taskTextLabel->setGeometry(iconWidth + margin,
+                               (this->height() - metrics.boundingRect(taskText).height())/2,
+                               metrics.boundingRect(taskText).width(),
+                               metrics.boundingRect(taskText).height()
+    );
 
-    painter.drawText(this->width() - metrics.boundingRect(timerText).width() - margin,
-                     textPosH,
-                     timerText);
+    timerTextLabel->setFont(usedFont);
+    timerTextLabel->setText(timerText);
+    timerTextLabel->setGeometry(this->width() - metrics.boundingRect(timerText).width() - margin,
+                               (this->height() - metrics.boundingRect(timerText).height())/2,
+                               metrics.boundingRect(timerText).width(),
+                               metrics.boundingRect(timerText).height()
+    );
 }
 
 bool FloatingWidget::mouseInGrip(QPoint mousePos)

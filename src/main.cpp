@@ -158,6 +158,7 @@ int main(int argc, char *argv[])
     // everything connected via QObject, now heavy lifting
     trayManager->setupTray(&mainWidget); // create tray
     auto *theWidget = new FloatingWidget(&mainWidget);
+    QObject::connect(theWidget, &FloatingWidget::taskNameClicked, &mainWidget, &MainWidget::startTask);
     trayManager->setWidget(theWidget);
     trayManager->setupSettings();
     mainWidget.init(); // init the WebView

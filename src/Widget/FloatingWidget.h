@@ -5,8 +5,8 @@
 #include <QCloseEvent>
 #include <QResizeEvent>
 #include <QSettings>
-#include <QLabel>
 #include <QPainter>
+#include "src/Overrides/ClickableLabel.h"
 
 #include "Widget.h"
 class FloatingWidget: public QWidget, public Widget
@@ -27,6 +27,9 @@ public slots:
     void setMenu(QMenu *);
     void setIcon(QString iconPath);
     bool isHidden();
+
+signals:
+    void taskNameClicked();
 
 protected:
     void handleSpacingEvents();
@@ -49,6 +52,9 @@ private:
     bool FloatingWidgetWasInitialised = false;
     QSettings settings;
     int scaleToFit(double height);
+
+    ClickableLabel *taskTextLabel;
+    ClickableLabel *timerTextLabel;
 };
 
 #endif //TIMECAMPDESKTOP_FLOATINGWIDGET_H
