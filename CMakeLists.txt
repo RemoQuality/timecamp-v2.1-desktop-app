@@ -75,6 +75,7 @@ list(APPEND SOURCE_FILES
         "src/Overrides/TCRequestInterceptor.cpp"
         "src/Overrides/TCNavigationInterceptor.cpp"
         "src/Overrides/TCWebEngineView.cpp"
+        "src/Overrides/ClickableLabel.cpp"
         "src/Comms.cpp"
         "src/AppData.cpp"
         "src/Task.cpp"
