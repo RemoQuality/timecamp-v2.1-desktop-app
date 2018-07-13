@@ -168,8 +168,5 @@ int main(int argc, char *argv[])
     syncDBtimer->start(30 * 1000); // sync DB every 30s
     twoSecondTimer->start(2 * 1000);
 
-//    FloatingWidget theWidget;
-
-
     return QApplication::exec();
 }
