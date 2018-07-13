@@ -8,7 +8,7 @@
 #include "src/Settings.h"
 
 FloatingWidget::FloatingWidget(QWidget *parent)
-    : QWidget(parent, Qt::Tool | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint)
+    : QWidget(parent, Qt::Tool | Qt::X11BypassWindowManagerHint | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint)
 {
     this->setAcceptDrops(false);
 //    this->setAttribute(Qt::WA_TranslucentBackground, true);
