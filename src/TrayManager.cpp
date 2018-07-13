@@ -216,7 +216,7 @@ void TrayManager::assignActions(QMenu *menu) {
     QFontMetrics metrix(x);
     int width = 150; // pixels
 
-    if (mainWidget->LastTasks.size() > 0) {
+    if (!mainWidget->LastTasks.empty()) {
         tempMenu->addAction(recentTasksTitleAct);
     }
 
@@ -230,7 +230,7 @@ void TrayManager::assignActions(QMenu *menu) {
 //        qDebug() << "ADDED key: " << i.key() << ", value: " << i.value();
     }
 
-    if (mainWidget->LastTasks.size() > 0) {
+    if (!mainWidget->LastTasks.empty()) {
         tempMenu->addSeparator();
     }
 
@@ -248,9 +248,8 @@ void TrayManager::assignActions(QMenu *menu) {
     tempMenu->addAction(quitAct);
 
     // replace only if menu should change
-    if (!areMenusEqual(tempMenu, trayMenu)) {
+    if (!areMenusEqual(tempMenu, menu)) {
         qDebug() << "Menus are not equal! REPLACE!";
-        delete trayMenu; // stop memory leaks!
         trayMenu = tempMenu;
     }
 }
@@ -261,7 +260,7 @@ bool TrayManager::areMenusEqual(QMenu *menu1, QMenu *menu2) {
         return false;
     }
     for (int i = 0; i < menu1->actions().length(); i++) {
-        if (menu1->actions()[i]->text() == menu2->actions()[i]->text()) {
+        if (QString::compare(menu1->actions()[i]->text(), menu2->actions()[i]->text()) == 0) {
             if (menu1->actions()[i]->isCheckable() == menu2->actions()[i]->isCheckable()) {
                 if (menu1->actions()[i]->isChecked() != menu2->actions()[i]->isChecked()) {
                     return false;
