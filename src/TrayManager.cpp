@@ -66,7 +66,6 @@ void TrayManager::setupSettings() {
     trackerAct->setChecked(settings.value(SETT_TRACK_PC_ACTIVITIES, false).toBool());
 #ifdef _WIDGET_EXISTS_
     widgetAct->setChecked(settings.value(SETT_SHOW_WIDGET, true).toBool());
-//    this->widgetToggl(widgetAct->isChecked());
 #endif
     // act on the saved settings
     this->autoStart(autoStartAct->isChecked());
