@@ -250,7 +250,7 @@ void TrayManager::assignActions(QMenu *menu) {
     // replace only if menu should change
     if (!areMenusEqual(tempMenu, trayMenu)) {
         qDebug() << "Menus are not equal! REPLACE!";
-        delete trayMenu; // memory leaks!
+        delete trayMenu; // stop memory leaks!
         trayMenu = tempMenu;
     }
 }
