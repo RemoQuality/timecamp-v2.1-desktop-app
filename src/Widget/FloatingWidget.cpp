@@ -103,9 +103,10 @@ int FloatingWidget::scaleToFit(double height)
 
 void FloatingWidget::paintEvent(QPaintEvent *)
 {
+    int margin = 4;
     QPainter painter(this);
-    painter.drawPixmap(1, this->height() - scaleToFit(this->height()),
-                       background.scaledToHeight(scaleToFit(this->height()) - 2,
+    painter.drawPixmap(margin/2, this->height() - scaleToFit(this->height()),
+                       background.scaledToHeight(scaleToFit(this->height()) - margin/2,
                        Qt::SmoothTransformation));
 //    painter.setRenderHint(QPainter::Antialiasing);
 
@@ -115,7 +116,6 @@ void FloatingWidget::paintEvent(QPaintEvent *)
 
     QFontMetrics metrics(usedFont);
 
-    int margin = 4;
     int iconWidth = background.scaledToHeight(scaleToFit(this->height())).width();
 
     taskTextLabel->setFont(usedFont);
@@ -130,7 +130,7 @@ void FloatingWidget::paintEvent(QPaintEvent *)
     timerTextLabel->setText(timerText);
     timerTextLabel->setGeometry(this->width() - metrics.boundingRect(timerText).width() - margin,
                                (this->height() - metrics.boundingRect(timerText).height())/2,
-                               metrics.boundingRect(timerText).width(),
+                               metrics.boundingRect(timerText).width() + margin,
                                metrics.boundingRect(timerText).height()
     );
 }
