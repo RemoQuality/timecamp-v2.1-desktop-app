@@ -59,6 +59,7 @@ void FloatingWidget::startStopClicked() {
     if (current == PAUSE_BUTTON) {
         emit pauseButtonClicked();
         startStopLabel->setText(PLAY_BUTTON);
+        timerTextLabel->setText(""); // set empty text (no 0:00 for timer when no task is running)
         return;
     }
 }
@@ -155,6 +156,7 @@ void FloatingWidget::paintEvent(QPaintEvent *) {
     if (startStopLabel->text() == PAUSE_BUTTON) {
         special_offset = 2;
     }
+    special_offset *= fontSize/12;
 
     taskTextLabel->setFont(usedFont);
     taskTextLabel->setText(taskText);
