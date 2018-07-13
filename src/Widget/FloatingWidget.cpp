@@ -154,7 +154,7 @@ void FloatingWidget::paintEvent(QPaintEvent *) {
         special_offset = -2;
     }
     if (startStopLabel->text() == PAUSE_BUTTON) {
-        special_offset = 1;
+        special_offset = 2;
     }
 
     taskTextLabel->setFont(usedFont);
@@ -167,7 +167,7 @@ void FloatingWidget::paintEvent(QPaintEvent *) {
 
     int startStopWidth = fontSize + margin;
     startStopLabel->setFont(usedFont);
-    startStopLabel->setGeometry(this->width() - startStopWidth - margin / 2,
+    startStopLabel->setGeometry(this->width() - startStopWidth - margin,
                                 textStartingPoint + special_offset,
                                 startStopWidth,
                                 startStopWidth
