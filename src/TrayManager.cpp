@@ -89,13 +89,6 @@ void TrayManager::updateStopMenu(bool canBeStopped, QString timerName) {
     stopTaskAct->setEnabled(canBeStopped);
 }
 
-void TrayManager::updateWidgetStatus(bool canBeStopped, QString timerName) {
-    if (!canBeStopped || timerName.isEmpty()) {
-        timerName = "No task";
-    }
-    widget->setTaskText(timerName);
-}
-
 void TrayManager::autoStart(bool checked) {
     if (checked) {
         Autorun::enableAutorun();

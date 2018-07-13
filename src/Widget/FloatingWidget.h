@@ -28,9 +28,13 @@ public slots:
     void setIcon(QString iconPath);
     bool isHidden();
     void showContextMenu(const QPoint &);
+    void startStopClicked();
+    void updateWidgetStatus(bool, QString);
 
 signals:
     void taskNameClicked();
+    void pauseButtonClicked();
+    void playButtonClicked();
 
 protected:
     void handleSpacingEvents();
@@ -56,6 +60,7 @@ private:
 
     ClickableLabel *taskTextLabel;
     ClickableLabel *timerTextLabel;
+    ClickableLabel *startStopLabel;
     QMenu *contextMenu;
 };
 

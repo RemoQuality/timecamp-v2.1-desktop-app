@@ -99,7 +99,6 @@ int main(int argc, char *argv[])
     // create tray manager
     TrayManager *trayManager = &TrayManager::instance();
     QObject::connect(&mainWidget, &MainWidget::pageStatusChanged, trayManager, &TrayManager::loginLogout);
-    QObject::connect(&mainWidget, &MainWidget::timerStatusChanged, trayManager, &TrayManager::updateWidgetStatus);
     QObject::connect(&mainWidget, &MainWidget::timerStatusChanged, trayManager, &TrayManager::updateStopMenu);
     QObject::connect(&mainWidget, &MainWidget::lastTasksChanged, trayManager, &TrayManager::updateRecentTasks);
     QObject::connect(trayManager, &TrayManager::taskSelected, &mainWidget, &MainWidget::startTaskByID);
@@ -158,7 +157,10 @@ int main(int argc, char *argv[])
     // everything connected via QObject, now heavy lifting
     trayManager->setupTray(&mainWidget); // create tray
     auto *theWidget = new FloatingWidget(&mainWidget);
+    QObject::connect(&mainWidget, &MainWidget::timerStatusChanged, theWidget, &FloatingWidget::updateWidgetStatus);
     QObject::connect(theWidget, &FloatingWidget::taskNameClicked, &mainWidget, &MainWidget::startTask);
+    QObject::connect(theWidget, &FloatingWidget::playButtonClicked, &mainWidget, &MainWidget::startTask);
+    QObject::connect(theWidget, &FloatingWidget::pauseButtonClicked, &mainWidget, &MainWidget::stopTask);
     trayManager->setWidget(theWidget);
     trayManager->setupSettings();
     mainWidget.init(); // init the WebView
