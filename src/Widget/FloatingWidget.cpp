@@ -171,17 +171,14 @@ void FloatingWidget::open()
 
 void FloatingWidget::showMe()
 {
-    qDebug(__FUNCTION__);
     this->open();
 }
 void FloatingWidget::hideMe()
 {
-    qDebug(__FUNCTION__);
     this->hide();
 }
 bool FloatingWidget::isHidden()
 {
-    qDebug(__FUNCTION__);
     return !this->isVisible();
 }
 void FloatingWidget::setTimerText(QString text)

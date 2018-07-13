@@ -123,9 +123,11 @@ void TrayManager::tracker(bool checked)
 void TrayManager::widgetToggl(bool checked)
 {
     settings.setValue(SETT_SHOW_WIDGET, checked);
-    if (checked) {
+    bool widgetIsHidden = widget->isHidden();
+    if (checked && widgetIsHidden) {
         widget->showMe();
-    } else {
+    }
+    if (!checked && !widgetIsHidden) {
         widget->hideMe();
     }
 }
