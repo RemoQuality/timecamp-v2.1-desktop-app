@@ -31,9 +31,7 @@ public slots:
 protected:
     void handleSpacingEvents();
     void resizeEvent(QResizeEvent *event) override;
-//    void moveEvent(QMoveEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
-//    void changeEvent(QEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void paintEvent(QPaintEvent *) override;

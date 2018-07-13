@@ -97,7 +97,6 @@ int main(int argc, char *argv[])
     mainWidget.setWindowIcon(appIcon);
 
     // create tray manager
-//    auto *trayManager = new TrayManager();
     TrayManager *trayManager = &TrayManager::instance();
     QObject::connect(&mainWidget, &MainWidget::pageStatusChanged, trayManager, &TrayManager::loginLogout);
     QObject::connect(&mainWidget, &MainWidget::timerStatusChanged, trayManager, &TrayManager::updateWidgetStatus);
