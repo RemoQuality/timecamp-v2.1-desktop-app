@@ -13,7 +13,7 @@ FloatingWidget::FloatingWidget(QWidget *parent)
 //    this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->background = QPixmap(MAIN_ICON);
     this->radius = 4;
-    this->gripSize = QSize(15, 10);
+    this->gripSize = QSize(16, 8);
     this->setMinimumSize(180, 20);
     this->setMaximumSize(600, 64);
     this->setStyleSheet("background-color:green;");
@@ -24,7 +24,6 @@ FloatingWidget::FloatingWidget(QWidget *parent)
     taskTextLabel = new ClickableLabel(this);
     timerTextLabel = new ClickableLabel(this);
     startStopLabel = new ClickableLabel(this);
-    startStopLabel->setText(PLAY_BUTTON);
 
     QMetaObject::Connection conn1 = QObject::connect(taskTextLabel, &ClickableLabel::clicked,
                                                      [&]() {
