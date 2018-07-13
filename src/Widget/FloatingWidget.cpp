@@ -25,7 +25,7 @@ FloatingWidget::FloatingWidget(QWidget *parent)
 
 void FloatingWidget::handleSpacingEvents()
 {
-    qInfo("Size: %d x %d", size().width(), size().height());
+//    qInfo("Size: %d x %d", size().width(), size().height());
     if (FloatingWidgetWasInitialised) {
         this->setUpdatesEnabled(false);
         settings.setValue("floatingWidgetGeometry", saveGeometry()); // save window position
@@ -40,25 +40,6 @@ void FloatingWidget::closeEvent(QCloseEvent *event)
     event->ignore(); // don't do the default action (which usually is app exit)
 }
 
-//void FloatingWidget::moveEvent(QMoveEvent *event)
-//{
-//    this->handleSpacingEvents();
-//    QWidget::moveEvent(event); // do the default "whatever happens on move"
-//}
-//
-//void FloatingWidget::changeEvent(QEvent *event)
-//{
-//    if (event->type() == QEvent::WindowStateChange) {
-//        this->handleSpacingEvents();
-//    }
-//    QWidget::changeEvent(event);
-//}
-//
-//void FloatingWidget::resizeEvent(QResizeEvent *event)
-//{
-//    this->handleSpacingEvents();
-//    QWidget::resizeEvent(event); // do the default "whatever happens on resize"
-//}
 void FloatingWidget::resizeEvent(QResizeEvent *event)
 {
     QPainterPath path;
@@ -82,7 +63,7 @@ void FloatingWidget::mousePressEvent(QMouseEvent *event)
             event->accept();
         }
     }
-    qDebug() << "IsResizing: " << resizing;
+//    qDebug() << "IsResizing: " << resizing;
 }
 
 void FloatingWidget::mouseMoveEvent(QMouseEvent *event)
@@ -145,9 +126,9 @@ void FloatingWidget::paintEvent(QPaintEvent *)
 
 bool FloatingWidget::mouseInGrip(QPoint mousePos)
 {
-    qDebug() << "Mouse: (" << mousePos.x() << ", " << mousePos.y() << ")";
-    qDebug() << "Widget: (" << width() << ", " << height() << ")";
-    qDebug() << "Activation point: (" << width() - gripSize.width() << ", " << height() - gripSize.height() << ")";
+//    qDebug() << "Mouse: (" << mousePos.x() << ", " << mousePos.y() << ")";
+//    qDebug() << "Widget: (" << width() << ", " << height() << ")";
+//    qDebug() << "Activation point: (" << width() - gripSize.width() << ", " << height() - gripSize.height() << ")";
 
     // "handle" is in the lower right hand corner
     return ((mousePos.x() > (width() - gripSize.width()))
