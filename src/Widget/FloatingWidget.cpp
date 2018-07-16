@@ -228,13 +228,17 @@ bool FloatingWidget::isHidden() {
 }
 
 void FloatingWidget::setTimerText(QString text) {
-    this->timerText = text;
-    this->update();
+    if(text != this->timerText) {
+        this->timerText = text;
+        this->update();
+    }
 }
 
 void FloatingWidget::setTaskText(QString text) {
-    this->taskText = text;
-    this->update();
+    if(text != this->taskText) {
+        this->taskText = text;
+        this->update();
+    }
 }
 
 void FloatingWidget::setMenu(QMenu *contextMenu) {
