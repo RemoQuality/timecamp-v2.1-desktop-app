@@ -42,6 +42,7 @@ void FloatingWidget::updateWidgetStatus(bool canBeStopped, QString timerName) {
     if (!canBeStopped || timerName.isEmpty()) {
         timerName = "No task";
         startStopLabel->setText(PLAY_BUTTON);
+        this->setTimerText(""); // set empty text (no 0:00 for timer when no task is running)
     }
     if (canBeStopped) {
         startStopLabel->setText(PAUSE_BUTTON);
@@ -59,7 +60,6 @@ void FloatingWidget::startStopClicked() {
     if (current == PAUSE_BUTTON) {
         emit pauseButtonClicked();
         startStopLabel->setText(PLAY_BUTTON);
-        timerTextLabel->setText(""); // set empty text (no 0:00 for timer when no task is running)
         return;
     }
 }
