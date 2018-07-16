@@ -114,11 +114,11 @@ void FloatingWidget::mousePressEvent(QMouseEvent *event) {
 void FloatingWidget::mouseMoveEvent(QMouseEvent *event) {
     // this bit is for setting a resize cursor
     if (mouseInGrip(event->pos())) {
-        if(this->cursor() != Qt::SizeFDiagCursor) {
+        if(this->cursor().shape() != Qt::SizeFDiagCursor) {
             this->setCursor(Qt::SizeFDiagCursor);
         }
     } else {
-        if(this->cursor() == Qt::SizeFDiagCursor) {
+        if(this->cursor().shape() == Qt::SizeFDiagCursor) {
             this->unsetCursor();
         }
     }
