@@ -12,7 +12,6 @@ FloatingWidget::FloatingWidget(QWidget *parent)
     this->setAcceptDrops(false);
 //    this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->background = QPixmap(MAIN_ICON);
-    this->radius = 4;
     this->gripSize = QSize(16, 8);
     this->setMinimumSize(180, 20);
     this->setMaximumSize(600, 64);

@@ -46,7 +46,8 @@ protected:
     bool mouseInGrip(QPoint mousePos);
 
 private:
-    int radius;
+    int radius = 4;
+    int margin = 4;
     bool resizing;
     QPixmap background;
     QString taskText;
@@ -63,7 +64,6 @@ private:
     ClickableLabel *startStopLabel;
     QMenu *contextMenu;
 
-    int margin = 4;
     QFont usedFont;
     int fontSize;
     int iconWidth;
