@@ -9,7 +9,7 @@
 
 FloatingWidget::FloatingWidget(QWidget *parent)
     : QWidget(parent, Qt::Tool | Qt::X11BypassWindowManagerHint | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint) {
-    this->setAcceptDrops(false);
+    this->setAcceptDrops(false); // don't let users drop stuff on our widget
 //    this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->background = QPixmap(MAIN_ICON);
     this->gripSize = QSize(16, 8);
@@ -17,7 +17,7 @@ FloatingWidget::FloatingWidget(QWidget *parent)
     this->setMaximumSize(600, 64);
     this->setStyleSheet("background-color:green;");
     this->hide();
-    this->setMouseTracking(true);
+    this->setMouseTracking(true); // we need this to show resize arrows
 
     FloatingWidgetWasInitialised = true;
 
@@ -81,6 +81,7 @@ void FloatingWidget::handleSpacingEvents() {
 }
 
 void FloatingWidget::closeEvent(QCloseEvent *event) {
+    // TODO: this is copied from the MainWidget, not 100% sure we need it
     hide(); // hide our window when X was pressed
     event->ignore(); // don't do the default action (which usually is app exit)
 }
@@ -111,6 +112,7 @@ void FloatingWidget::mousePressEvent(QMouseEvent *event) {
 }
 
 void FloatingWidget::mouseMoveEvent(QMouseEvent *event) {
+    // this bit is for setting a resize cursor
     if (mouseInGrip(event->pos())) {
         if(this->cursor() != Qt::SizeFDiagCursor) {
             this->setCursor(Qt::SizeFDiagCursor);
@@ -120,6 +122,7 @@ void FloatingWidget::mouseMoveEvent(QMouseEvent *event) {
             this->unsetCursor();
         }
     }
+    // this is for actual js-like-dragStart
     if (event->buttons() & Qt::LeftButton) {
         if (resizing) {
             // adapt the widget size based on mouse movement
@@ -136,6 +139,7 @@ void FloatingWidget::mouseMoveEvent(QMouseEvent *event) {
 }
 
 int FloatingWidget::scaleToFit(double height) {
+    // magical arbitrary value, to keep widget in sane dimentions
     double newHeight = height - 2;
     if (newHeight > 62) {
         return 62;
@@ -153,7 +157,7 @@ void FloatingWidget::paintEvent(QPaintEvent *) {
 //    painter.setRenderHint(QPainter::Antialiasing);
 
     usedFont = painter.font();
-    fontSize = scaleToFit((pow(this->height(), 1.0 / 3.0) * 12) - 20);
+    fontSize = scaleToFit((pow(this->height(), 1.0 / 3.0) * 12) - 20); // magic, should keep the values scaling nicely in a f=x^(1/3) shape, scaled
     usedFont.setPixelSize(fontSize);
 
     QFontMetrics metrics(usedFont);
@@ -162,6 +166,7 @@ void FloatingWidget::paintEvent(QPaintEvent *) {
     textStartingPoint = (this->height() - metrics.boundingRect(taskText).height()) / 2;
     textHeight = metrics.boundingRect(taskText).height();
 
+    // special_offset is used, because PLAY and PAUSE buttons in default font are weirdly spaced
     int special_offset = 0;
     if (startStopLabel->text() == PLAY_BUTTON) {
         special_offset = -2;
@@ -208,11 +213,10 @@ bool FloatingWidget::mouseInGrip(QPoint mousePos) {
 }
 
 QSize FloatingWidget::sizeHint() const {
-    return {245, 21};
+    return {245, 21}; // default size; same dimentions as in the old app
 }
 
 void FloatingWidget::open() {
-    qDebug(__FUNCTION__);
     settings.sync();
     restoreGeometry(settings.value("floatingWidgetGeometry").toByteArray());
     show();
@@ -233,14 +237,14 @@ bool FloatingWidget::isHidden() {
 }
 
 void FloatingWidget::setTimerText(QString text) {
-    if(text != this->timerText) {
+    if(text != this->timerText) { // call update only when text actually changed
         this->timerText = text;
         this->update();
     }
 }
 
 void FloatingWidget::setTaskText(QString text) {
-    if(text != this->taskText) {
+    if(text != this->taskText) { // call update only when text actually changed
         this->taskText = text;
         this->update();
     }
