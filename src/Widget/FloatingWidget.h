@@ -48,6 +48,8 @@ protected:
 private:
     int radius = 4;
     int margin = 4;
+    bool FloatingWidgetWasInitialised = false;
+
     bool resizing;
     QPixmap background;
     QString taskText;
@@ -55,7 +57,6 @@ private:
     QPoint dragPosition;
     QPoint oldPos;
     QSize gripSize;
-    bool FloatingWidgetWasInitialised = false;
     QSettings settings;
     int scaleToFit(double height);
 
