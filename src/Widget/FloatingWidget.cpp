@@ -18,6 +18,7 @@ FloatingWidget::FloatingWidget(QWidget *parent)
     this->setMaximumSize(600, 64);
     this->setStyleSheet("background-color:green;");
     this->hide();
+    this->setMouseTracking(true);
 
     FloatingWidgetWasInitialised = true;
 
@@ -108,6 +109,11 @@ void FloatingWidget::mousePressEvent(QMouseEvent *event) {
 }
 
 void FloatingWidget::mouseMoveEvent(QMouseEvent *event) {
+    if (mouseInGrip(event->pos())) {
+        this->setCursor(Qt::SizeFDiagCursor);
+    } else {
+        this->unsetCursor();
+    }
     if (event->buttons() & Qt::LeftButton) {
         if (resizing) {
             // adapt the widget size based on mouse movement
