@@ -22,8 +22,8 @@ FloatingWidget::FloatingWidget(QWidget *parent)
 
     FloatingWidgetWasInitialised = true;
 
+    timerTextLabel = new QLabel(this);
     taskTextLabel = new ClickableLabel(this);
-    timerTextLabel = new ClickableLabel(this);
     startStopLabel = new ClickableLabel(this);
 
     QMetaObject::Connection conn1 = QObject::connect(taskTextLabel, &ClickableLabel::clicked,

@@ -58,8 +58,8 @@ private:
     QSettings settings;
     int scaleToFit(double height);
 
+    QLabel *timerTextLabel;
     ClickableLabel *taskTextLabel;
-    ClickableLabel *timerTextLabel;
     ClickableLabel *startStopLabel;
     QMenu *contextMenu;
 };
