@@ -144,7 +144,7 @@ int FloatingWidget::scaleToFit(double height) {
 }
 
 void FloatingWidget::paintEvent(QPaintEvent *) {
-    qInfo() << QObject::sender() << __FUNCTION__ << "\t PAINT";
+//     qDebug() << __FUNCTION__;
 
     QPainter painter(this);
     painter.drawPixmap(margin / 2, this->height() - scaleToFit(this->height()),
