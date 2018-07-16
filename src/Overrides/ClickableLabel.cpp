@@ -2,7 +2,7 @@
 
 ClickableLabel::ClickableLabel(QWidget *parent, Qt::WindowFlags f)
     : QLabel(parent) {
-
+    this->setCursor(Qt::PointingHandCursor);
 }
 
 ClickableLabel::~ClickableLabel() {}
