@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
 
     // everything connected via QObject, now heavy lifting
     trayManager->setupTray(&mainWidget); // create tray
-    auto *theWidget = new FloatingWidget(&mainWidget);
+    auto *theWidget = new FloatingWidget(); // FloatingWidget can't be bound to mainwidget (it won't set state=visible when main is hidden)
     QObject::connect(&mainWidget, &MainWidget::timerStatusChanged, theWidget, &FloatingWidget::updateWidgetStatus);
     QObject::connect(theWidget, &FloatingWidget::taskNameClicked, &mainWidget, &MainWidget::startTask);
     QObject::connect(theWidget, &FloatingWidget::playButtonClicked, &mainWidget, &MainWidget::startTask);
