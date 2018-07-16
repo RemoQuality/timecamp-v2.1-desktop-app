@@ -112,9 +112,13 @@ void FloatingWidget::mousePressEvent(QMouseEvent *event) {
 
 void FloatingWidget::mouseMoveEvent(QMouseEvent *event) {
     if (mouseInGrip(event->pos())) {
-        this->setCursor(Qt::SizeFDiagCursor);
+        if(this->cursor() != Qt::SizeFDiagCursor) {
+            this->setCursor(Qt::SizeFDiagCursor);
+        }
     } else {
-        this->unsetCursor();
+        if(this->cursor() == Qt::SizeFDiagCursor) {
+            this->unsetCursor();
+        }
     }
     if (event->buttons() & Qt::LeftButton) {
         if (resizing) {
@@ -140,6 +144,7 @@ int FloatingWidget::scaleToFit(double height) {
 }
 
 void FloatingWidget::paintEvent(QPaintEvent *) {
+    qInfo() << QObject::sender() << __FUNCTION__ << "\t PAINT";
     int margin = 4;
     QPainter painter(this);
     painter.drawPixmap(margin / 2, this->height() - scaleToFit(this->height()),
