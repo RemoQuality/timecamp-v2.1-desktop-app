@@ -106,6 +106,7 @@ void FloatingWidget::mousePressEvent(QMouseEvent *event) {
             dragPosition = event->globalPos() - frameGeometry().topLeft();
             event->accept();
         }
+        this->handleSpacingEvents();
     }
 //    qDebug() << "IsResizing: " << resizing;
 }
@@ -131,8 +132,8 @@ void FloatingWidget::mouseMoveEvent(QMouseEvent *event) {
             move(event->globalPos() - dragPosition);
             event->accept();
         }
+        this->handleSpacingEvents();
     }
-    this->handleSpacingEvents();
 }
 
 int FloatingWidget::scaleToFit(double height) {
