@@ -209,7 +209,7 @@ bool FloatingWidget::mouseInGrip(QPoint mousePos) {
 }
 
 QSize FloatingWidget::sizeHint() const {
-    return QSize(245, 21);
+    return {245, 21};
 }
 
 void FloatingWidget::open() {
