@@ -62,6 +62,15 @@ private:
     ClickableLabel *taskTextLabel;
     ClickableLabel *startStopLabel;
     QMenu *contextMenu;
+
+    int margin = 4;
+    QFont usedFont;
+    int fontSize;
+    int iconWidth;
+    int textStartingPoint;
+    int textHeight;
+    int startStopWidth;
+    int timerTextWidth;
 };
 
 #endif //TIMECAMPDESKTOP_FLOATINGWIDGET_H

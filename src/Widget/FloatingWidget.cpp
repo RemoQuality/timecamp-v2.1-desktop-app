@@ -146,22 +146,22 @@ int FloatingWidget::scaleToFit(double height) {
 
 void FloatingWidget::paintEvent(QPaintEvent *) {
     qInfo() << QObject::sender() << __FUNCTION__ << "\t PAINT";
-    int margin = 4;
+
     QPainter painter(this);
     painter.drawPixmap(margin / 2, this->height() - scaleToFit(this->height()),
                        background.scaledToHeight(scaleToFit(this->height()) - margin / 2,
                                                  Qt::SmoothTransformation));
 //    painter.setRenderHint(QPainter::Antialiasing);
 
-    QFont usedFont = painter.font();
-    int fontSize = scaleToFit((pow(this->height(), 1.0 / 3.0) * 12) - 20);
+    usedFont = painter.font();
+    fontSize = scaleToFit((pow(this->height(), 1.0 / 3.0) * 12) - 20);
     usedFont.setPixelSize(fontSize);
 
     QFontMetrics metrics(usedFont);
 
-    int iconWidth = background.scaledToHeight(scaleToFit(this->height())).width();
-    int textStartingPoint = (this->height() - metrics.boundingRect(taskText).height()) / 2;
-    int textHeight = metrics.boundingRect(taskText).height();
+    iconWidth = background.scaledToHeight(scaleToFit(this->height())).width();
+    textStartingPoint = (this->height() - metrics.boundingRect(taskText).height()) / 2;
+    textHeight = metrics.boundingRect(taskText).height();
 
     int special_offset = 0;
     if (startStopLabel->text() == PLAY_BUTTON) {
@@ -180,7 +180,7 @@ void FloatingWidget::paintEvent(QPaintEvent *) {
                                textHeight
     );
 
-    int startStopWidth = fontSize + margin;
+    startStopWidth = fontSize + margin;
     startStopLabel->setFont(usedFont);
     startStopLabel->setGeometry(this->width() - startStopWidth - margin,
                                 textStartingPoint + special_offset,
@@ -188,7 +188,7 @@ void FloatingWidget::paintEvent(QPaintEvent *) {
                                 startStopWidth
     );
 
-    int timerTextWidth = metrics.boundingRect(timerText).width() + margin;
+    timerTextWidth = metrics.boundingRect(timerText).width() + margin;
     timerTextLabel->setFont(usedFont);
     timerTextLabel->setText(timerText);
     timerTextLabel->setGeometry(this->width() - startStopWidth - timerTextWidth - margin * 2,
