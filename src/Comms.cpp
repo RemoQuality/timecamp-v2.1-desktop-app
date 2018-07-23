@@ -475,9 +475,3 @@ void Comms::netRequest(QNetworkRequest request, QNetworkAccessManager::Operation
 
     reply->deleteLater();
 }
-
-void Comms::startTask(Task *taskObj) {
-    // start by emitting a signal which MainWidget listens to
-    // TODO: call API directly?
-    emit startTaskByID(taskObj->getTaskId());
-}

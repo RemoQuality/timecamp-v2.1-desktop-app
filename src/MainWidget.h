@@ -19,6 +19,7 @@
 
 #include "Overrides/TCRequestInterceptor.h"
 #include "Overrides/TCWebEngineView.h"
+#include "Task.h"
 
 namespace Ui
 {
@@ -65,6 +66,7 @@ public slots:
     //void status();
     void startTask();
     void startTaskByID(qint64);
+    void startTaskByTaskObj(Task*);
     void stopTask();
     void quit();
 
