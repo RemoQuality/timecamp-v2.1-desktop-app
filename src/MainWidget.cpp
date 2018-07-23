@@ -361,7 +361,7 @@ void MainWidget::startTaskByTaskObj(Task* task)
                             {
 
                                 QString timerName = v.toString();
-                                if(timerName != task->getName()) {
+                                if(timerName.isEmpty() || timerName != task->getName()) {
                                     this->startTaskByID(task->getTaskId());
                                 }
                             });
