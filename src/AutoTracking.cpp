@@ -17,7 +17,6 @@ void AutoTracking::checkAppKeywords(AppData *app) {
 Task *AutoTracking::matchActivityToTaskKeywords(AppData *app) {
     qint64 now = QDateTime::currentMSecsSinceEpoch();
     if (now > lastUpdate + taskUpdateThreshold) { // if we're past X minutes since last task update
-        lastUpdate = now;
 
         // insert AppData into a List
         QStringList dataItems;
@@ -26,12 +25,13 @@ Task *AutoTracking::matchActivityToTaskKeywords(AppData *app) {
         dataItems.push_back(app->getAdditionalInfo());
 
         for (Task *task: DbManager::instance().getTaskList()) { // in every task
-            const QStringList &taskKeywords = task->getKeywordsList(); // get the KW
+            QStringList taskKeywords = task->getKeywordsList(); // get the KW
             if (!taskKeywords.isEmpty()) { // and if we have KW
                 for (const QString &dataWithPotentialKeyword: dataItems) { // and in every appdata
                     for (const QString &keyword: taskKeywords) { // check each keyword
                         if (dataWithPotentialKeyword.contains(keyword,
                                                               Qt::CaseInsensitive)) { // and if data contains keyword
+                            lastUpdate = now;
                             return task; // return task
                         }
                     }
