@@ -439,12 +439,12 @@ void Comms::tasksReply(QNetworkReply *reply)
     QJsonObject rootObject = itemDoc.object();
     for (auto oneTaskJSON: rootObject) {
         QJsonObject oneTask = oneTaskJSON.toObject();
-        int task_id = oneTaskJSON.toObject().value("task_id").toString().toInt();
+        qint64 task_id = oneTaskJSON.toObject().value("task_id").toString().toLongLong();
         QString name = oneTaskJSON.toObject().value("name").toString();
         QString tags = oneTaskJSON.toObject().value("tags").toString();
-        Task impTask(task_id);
-        impTask.setName(name);
-        impTask.setKeywords(tags);
+        Task* impTask = new Task(task_id);
+        impTask->setName(name);
+        impTask->setKeywords(tags);
         DbManager::instance().addToTaskList(impTask);
     }
 }

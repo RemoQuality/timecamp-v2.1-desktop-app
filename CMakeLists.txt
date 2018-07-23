@@ -79,6 +79,7 @@ list(APPEND SOURCE_FILES
         "src/Comms.cpp"
         "src/AppData.cpp"
         "src/Task.cpp"
+        "src/AutoTracking.cpp"
         "src/Autorun.cpp"
         "src/WindowEventsManager.cpp"
         "src/TrayManager.cpp"

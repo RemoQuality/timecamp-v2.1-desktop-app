@@ -14,6 +14,7 @@
 #include "MainWidget.h"
 #include "Comms.h"
 #include "DbManager.h"
+#include "AutoTracking.h"
 #include "TrayManager.h"
 #include "DataCollector/WindowEvents.h"
 #include "WindowEventsManager.h"
@@ -88,6 +89,7 @@ int main(int argc, char *argv[])
 
     // create DB Manager instance early, as it needs some time to prepare queries etc
     DbManager *dbManager = &DbManager::instance();
+    AutoTracking *autoTracking = &AutoTracking::instance();
 
     // create events manager
     WindowEventsManager *windowEventsManager = &WindowEventsManager::instance();
@@ -119,6 +121,7 @@ int main(int argc, char *argv[])
 
     // Save apps to sqlite on signal-slot basis
     QObject::connect(comms, &Comms::DbSaveApp, dbManager, &DbManager::saveAppToDb);
+    QObject::connect(comms, &Comms::DbSaveApp, autoTracking, &AutoTracking::checkAppKeywords);
 
 
     // 2 sec timer for updating submenu and other features
