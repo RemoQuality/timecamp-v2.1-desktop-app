@@ -355,11 +355,10 @@ void MainWidget::startTaskByID(qint64 taskID)
 
 void MainWidget::startTaskByTaskObj(Task *task) {
     QTWEPage->runJavaScript(
-        "var task = TC.TimeTracking.getTask(angular.element(document.body).injector().get('TimerService').timer.task_id);"
-        "if(task!=null){task.name}",
+        "angular.element(document.body).injector().get('TimerService').timer.task_id",
         [this, task](const QVariant &v) {
-            QString timerName = v.toString();
-            if (timerName.isEmpty() || timerName != task->getName()) {
+            QString timerId = v.toString();
+            if (timerId.isEmpty() || timerId.toInt() != task->getTaskId()) {
                 this->startTaskByID(task->getTaskId());
             }
         });
