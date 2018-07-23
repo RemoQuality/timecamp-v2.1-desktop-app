@@ -30,16 +30,16 @@ const QString &Task::getKeywords() const {
     return keywords;
 }
 
-void Task::setKeywords(const QString &keywords) {
+void Task::setKeywords(QString keywords) {
     this->keywords = keywords;
     QStringList keywordsList = keywords.split(',', QString::SkipEmptyParts);
     this->setKeywordsList(keywordsList);
 }
 
-const QStringList &Task::getKeywordsList() const {
+QStringList Task::getKeywordsList() {
     return keywordsList;
 }
 
-void Task::setKeywordsList(const QStringList &keywordsList) {
-    this->keywordsList = keywordsList;
+void Task::setKeywordsList(QStringList keywordsList) {
+    this->keywordsList = std::move(keywordsList);
 }

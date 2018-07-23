@@ -22,10 +22,10 @@ public:
     void setName(const QString &name);
 
     const QString &getKeywords() const;
-    void setKeywords(const QString &keywords);
+    void setKeywords(QString keywords);
 
-    const QStringList &getKeywordsList() const;
-    void setKeywordsList(const QStringList &keywordsList);
+    QStringList getKeywordsList();
+    void setKeywordsList(QStringList keywordsList);
 };
 
 
