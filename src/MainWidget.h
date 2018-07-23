@@ -64,7 +64,7 @@ public slots:
     void open();
     //void status();
     void startTask();
-    void startTaskByID(int);
+    void startTaskByID(qint64);
     void stopTask();
     void quit();
 

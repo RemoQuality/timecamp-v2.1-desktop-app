@@ -13,7 +13,7 @@ Q_OBJECT
     Q_DISABLE_COPY(AutoTracking)
 
 private:
-    int taskUpdateThreshold = 5 * 1000; // in ms; prompt every X sec
+    int taskUpdateThreshold = 30 * 1000; // in ms; prompt every X sec
     qint64 lastUpdate = 0;
 
 protected:

@@ -342,7 +342,7 @@ void MainWidget::stopTask()
     this->runJSinPage("if($('.btn-timer').text().trim().toLowerCase() == 'stop timer') { $('.btn-timer').click(); }");
 }
 
-void MainWidget::startTaskByID(int taskID)
+void MainWidget::startTaskByID(qint64 taskID)
 {
     this->goToTimerPage();
     this->stopTask();

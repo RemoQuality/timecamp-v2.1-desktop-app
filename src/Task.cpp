@@ -10,11 +10,11 @@ Task::Task(qint64 tid) {
     tc_id = tid;
 }
 
-qint64 Task::getTc_id() const {
+qint64 Task::getTaskId() const {
     return tc_id;
 }
 
-void Task::setTc_id(qint64 tc_id) {
+void Task::setTaskId(qint64 tc_id) {
     this->tc_id = tc_id;
 }
 

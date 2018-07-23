@@ -122,6 +122,8 @@ int main(int argc, char *argv[])
     // Save apps to sqlite on signal-slot basis
     QObject::connect(comms, &Comms::DbSaveApp, dbManager, &DbManager::saveAppToDb);
     QObject::connect(comms, &Comms::DbSaveApp, autoTracking, &AutoTracking::checkAppKeywords);
+    QObject::connect(autoTracking, &AutoTracking::foundTask, comms, &Comms::startTask);
+    QObject::connect(comms, &Comms::startTaskByID, &mainWidget, &MainWidget::startTaskByID);
 
 
     // 2 sec timer for updating submenu and other features

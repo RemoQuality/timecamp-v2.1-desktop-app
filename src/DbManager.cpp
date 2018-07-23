@@ -135,7 +135,7 @@ QVector<AppData> DbManager::getAppsSinceLastSync(qint64 last_sync)
 }
 
 void DbManager::addToTaskList(Task *impTask) {
-    taskList.insert(impTask->getTc_id(), impTask);
+    taskList.insert(impTask->getTaskId(), impTask);
 }
 
 void DbManager::clearTaskList() {

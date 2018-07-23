@@ -15,8 +15,8 @@ public:
     Task();
     Task(qint64);
 
-    qint64 getTc_id() const;
-    void setTc_id(qint64 tc_id);
+    qint64 getTaskId() const;
+    void setTaskId(qint64 tc_id);
 
     const QString &getName() const;
     void setName(const QString &name);

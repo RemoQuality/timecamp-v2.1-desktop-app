@@ -52,6 +52,7 @@ private:
 
 signals:
     void DbSaveApp(AppData *);
+    void startTaskByID(qint64);
 
 public slots:
     void appDataReply(QNetworkReply *reply);
@@ -60,6 +61,7 @@ public slots:
     void tasksReply(QNetworkReply *reply);
     void checkBatchSize();
     void clearLastApp();
+    void startTask(Task *);
 };
 
 typedef void (Comms::*ReplyHandler)(QNetworkReply *reply);
