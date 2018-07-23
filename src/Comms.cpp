@@ -38,7 +38,7 @@ void Comms::timedUpdates()
 
     QVector<AppData> appList;
     try {
-        appList = DbManager::instance().getAppsSinceLastSync(lastSync); // get apps since last sync
+        appList = DbManager::instance().getAppsSinceLastSync(lastSync); // get apps since last sync; SQL queries for LIMIT = MAX_ACTIVITIES_BATCH_SIZE
     } catch (...) {
         qInfo("[AppList] DB fail");
         return;
