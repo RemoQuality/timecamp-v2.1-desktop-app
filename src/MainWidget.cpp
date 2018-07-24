@@ -356,8 +356,8 @@ void MainWidget::startTaskByID(qint64 taskID)
 void MainWidget::startTaskByTaskObj(Task *task, bool force)
 {
     QTWEPage->runJavaScript(
-        "angular.element(document.body).injector().get('TimerService').timer.task_id",
-        [&](const QVariant &v) {
+        "typeof(angular) !== 'undefined' && angular.element(document.body).injector().get('TimerService').timer.task_id",
+        [this, task, force](const QVariant &v) {
             QString timerId = v.toString();
             if (force || timerId.isEmpty() || timerId.toInt() != task->getTaskId()) {
                 emit startTaskViaObjToID(task->getTaskId());
@@ -374,7 +374,7 @@ void MainWidget::refreshTimerPageData()
 
 void MainWidget::checkIsTimerRunning()
 {
-    QTWEPage->runJavaScript("angular.element(document.body).injector().get('TimerService').timer.isTimerRunning", [this](
+    QTWEPage->runJavaScript("typeof(angular) !== 'undefined' && angular.element(document.body).injector().get('TimerService').timer.isTimerRunning", [this](
         const QVariant &v)
     {
 //        qDebug() << "Timer running: " << v.toString();
@@ -384,7 +384,7 @@ void MainWidget::checkIsTimerRunning()
 
 void MainWidget::fetchRecentTasks()
 {
-    QTWEPage->runJavaScript("JSON.stringify(TC.TimeTracking.Lasts)", [this](const QVariant &v)
+    QTWEPage->runJavaScript("typeof(TC) !== 'undefined' && JSON.stringify(TC.TimeTracking.Lasts)", [this](const QVariant &v)
     {
 //        LastTasks.clear(); // don't need to clear a QHash
 
@@ -406,7 +406,7 @@ void MainWidget::fetchRecentTasks()
 void MainWidget::fetchAPIkey()
 {
 //    QTWEPage->runJavaScript("await window.apiService.getToken()",
-    QTWEPage->runJavaScript("window.apiService.getToken().$$state.value", [this](const QVariant &v)
+    QTWEPage->runJavaScript("typeof(window.apiService) !== 'undefined' && window.apiService.getToken().$$state.value", [this](const QVariant &v)
     {
 //        qDebug() << "API Key: " << v.toString();
         setApiKey(v.toString());
