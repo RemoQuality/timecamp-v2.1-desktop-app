@@ -1,6 +1,8 @@
 #include "AutoTracking.h"
 #include <QtCore/QDateTime>
+#include <QtCore/QSettings>
 #include "DbManager.h"
+#include "Settings.h"
 
 AutoTracking &AutoTracking::instance() {
     static AutoTracking _instance;
@@ -8,9 +10,14 @@ AutoTracking &AutoTracking::instance() {
 }
 
 void AutoTracking::checkAppKeywords(AppData *app) {
-    Task *matchedTask = this->matchActivityToTaskKeywords(app);
-    if (matchedTask != nullptr) {
-        emit foundTask(matchedTask);
+
+    QSettings settings;
+    bool autoTracking = settings.value(SETT_TRACK_AUTO_SWITCH, false).toBool();
+    if(autoTracking) {
+        Task *matchedTask = this->matchActivityToTaskKeywords(app);
+        if (matchedTask != nullptr) {
+            emit foundTask(matchedTask);
+        }
     }
 }
 

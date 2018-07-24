@@ -47,13 +47,14 @@ public:
 
 signals:
     void pcActivitiesValueChanged(bool);
-    void taskSelected(int);
+    void taskSelected(int, bool);
 
 public slots:
     void iconActivated(QSystemTrayIcon::ActivationReason);
     void menuActionHandler(QAction *action);
     void autoStart(bool checked);
     void tracker(bool checked);
+    void autoTracking(bool checked);
     void updateRecentTasks();
     void openCloseWindowAction();
     void contactSupport();
@@ -76,6 +77,7 @@ private:
     QAction *startTaskAct;
     QAction *stopTaskAct;
     QAction *trackerAct;
+    QAction *autoTrackingAct;
     QAction *autoStartAct;
     QAction *widgetAct;
     QAction *helpAct;

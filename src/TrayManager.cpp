@@ -64,12 +64,14 @@ void TrayManager::setupSettings() {
     autoStartAct->setDisabled(false);
     autoStartAct->setChecked(Autorun::checkAutorun());
     trackerAct->setChecked(settings.value(SETT_TRACK_PC_ACTIVITIES, false).toBool());
+    autoTrackingAct->setChecked(settings.value(SETT_TRACK_AUTO_SWITCH, false).toBool());
 #ifdef _WIDGET_EXISTS_
     widgetAct->setChecked(settings.value(SETT_SHOW_WIDGET, true).toBool());
 #endif
     // act on the saved settings
     this->autoStart(autoStartAct->isChecked());
     this->tracker(trackerAct->isChecked());
+    this->autoTracking(autoTrackingAct->isChecked());
 }
 
 void TrayManager::updateRecentTasks() {
@@ -100,6 +102,11 @@ void TrayManager::autoStart(bool checked) {
 void TrayManager::tracker(bool checked) {
     settings.setValue(SETT_TRACK_PC_ACTIVITIES, checked);
     emit pcActivitiesValueChanged(checked);
+}
+
+void TrayManager::autoTracking(bool checked) {
+    settings.setValue(SETT_TRACK_AUTO_SWITCH, checked);
+    settings.sync();
 }
 
 #ifdef _WIDGET_EXISTS_
@@ -167,6 +174,10 @@ void TrayManager::createActions(QMenu *menu) {
     trackerAct->setCheckable(true);
     connect(trackerAct, &QAction::triggered, this, &TrayManager::tracker);
 
+    autoTrackingAct = new QAction(tr("Automatic task switching"), this);
+    autoTrackingAct->setCheckable(true);
+    connect(autoTrackingAct, &QAction::triggered, this, &TrayManager::autoTracking);
+
 #ifdef _WIDGET_EXISTS_
     widgetAct = new QAction(tr("Time widget"), this);
     widgetAct->setCheckable(true);
@@ -231,6 +242,7 @@ void TrayManager::assignActions(QMenu *menu) {
     tempMenu->addAction(stopTaskAct);
     tempMenu->addSeparator();
     tempMenu->addAction(trackerAct);
+    tempMenu->addAction(autoTrackingAct);
     tempMenu->addAction(autoStartAct);
 #ifdef _WIDGET_EXISTS_
     tempMenu->addAction(widgetAct);
@@ -298,6 +310,7 @@ void TrayManager::loginLogout(bool isLoggedIn, QString tooltipText) {
     startTaskAct->setEnabled(isLoggedIn);
     stopTaskAct->setEnabled(isLoggedIn);
     trackerAct->setEnabled(isLoggedIn);
+    autoTrackingAct->setEnabled(isLoggedIn);
 #ifndef Q_OS_MACOS
     trayIcon->setToolTip(tooltipText); // we don't use trayIcon on macOS
 #endif
