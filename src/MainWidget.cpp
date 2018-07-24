@@ -353,13 +353,14 @@ void MainWidget::startTaskByID(qint64 taskID)
     this->pressStartTimerButton();
 }
 
-void MainWidget::startTaskByTaskObj(Task *task) {
+void MainWidget::startTaskByTaskObj(Task *task, bool force)
+{
     QTWEPage->runJavaScript(
         "angular.element(document.body).injector().get('TimerService').timer.task_id",
-        [this, task](const QVariant &v) {
+        [&](const QVariant &v) {
             QString timerId = v.toString();
-            if (timerId.isEmpty() || timerId.toInt() != task->getTaskId()) {
-                this->startTaskByID(task->getTaskId());
+            if (force || timerId.isEmpty() || timerId.toInt() != task->getTaskId()) {
+                emit startTaskViaObjToID(task->getTaskId());
             }
         });
 }

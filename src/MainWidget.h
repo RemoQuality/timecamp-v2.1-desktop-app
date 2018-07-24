@@ -46,6 +46,7 @@ signals:
     void checkIsIdle();
     void windowStatusChanged(bool);
     void lastTasksChanged();
+    void startTaskViaObjToID(qint64);
 
 protected:
     void handleSpacingEvents();
@@ -66,7 +67,7 @@ public slots:
     //void status();
     void startTask();
     void startTaskByID(qint64);
-    void startTaskByTaskObj(Task*);
+    void startTaskByTaskObj(Task*, bool);
     void stopTask();
     void quit();
 

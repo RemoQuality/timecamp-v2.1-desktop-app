@@ -28,7 +28,7 @@ public slots:
     void checkAppKeywords(AppData *app);
 
 signals:
-    void foundTask(Task* matchedTask);
+    void foundTask(Task* matchedTask, bool force);
 };
 
 

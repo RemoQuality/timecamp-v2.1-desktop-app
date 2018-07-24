@@ -123,6 +123,7 @@ int main(int argc, char *argv[])
     QObject::connect(comms, &Comms::DbSaveApp, dbManager, &DbManager::saveAppToDb);
     QObject::connect(comms, &Comms::DbSaveApp, autoTracking, &AutoTracking::checkAppKeywords);
     QObject::connect(autoTracking, &AutoTracking::foundTask, &mainWidget, &MainWidget::startTaskByTaskObj);
+    QObject::connect(&mainWidget, &MainWidget::startTaskViaObjToID, &mainWidget, &MainWidget::startTaskByID);
 
 
     // 2 sec timer for updating submenu and other features

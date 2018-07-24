@@ -16,7 +16,7 @@ void AutoTracking::checkAppKeywords(AppData *app) {
     if(autoTracking) {
         Task *matchedTask = this->matchActivityToTaskKeywords(app);
         if (matchedTask != nullptr) {
-            emit foundTask(matchedTask);
+            emit foundTask(matchedTask, false);
         }
     }
 }

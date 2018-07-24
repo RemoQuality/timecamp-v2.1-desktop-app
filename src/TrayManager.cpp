@@ -204,7 +204,7 @@ void TrayManager::menuActionHandler(QAction *action) {
     bool wasOK;
     int taskID = action->data().toInt(&wasOK);
     if (wasOK) {
-        emit taskSelected(taskID);
+        emit taskSelected(taskID, true);
     }
 }
 
