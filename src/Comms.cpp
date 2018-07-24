@@ -103,7 +103,7 @@ void Comms::saveApp(AppData *app)
                     return;
                 }
 
-                qInfo("[DBSAVE] %lds - %s | %s\nADD_INFO: %s \n",
+                qInfo("[DBSAVE] %llds - %s | %s\nADD_INFO: %s \n",
                        (lastApp->getEnd() - lastApp->getStart()) / 1000,
                        lastApp->getAppName().toLatin1().constData(),
                        lastApp->getWindowName().toLatin1().constData(),
@@ -112,7 +112,7 @@ void Comms::saveApp(AppData *app)
 
                 app->setStart(now); // saved OK, so new App starts "NOW"
             } else {
-                qWarning("[DBSAVE] Activity too short (%ldms) - %s",
+                qWarning("[DBSAVE] Activity too short (%lldms) - %s",
                       lastApp->getEnd() - lastApp->getStart(),
                       lastApp->getAppName().toLatin1().constData()
                 );
@@ -120,7 +120,7 @@ void Comms::saveApp(AppData *app)
                 app->setStart(lastApp->getStart()); // not saved, so new App starts when the old one has started
             }
         } else {
-            qInfo("[DBSAVE] Activity (%s) broken: from %ld, to %ld",
+            qInfo("[DBSAVE] Activity (%s) broken: from %lld, to %lld",
                   lastApp->getAppName().toLatin1().constData(),
                   lastApp->getStart(),
                   lastApp->getEnd()

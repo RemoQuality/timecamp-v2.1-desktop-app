@@ -16,17 +16,17 @@ Q_OBJECT
 
 public:
     explicit FloatingWidget(QWidget *parent = nullptr);
-    QSize sizeHint() const;
+    QSize sizeHint() const override;
 
 public slots:
     void open();
-    void showMe();
-    void hideMe();
-    void setTimerText(QString text);
-    void setTaskText(QString text);
-    void setMenu(QMenu *);
-    void setIcon(QString iconPath);
-    bool isHidden();
+    void showMe() override;
+    void hideMe() override;
+    void setTimerText(QString text) override;
+    void setTaskText(QString text) override;
+    void setMenu(QMenu *) override;
+    void setIcon(QString iconPath) override;
+    bool isHidden() override;
     void showContextMenu(const QPoint &);
     void startStopClicked();
     void updateWidgetStatus(bool, QString);
