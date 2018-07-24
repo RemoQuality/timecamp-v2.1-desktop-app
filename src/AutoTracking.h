@@ -15,6 +15,8 @@ Q_OBJECT
 private:
     int taskUpdateThreshold = 30 * 1000; // in ms; prompt every X sec
     qint64 lastUpdate = 0;
+public:
+    qint64 getLastUpdate() const;
 
 protected:
     explicit AutoTracking(QObject *parent = nullptr);
@@ -26,6 +28,7 @@ public:
 
 public slots:
     void checkAppKeywords(AppData *app);
+    void setLastUpdate(qint64 lastUpdate);
 
 signals:
     void foundTask(Task* matchedTask, bool force);

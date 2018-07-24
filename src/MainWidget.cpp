@@ -255,6 +255,7 @@ void MainWidget::open()
 
 void MainWidget::runJSinPage(QString js)
 {
+    qDebug() << "Running JS: " << js;
     QTWEPage->runJavaScript(js);
 }
 
@@ -348,6 +349,9 @@ void MainWidget::startTaskByID(qint64 taskID)
     this->stopTask();
     QThread::msleep(128);
     this->runJSinPage("$('#timer-task-picker').click();");
+    QThread::msleep(128);
+    qDebug() << "Clicking task with id: " << taskID;
+    qDebug() << "Turned into string: " << QString::number(taskID);
     this->runJSinPage("$(\".widgetSelectTask[data-task-id='" + QString::number(taskID) + "'\")[0].click()");
     QThread::msleep(128);
     this->pressStartTimerButton();

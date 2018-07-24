@@ -1,6 +1,7 @@
 #include "AutoTracking.h"
 #include <QtCore/QDateTime>
 #include <QtCore/QSettings>
+#include <QDebug>
 #include "DbManager.h"
 #include "Settings.h"
 
@@ -39,6 +40,10 @@ Task *AutoTracking::matchActivityToTaskKeywords(AppData *app) {
                         if (dataWithPotentialKeyword.contains(keyword,
                                                               Qt::CaseInsensitive)) { // and if data contains keyword
                             lastUpdate = now;
+                            qDebug() << "Task matched: " << task->getName();
+                            qDebug() << "Keyword found: " << keyword;
+                            qDebug() << "In data: " << dataWithPotentialKeyword;
+                            qDebug() << "Task ID: " << task->getTaskId();
                             return task; // return task
                         }
                     }
@@ -51,4 +56,12 @@ Task *AutoTracking::matchActivityToTaskKeywords(AppData *app) {
 
 AutoTracking::AutoTracking(QObject *parent) : QObject(parent) {
 
+}
+
+qint64 AutoTracking::getLastUpdate() const {
+    return lastUpdate;
+}
+
+void AutoTracking::setLastUpdate(qint64 lastUpdate) {
+    AutoTracking::lastUpdate = lastUpdate;
 }

@@ -103,7 +103,7 @@ void Comms::saveApp(AppData *app)
                     return;
                 }
 
-                qDebug("[DBSAVE] %lds - %s | %s\nADD_INFO: %s \n",
+                qInfo("[DBSAVE] %lds - %s | %s\nADD_INFO: %s \n",
                        (lastApp->getEnd() - lastApp->getStart()) / 1000,
                        lastApp->getAppName().toLatin1().constData(),
                        lastApp->getWindowName().toLatin1().constData(),
@@ -112,7 +112,7 @@ void Comms::saveApp(AppData *app)
 
                 app->setStart(now); // saved OK, so new App starts "NOW"
             } else {
-                qInfo("[DBSAVE] Activity too short (%ldms) - %s",
+                qWarning("[DBSAVE] Activity too short (%ldms) - %s",
                       lastApp->getEnd() - lastApp->getStart(),
                       lastApp->getAppName().toLatin1().constData()
                 );
@@ -233,8 +233,8 @@ void Comms::appDataReply(QNetworkReply *reply)
 {
     QByteArray buffer = reply->readAll();
     if(reply->error() != QNetworkReply::NoError){
-        qInfo() << "Network error: " << reply->errorString();
-        qInfo() << "Data: " << buffer;
+        qWarning() << "Network error: " << reply->errorString();
+        qWarning() << "Data: " << buffer;
         return;
     }
 
@@ -290,7 +290,7 @@ void Comms::getUserInfo()
 void Comms::userInfoReply(QNetworkReply *reply)
 {
     if(reply->error() != QNetworkReply::NoError){
-        qInfo() << "Network error: " << reply->errorString();
+        qWarning() << "Network error: " << reply->errorString();
         return;
     }
 
@@ -378,7 +378,7 @@ void Comms::getSettings()
 void Comms::settingsReply(QNetworkReply *reply)
 {
     if(reply->error() != QNetworkReply::NoError){
-        qInfo() << "Network error: " << reply->errorString();
+        qWarning() << "Network error: " << reply->errorString();
         return;
     }
     QByteArray buffer = reply->readAll();
@@ -424,7 +424,7 @@ void Comms::getTasks()
 void Comms::tasksReply(QNetworkReply *reply)
 {
     if(reply->error() != QNetworkReply::NoError){
-        qInfo() << "Network error: " << reply->errorString();
+        qWarning() << "Network error: " << reply->errorString();
         return;
     }
 
