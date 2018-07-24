@@ -27,7 +27,7 @@ Task *AutoTracking::matchActivityToTaskKeywords(AppData *app) {
         for (Task *task: DbManager::instance().getTaskList()) { // in every task
             QStringList taskKeywords = task->getKeywordsList(); // get the KW
             if (!taskKeywords.isEmpty()) { // and if we have KW
-                for (const QString &dataWithPotentialKeyword: dataItems) { // and in every appdata
+                for (const QString &dataWithPotentialKeyword: dataItems) { // in every appdata
                     for (const QString &keyword: taskKeywords) { // check each keyword
                         if (dataWithPotentialKeyword.contains(keyword,
                                                               Qt::CaseInsensitive)) { // and if data contains keyword
