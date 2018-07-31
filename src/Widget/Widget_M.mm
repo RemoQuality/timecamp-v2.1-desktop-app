@@ -42,9 +42,13 @@ void Widget_M::setMenu(QMenu *menu)
     [macWidget SetMenu:menu];
 }
 
-void Widget_M::setText(QString title)
+void Widget_M::setTimerText(QString title)
 {
     [macWidget SetText:title];
+}
+
+void Widget_M::setTaskText(QString title)
+{
 }
 
 void Widget_M::showMe()

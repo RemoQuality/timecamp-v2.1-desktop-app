@@ -5,6 +5,7 @@
 #include <QSqlRecord>
 #include <QDebug>
 #include <QStandardPaths>
+#include <utility>
 
 DbManager &DbManager::instance()
 {
@@ -133,18 +134,14 @@ QVector<AppData> DbManager::getAppsSinceLastSync(qint64 last_sync)
     return appList;
 }
 
-const QVector<Task> &DbManager::getTaskList() const {
-    return taskList;
-}
-
-void DbManager::setTaskList(const QVector<Task> &taskList) {
-    this->taskList = taskList;
-}
-
-void DbManager::addToTaskList(const Task &impTask) {
-    taskList.push_back(impTask);
+void DbManager::addToTaskList(Task *impTask) {
+    taskList.insert(impTask->getTaskId(), impTask);
 }
 
 void DbManager::clearTaskList() {
     taskList.clear();
+}
+
+const QHash<qint64, Task *> &DbManager::getTaskList() const {
+    return taskList;
 }

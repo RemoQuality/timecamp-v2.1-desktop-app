@@ -19,6 +19,7 @@
 
 #include "Overrides/TCRequestInterceptor.h"
 #include "Overrides/TCWebEngineView.h"
+#include "Task.h"
 
 namespace Ui
 {
@@ -45,6 +46,7 @@ signals:
     void checkIsIdle();
     void windowStatusChanged(bool);
     void lastTasksChanged();
+    void startTaskViaObjToID(qint64);
 
 protected:
     void handleSpacingEvents();
@@ -64,7 +66,8 @@ public slots:
     void open();
     //void status();
     void startTask();
-    void startTaskByID(int);
+    void startTaskByID(qint64);
+    void startTaskByTaskObj(Task*, bool);
     void stopTask();
     void quit();
 
@@ -103,7 +106,6 @@ private:
 
     bool MainWidgetWasInitialised = false;
     bool loggedIn;
-    QString timerName;
 
     void setApiKey(const QString &apiKey);
     void setTimerName(const QString &timerName);

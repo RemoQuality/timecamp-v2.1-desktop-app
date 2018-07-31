@@ -28,6 +28,7 @@
 
 // settings fields
 #define SETT_TRACK_PC_ACTIVITIES "TRACK_PC_ACTIVITIES"
+#define SETT_TRACK_AUTO_SWITCH "TRACK_AUTO_SWITCH"
 #define SETT_SHOW_WIDGET "SHOW_WIDGET"
 
 #define SETT_APIKEY "API_KEY"
@@ -41,5 +42,9 @@
 #define KB_SHORTCUTS_START_TIMER "ctrl+alt+shift+."
 #define KB_SHORTCUTS_STOP_TIMER "ctrl+alt+shift+,"
 #define KB_SHORTCUTS_OPEN_WINDOW "ctrl+alt+shift+/"
+
+#define PLAY_BUTTON  "\u25B6"
+#define PAUSE_BUTTON "\u23F8"
+#define STOP_BUTTON  "\u23F9"
 
 #endif //THEGUI_SETTINGS_H

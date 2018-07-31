@@ -17,6 +17,10 @@
 #define _WIDGET_EXISTS_
 
 #else
+
+#include "Widget/FloatingWidget.h"
+#define _WIDGET_EXISTS_
+
 #endif
 
 class MainWidget;
@@ -39,16 +43,18 @@ public:
     void loginLogout(bool, QString);
 
     bool wasLoggedIn = false;
+    QMenu *getTrayMenu() const;
 
 signals:
     void pcActivitiesValueChanged(bool);
-    void taskSelected(int);
+    void taskSelected(int, bool);
 
 public slots:
     void iconActivated(QSystemTrayIcon::ActivationReason);
     void menuActionHandler(QAction *action);
     void autoStart(bool checked);
     void tracker(bool checked);
+    void autoTracking(bool checked);
     void updateRecentTasks();
     void openCloseWindowAction();
     void contactSupport();
@@ -71,6 +77,7 @@ private:
     QAction *startTaskAct;
     QAction *stopTaskAct;
     QAction *trackerAct;
+    QAction *autoTrackingAct;
     QAction *autoStartAct;
     QAction *widgetAct;
     QAction *helpAct;
@@ -80,7 +87,11 @@ private:
 
 #ifdef _WIDGET_EXISTS_
     Widget *widget;
+public:
+    void setWidget(Widget *widget);
 #endif
+
+    bool areMenusEqual(QMenu *menu1, QMenu *menu2);
 };
 
 

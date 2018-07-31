@@ -14,9 +14,11 @@
 #include "MainWidget.h"
 #include "Comms.h"
 #include "DbManager.h"
+#include "AutoTracking.h"
 #include "TrayManager.h"
 #include "DataCollector/WindowEvents.h"
 #include "WindowEventsManager.h"
+#include "Widget/FloatingWidget.h"
 
 #include "third-party/vendor/de/skycoder42/qhotkey/QHotkey/qhotkey.h"
 #include "third-party/QTLogRotation/logutils.h"
@@ -87,6 +89,7 @@ int main(int argc, char *argv[])
 
     // create DB Manager instance early, as it needs some time to prepare queries etc
     DbManager *dbManager = &DbManager::instance();
+    AutoTracking *autoTracking = &AutoTracking::instance();
 
     // create events manager
     WindowEventsManager *windowEventsManager = &WindowEventsManager::instance();
@@ -96,7 +99,6 @@ int main(int argc, char *argv[])
     mainWidget.setWindowIcon(appIcon);
 
     // create tray manager
-//    auto *trayManager = new TrayManager();
     TrayManager *trayManager = &TrayManager::instance();
     QObject::connect(&mainWidget, &MainWidget::pageStatusChanged, trayManager, &TrayManager::loginLogout);
     QObject::connect(&mainWidget, &MainWidget::timerStatusChanged, trayManager, &TrayManager::updateStopMenu);
@@ -119,6 +121,9 @@ int main(int argc, char *argv[])
 
     // Save apps to sqlite on signal-slot basis
     QObject::connect(comms, &Comms::DbSaveApp, dbManager, &DbManager::saveAppToDb);
+    QObject::connect(comms, &Comms::DbSaveApp, autoTracking, &AutoTracking::checkAppKeywords);
+    QObject::connect(autoTracking, &AutoTracking::foundTask, &mainWidget, &MainWidget::startTaskByTaskObj);
+    QObject::connect(&mainWidget, &MainWidget::startTaskViaObjToID, &mainWidget, &MainWidget::startTaskByID);
 
 
     // 2 sec timer for updating submenu and other features
@@ -156,6 +161,13 @@ int main(int argc, char *argv[])
 
     // everything connected via QObject, now heavy lifting
     trayManager->setupTray(&mainWidget); // create tray
+    auto *theWidget = new FloatingWidget(); // FloatingWidget can't be bound to mainwidget (it won't set state=visible when main is hidden)
+    QObject::connect(&mainWidget, &MainWidget::timerStatusChanged, theWidget, &FloatingWidget::updateWidgetStatus);
+    QObject::connect(theWidget, &FloatingWidget::taskNameClicked, &mainWidget, &MainWidget::startTask);
+    QObject::connect(theWidget, &FloatingWidget::playButtonClicked, &mainWidget, &MainWidget::startTask);
+    QObject::connect(theWidget, &FloatingWidget::pauseButtonClicked, &mainWidget, &MainWidget::stopTask);
+    trayManager->setWidget(theWidget);
+    trayManager->setupSettings();
     mainWidget.init(); // init the WebView
     comms->timedUpdates(); // fetch userInfo, userSettings, send apps since last update
 

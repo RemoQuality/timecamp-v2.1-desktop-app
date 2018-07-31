@@ -6,15 +6,15 @@
 Task::Task()
 = default;
 
-Task::Task(int tid) {
+Task::Task(qint64 tid) {
     tc_id = tid;
 }
 
-int Task::getTc_id() const {
+qint64 Task::getTaskId() const {
     return tc_id;
 }
 
-void Task::setTc_id(int tc_id) {
+void Task::setTaskId(qint64 tc_id) {
     this->tc_id = tc_id;
 }
 
@@ -30,16 +30,16 @@ const QString &Task::getKeywords() const {
     return keywords;
 }
 
-void Task::setKeywords(const QString &keywords) {
+void Task::setKeywords(QString keywords) {
     this->keywords = keywords;
     QStringList keywordsList = keywords.split(',', QString::SkipEmptyParts);
     this->setKeywordsList(keywordsList);
 }
 
-const QStringList &Task::getKeywordsList() const {
+QStringList Task::getKeywordsList() {
     return keywordsList;
 }
 
-void Task::setKeywordsList(const QStringList &keywordsList) {
-    this->keywordsList = keywordsList;
+void Task::setKeywordsList(QStringList keywordsList) {
+    this->keywordsList = std::move(keywordsList);
 }

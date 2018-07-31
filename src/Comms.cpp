@@ -38,7 +38,7 @@ void Comms::timedUpdates()
 
     QVector<AppData> appList;
     try {
-        appList = DbManager::instance().getAppsSinceLastSync(lastSync); // get apps since last sync
+        appList = DbManager::instance().getAppsSinceLastSync(lastSync); // get apps since last sync; SQL queries for LIMIT = MAX_ACTIVITIES_BATCH_SIZE
     } catch (...) {
         qInfo("[AppList] DB fail");
         return;
@@ -103,7 +103,7 @@ void Comms::saveApp(AppData *app)
                     return;
                 }
 
-                qDebug("[DBSAVE] %lds - %s | %s\nADD_INFO: %s \n",
+                qInfo("[DBSAVE] %llds - %s | %s\nADD_INFO: %s \n",
                        (lastApp->getEnd() - lastApp->getStart()) / 1000,
                        lastApp->getAppName().toLatin1().constData(),
                        lastApp->getWindowName().toLatin1().constData(),
@@ -112,7 +112,7 @@ void Comms::saveApp(AppData *app)
 
                 app->setStart(now); // saved OK, so new App starts "NOW"
             } else {
-                qInfo("[DBSAVE] Activity too short (%ldms) - %s",
+                qWarning("[DBSAVE] Activity too short (%lldms) - %s",
                       lastApp->getEnd() - lastApp->getStart(),
                       lastApp->getAppName().toLatin1().constData()
                 );
@@ -120,7 +120,7 @@ void Comms::saveApp(AppData *app)
                 app->setStart(lastApp->getStart()); // not saved, so new App starts when the old one has started
             }
         } else {
-            qInfo("[DBSAVE] Activity (%s) broken: from %ld, to %ld",
+            qInfo("[DBSAVE] Activity (%s) broken: from %lld, to %lld",
                   lastApp->getAppName().toLatin1().constData(),
                   lastApp->getStart(),
                   lastApp->getEnd()
@@ -233,8 +233,8 @@ void Comms::appDataReply(QNetworkReply *reply)
 {
     QByteArray buffer = reply->readAll();
     if(reply->error() != QNetworkReply::NoError){
-        qInfo() << "Network error: " << reply->errorString();
-        qInfo() << "Data: " << buffer;
+        qWarning() << "Network error: " << reply->errorString();
+        qWarning() << "Data: " << buffer;
         return;
     }
 
@@ -290,7 +290,7 @@ void Comms::getUserInfo()
 void Comms::userInfoReply(QNetworkReply *reply)
 {
     if(reply->error() != QNetworkReply::NoError){
-        qInfo() << "Network error: " << reply->errorString();
+        qWarning() << "Network error: " << reply->errorString();
         return;
     }
 
@@ -378,7 +378,7 @@ void Comms::getSettings()
 void Comms::settingsReply(QNetworkReply *reply)
 {
     if(reply->error() != QNetworkReply::NoError){
-        qInfo() << "Network error: " << reply->errorString();
+        qWarning() << "Network error: " << reply->errorString();
         return;
     }
     QByteArray buffer = reply->readAll();
@@ -424,7 +424,7 @@ void Comms::getTasks()
 void Comms::tasksReply(QNetworkReply *reply)
 {
     if(reply->error() != QNetworkReply::NoError){
-        qInfo() << "Network error: " << reply->errorString();
+        qWarning() << "Network error: " << reply->errorString();
         return;
     }
 
@@ -439,12 +439,12 @@ void Comms::tasksReply(QNetworkReply *reply)
     QJsonObject rootObject = itemDoc.object();
     for (auto oneTaskJSON: rootObject) {
         QJsonObject oneTask = oneTaskJSON.toObject();
-        int task_id = oneTaskJSON.toObject().value("task_id").toString().toInt();
+        qint64 task_id = oneTaskJSON.toObject().value("task_id").toString().toLongLong();
         QString name = oneTaskJSON.toObject().value("name").toString();
         QString tags = oneTaskJSON.toObject().value("tags").toString();
-        Task impTask(task_id);
-        impTask.setName(name);
-        impTask.setKeywords(tags);
+        Task* impTask = new Task(task_id);
+        impTask->setName(name);
+        impTask->setKeywords(tags);
         DbManager::instance().addToTaskList(impTask);
     }
 }

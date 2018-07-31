@@ -6,26 +6,26 @@
 
 class Task {
 private:
-    int tc_id;
+    qint64 tc_id;
     QString name;
     QString keywords;
     QStringList keywordsList;
 
 public:
     Task();
-    Task(int);
+    Task(qint64);
 
-    int getTc_id() const;
-    void setTc_id(int tc_id);
+    qint64 getTaskId() const;
+    void setTaskId(qint64 tc_id);
 
     const QString &getName() const;
     void setName(const QString &name);
 
     const QString &getKeywords() const;
-    void setKeywords(const QString &keywords);
+    void setKeywords(QString keywords);
 
-    const QStringList &getKeywordsList() const;
-    void setKeywordsList(const QStringList &keywordsList);
+    QStringList getKeywordsList();
+    void setKeywordsList(QStringList keywordsList);
 };
 
 

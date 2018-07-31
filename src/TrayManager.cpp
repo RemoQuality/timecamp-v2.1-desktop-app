@@ -9,18 +9,16 @@
 
 #include "Autorun.h"
 
-TrayManager &TrayManager::instance()
-{
+TrayManager &TrayManager::instance() {
     static TrayManager _instance;
     return _instance;
 }
 
-TrayManager::TrayManager(QObject *parent) : QObject(parent)
-{
+TrayManager::TrayManager(QObject *parent)
+    : QObject(parent) {
 }
 
-void TrayManager::setupTray(MainWidget *parent)
-{
+void TrayManager::setupTray(MainWidget *parent) {
     mainWidget = parent;
     if (!QSystemTrayIcon::isSystemTrayAvailable()) {
         QMessageBox::critical(mainWidget, "No tray",
@@ -55,41 +53,45 @@ void TrayManager::setupTray(MainWidget *parent)
     widget = new Widget_M();
     widget->setMenu(trayMenu);
     widget->setIcon(":/Icons/AppIcon_Dark.png");
-    widget->setText(""); // at the start there should be no timer text
+    widget->setTimerText(""); // at the start there should be no timer text
 #endif
     settings.sync();
-    this->setupSettings();
 }
 
-void TrayManager::setupSettings()
-{
+void TrayManager::setupSettings() {
     qDebug() << "[Tray] Update checkboxes (Settings)";
     // set checkboxes
     autoStartAct->setDisabled(false);
     autoStartAct->setChecked(Autorun::checkAutorun());
     trackerAct->setChecked(settings.value(SETT_TRACK_PC_ACTIVITIES, false).toBool());
+    autoTrackingAct->setChecked(settings.value(SETT_TRACK_AUTO_SWITCH, false).toBool());
 #ifdef _WIDGET_EXISTS_
     widgetAct->setChecked(settings.value(SETT_SHOW_WIDGET, true).toBool());
-    this->widgetToggl(widgetAct->isChecked());
 #endif
     // act on the saved settings
     this->autoStart(autoStartAct->isChecked());
     this->tracker(trackerAct->isChecked());
+    this->autoTracking(autoTrackingAct->isChecked());
 }
 
-void TrayManager::updateRecentTasks()
-{
+void TrayManager::updateRecentTasks() {
     this->assignActions(trayMenu);
 }
 
-void TrayManager::updateStopMenu(bool canBeStopped, QString timerName)
-{
-    stopTaskAct->setText("Stop " + timerName);
+void TrayManager::updateStopMenu(bool canBeStopped, QString timerName) {
+    if (!canBeStopped) {
+        timerName = "Stop timer";
+    } else {
+        QFont x = QFont();
+        QFontMetrics metrics(x);
+        int width = 100; // pixels
+        timerName = "Stop " + metrics.elidedText(timerName, Qt::ElideRight, width);
+    }
+    stopTaskAct->setText(timerName);
     stopTaskAct->setEnabled(canBeStopped);
 }
 
-void TrayManager::autoStart(bool checked)
-{
+void TrayManager::autoStart(bool checked) {
     if (checked) {
         Autorun::enableAutorun();
     } else {
@@ -97,44 +99,47 @@ void TrayManager::autoStart(bool checked)
     }
 }
 
-void TrayManager::tracker(bool checked)
-{
+void TrayManager::tracker(bool checked) {
     settings.setValue(SETT_TRACK_PC_ACTIVITIES, checked);
     emit pcActivitiesValueChanged(checked);
 }
 
+void TrayManager::autoTracking(bool checked) {
+    settings.setValue(SETT_TRACK_AUTO_SWITCH, checked);
+    settings.sync();
+}
+
 #ifdef _WIDGET_EXISTS_
-void TrayManager::widgetToggl(bool checked)
-{
+
+void TrayManager::widgetToggl(bool checked) {
     settings.setValue(SETT_SHOW_WIDGET, checked);
-    if (checked) {
+    bool widgetIsHidden = widget->isHidden();
+    if (checked && widgetIsHidden) {
         widget->showMe();
-    } else {
+    }
+    if (!checked && !widgetIsHidden) {
         widget->hideMe();
     }
 }
+
 #endif
 
-void TrayManager::iconActivated(QSystemTrayIcon::ActivationReason reason)
-{
+void TrayManager::iconActivated(QSystemTrayIcon::ActivationReason reason) {
     if (reason != QSystemTrayIcon::Context) {
         mainWidget->open();
     }
 }
 
-void TrayManager::openCloseWindowAction()
-{
+void TrayManager::openCloseWindowAction() {
     mainWidget->open();
 }
 
-void TrayManager::contactSupport()
-{
+void TrayManager::contactSupport() {
     QUrl mail("https://www.timecamp.com/kb/contact/?utm_source=timecamp_desktop");
     QDesktopServices::openUrl(mail);
 };
 
-void TrayManager::createActions(QMenu *menu)
-{
+void TrayManager::createActions(QMenu *menu) {
     openAct = new QAction(tr("Show"), this);
     openAct->setStatusTip(tr("Opens TimeCamp interface"));
     openAct->setShortcut(QKeySequence(KB_SHORTCUTS_OPEN_WINDOW));
@@ -169,6 +174,10 @@ void TrayManager::createActions(QMenu *menu)
     trackerAct->setCheckable(true);
     connect(trackerAct, &QAction::triggered, this, &TrayManager::tracker);
 
+    autoTrackingAct = new QAction(tr("Automatic task switching"), this);
+    autoTrackingAct->setCheckable(true);
+    connect(autoTrackingAct, &QAction::triggered, this, &TrayManager::autoTracking);
+
 #ifdef _WIDGET_EXISTS_
     widgetAct = new QAction(tr("Time widget"), this);
     widgetAct->setCheckable(true);
@@ -191,28 +200,28 @@ void TrayManager::createActions(QMenu *menu)
     connect(menu, &QMenu::triggered, this, &TrayManager::menuActionHandler);
 }
 
-void TrayManager::menuActionHandler(QAction *action)
-{
+void TrayManager::menuActionHandler(QAction *action) {
     bool wasOK;
     int taskID = action->data().toInt(&wasOK);
-    if(wasOK){
-        emit taskSelected(taskID);
+    if (wasOK) {
+        emit taskSelected(taskID, true);
     }
 }
 
-void TrayManager::assignActions(QMenu *menu)
-{
-    menu->clear();
+void TrayManager::assignActions(QMenu *menu) {
+    QMenu *tempMenu = new QMenu(mainWidget);
 
-    menu->addAction(openAct);
-    menu->addSeparator();
+    tempMenu->clear();
+
+    tempMenu->addAction(openAct);
+    tempMenu->addSeparator();
 
     QFont x = QFont();
     QFontMetrics metrix(x);
     int width = 150; // pixels
 
-    if (mainWidget->LastTasks.size() > 0) {
-        menu->addAction(recentTasksTitleAct);
+    if (!mainWidget->LastTasks.empty()) {
+        tempMenu->addAction(recentTasksTitleAct);
     }
 
     // add LastTasks
@@ -221,30 +230,55 @@ void TrayManager::assignActions(QMenu *menu)
         QAction *temp;
         temp = new QAction(metrix.elidedText(i.key(), Qt::ElideRight, width), this);
         temp->setData(i.value());
-        menu->addAction(temp);
+        tempMenu->addAction(temp);
 //        qDebug() << "ADDED key: " << i.key() << ", value: " << i.value();
     }
 
-    if (mainWidget->LastTasks.size() > 0) {
-        menu->addSeparator();
+    if (!mainWidget->LastTasks.empty()) {
+        tempMenu->addSeparator();
     }
 
-    menu->addAction(startTaskAct);
-    menu->addAction(stopTaskAct);
-    menu->addSeparator();
-    menu->addAction(trackerAct);
-    menu->addAction(autoStartAct);
+    tempMenu->addAction(startTaskAct);
+    tempMenu->addAction(stopTaskAct);
+    tempMenu->addSeparator();
+    tempMenu->addAction(trackerAct);
+    tempMenu->addAction(autoTrackingAct);
+    tempMenu->addAction(autoStartAct);
 #ifdef _WIDGET_EXISTS_
-    menu->addAction(widgetAct);
+    tempMenu->addAction(widgetAct);
 #endif
-    menu->addSeparator();
-    menu->addAction(helpAct);
-    menu->addSeparator();
-    menu->addAction(quitAct);
+    tempMenu->addSeparator();
+    tempMenu->addAction(helpAct);
+    tempMenu->addSeparator();
+    tempMenu->addAction(quitAct);
+
+    // replace only if menu should change
+    if (!areMenusEqual(tempMenu, menu)) {
+        qDebug() << "Menus are not equal! REPLACE!";
+        trayMenu = tempMenu;
+    }
 }
 
-void TrayManager::updateWidget(bool loggedIn, QString tooltipText)
-{
+bool TrayManager::areMenusEqual(QMenu *menu1, QMenu *menu2) {
+//    return menu1->actions() == menu2->actions();
+    if (menu1->actions().length() != menu2->actions().length()) {
+        return false;
+    }
+    for (int i = 0; i < menu1->actions().length(); i++) {
+        if (QString::compare(menu1->actions()[i]->text(), menu2->actions()[i]->text()) == 0) {
+            if (menu1->actions()[i]->isCheckable() == menu2->actions()[i]->isCheckable()) {
+                if (menu1->actions()[i]->isChecked() != menu2->actions()[i]->isChecked()) {
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+    }
+    return true;
+}
+
+void TrayManager::updateWidget(bool loggedIn, QString tooltipText) {
 #ifdef _WIDGET_EXISTS_
     widgetAct->setEnabled(loggedIn);
     if (!loggedIn) {
@@ -257,26 +291,26 @@ void TrayManager::updateWidget(bool loggedIn, QString tooltipText)
         if (ok) {
             QTime time = QTime::fromString(maybeTime, "hh:mm:ss");
             if (time.hour() > 0) {
-                widget->setText(time.toString("H:mm:ss"));
+                widget->setTimerText(time.toString("H:mm:ss"));
             } else {
-                widget->setText(time.toString("m:ss"));
+                widget->setTimerText(time.toString("m:ss"));
             }
         } else {
-            widget->setText(NO_TIMER_TEXT);
+            widget->setTimerText(NO_TIMER_TEXT);
         }
         this->widgetToggl(widgetAct->isChecked());
     }
 #endif
 }
 
-void TrayManager::loginLogout(bool isLoggedIn, QString tooltipText)
-{
+void TrayManager::loginLogout(bool isLoggedIn, QString tooltipText) {
     qDebug() << "[Browser] Page changed; update whether logged in or not";
 
     this->updateWidget(isLoggedIn, tooltipText);
     startTaskAct->setEnabled(isLoggedIn);
     stopTaskAct->setEnabled(isLoggedIn);
     trackerAct->setEnabled(isLoggedIn);
+    autoTrackingAct->setEnabled(isLoggedIn);
 #ifndef Q_OS_MACOS
     trayIcon->setToolTip(tooltipText); // we don't use trayIcon on macOS
 #endif
@@ -291,4 +325,9 @@ void TrayManager::loginLogout(bool isLoggedIn, QString tooltipText)
     }
     wasLoggedIn = isLoggedIn;
     this->assignActions(trayMenu);
+}
+
+void TrayManager::setWidget(Widget *widget) {
+    TrayManager::widget = widget;
+    widget->setMenu(trayMenu);
 }

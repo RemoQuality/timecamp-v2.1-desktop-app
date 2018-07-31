@@ -5,6 +5,7 @@
 #include <QSqlDatabase>
 #include <QVector>
 #include <QSqlQuery>
+#include <QtCore/QHash>
 
 #include "AppData.h"
 #include "Task.h"
@@ -29,11 +30,11 @@ public:
 
     QVector<AppData> getAppsSinceLastSync(qint64 last_sync);
 
-    QVector<Task> taskList; // maybe QSet or QMap later?
+    QHash<qint64, Task*> taskList;
 
-    const QVector<Task> &getTaskList() const;
-    void setTaskList(const QVector<Task> &taskList);
-    void addToTaskList(const Task &);
+    const QHash<qint64, Task *> &getTaskList() const;
+
+    void addToTaskList(Task*);
     void clearTaskList();
 
 public slots:
