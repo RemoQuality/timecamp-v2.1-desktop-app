@@ -373,7 +373,11 @@ void MainWidget::startTaskByTaskObj(Task *task, bool force)
 void MainWidget::refreshTimerPageData()
 {
     if (this->checkIfOnTimerPage()) {
-        this->runJSinPage("$('.btn .fa-repeat').parent().click();");
+        this->runJSinPage("if(typeof(TC['lastReload']) === 'undefined'){TC['lastReload'] = +Date.now() - 30*1000 - 1;}"
+                          "if(TC['lastReload'] < Date.now() - 30*1000){"
+                          "$('.btn .fa-repeat').parent().click();"
+                          "TC['lastReload'] = +Date.now();"
+                          "}");
     }
 }
 
