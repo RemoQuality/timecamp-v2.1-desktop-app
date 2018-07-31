@@ -14,6 +14,8 @@
 namespace LOGUTILS {
     static QString logFileName;
     static QString logFolderName;
+    QString lastMessage;
+    qint64 sameMessageCount = 0;
 
     void initLogFileName() {
         logFileName = QString(logFolderName + "/Log_%1__%2.txt")
@@ -116,7 +118,19 @@ namespace LOGUTILS {
         QFile outFile(logFileName);
         outFile.open(QIODevice::WriteOnly | QIODevice::Append);
         QTextStream ts(&outFile);
-        ts << txt << endl;
-        std::cout << txt.toStdString() << std::endl;
+        if(msg != lastMessage || sameMessageCount > 20) {
+            if(sameMessageCount > 0){
+                QString repeated;
+                repeated.append("^ repeated x").append(QString::number(sameMessageCount));
+                ts << repeated << endl;
+                std::cout << repeated.toStdString() << std::endl;
+            }
+            ts << txt << endl;
+            std::cout << txt.toStdString() << std::endl;
+            sameMessageCount = 0;
+        } else {
+            sameMessageCount++;
+        }
+        lastMessage = msg;
     }
 }
