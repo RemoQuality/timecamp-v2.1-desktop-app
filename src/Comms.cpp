@@ -135,9 +135,9 @@ void Comms::saveApp(AppData *app)
 
 bool Comms::updateApiKeyFromSettings()
 {
-    apiKey = settings.value(SETT_APIKEY).toString();
+    apiKey = settings.value(SETT_APIKEY).toString().trimmed();
 
-    if (apiKey.isEmpty()) {
+    if (apiKey.isEmpty() || apiKey == "false") {
         qInfo() << "[EMPTY API KEY !!!]";
         return false;
     }

@@ -106,7 +106,8 @@ void MainWidget::twoSecTimerTimeout()
         emit checkIsIdle();
         checkIsTimerRunning();
         fetchRecentTasks();
-        if (settings.value(SETT_APIKEY).toString().isEmpty()) {
+        QString apiKeyStr = settings.value(SETT_APIKEY).toString().trimmed();
+        if (apiKeyStr.isEmpty() || apiKeyStr == "false") {
             fetchAPIkey();
         }
     } else {
