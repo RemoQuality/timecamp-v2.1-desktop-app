@@ -17,6 +17,10 @@
 #define _WIDGET_EXISTS_
 
 #else
+
+#include "Widget/FloatingWidget.h"
+#define _WIDGET_EXISTS_
+
 #endif
 
 class MainWidget;
@@ -39,6 +43,7 @@ public:
     void loginLogout(bool, QString);
 
     bool wasLoggedIn = false;
+    QMenu *getTrayMenu() const;
 
 signals:
     void pcActivitiesValueChanged(bool);
@@ -80,7 +85,11 @@ private:
 
 #ifdef _WIDGET_EXISTS_
     Widget *widget;
+public:
+    void setWidget(Widget *widget);
 #endif
+
+    bool areMenusEqual(QMenu *menu1, QMenu *menu2);
 };
 
 

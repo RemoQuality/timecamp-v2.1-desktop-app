@@ -9,7 +9,8 @@
 #include "WindowEventsManager.h"
 
 
-MainWidget::MainWidget(QWidget *parent) : QWidget(parent), ui(new Ui::MainWidget)
+MainWidget::MainWidget(QWidget *parent)
+    : QWidget(parent), ui(new Ui::MainWidget)
 {
     ui->setupUi(this);
 
@@ -24,7 +25,6 @@ MainWidget::MainWidget(QWidget *parent) : QWidget(parent), ui(new Ui::MainWidget
 
     // set some defaults
     loggedIn = false;
-    timerName = "";
 
     this->setMinimumSize(QSize(350, 500));
 //
@@ -78,7 +78,7 @@ void MainWidget::moveEvent(QMoveEvent *event)
 
 void MainWidget::changeEvent(QEvent *event)
 {
-    if(event->type() == QEvent::WindowStateChange){
+    if (event->type() == QEvent::WindowStateChange) {
         this->handleSpacingEvents();
     }
     QWidget::changeEvent(event);
@@ -201,6 +201,7 @@ void MainWidget::webpageTitleChanged(QString title)
     emit pageStatusChanged(loggedIn, title);
     this->setWindowTitle(title); // https://trello.com/c/J8dCKeV2/43-niech-tytul-apki-desktopowej-sie-zmienia-
     this->setAttribute(Qt::WA_TranslucentBackground);
+    this->checkIsTimerRunning();
 }
 
 void MainWidget::clearCache()
@@ -211,7 +212,6 @@ void MainWidget::clearCache()
     QTWEProfile->clearHttpCache();
     this->setUpdatesEnabled(true);
 }
-
 
 void MainWidget::webviewRefresh()
 {
@@ -342,30 +342,28 @@ void MainWidget::stopTask()
     this->runJSinPage("if($('.btn-timer').text().trim().toLowerCase() == 'stop timer') { $('.btn-timer').click(); }");
 }
 
-
 void MainWidget::startTaskByID(int taskID)
 {
     this->goToTimerPage();
     this->stopTask();
     QThread::msleep(128);
     this->runJSinPage("$('#timer-task-picker').click();");
-    this->runJSinPage("$(\".widgetSelectTask[data-task-id='"+ QString::number(taskID) +"'\")[0].click()");
+    this->runJSinPage("$(\".widgetSelectTask[data-task-id='" + QString::number(taskID) + "'\")[0].click()");
     QThread::msleep(128);
     this->pressStartTimerButton();
 }
 
 void MainWidget::refreshTimerPageData()
 {
-    if(this->checkIfOnTimerPage()) {
+    if (this->checkIfOnTimerPage()) {
         this->runJSinPage("$('.btn .fa-repeat').parent().click();");
     }
 }
 
-
 void MainWidget::checkIsTimerRunning()
 {
     QTWEPage->runJavaScript("angular.element(document.body).injector().get('TimerService').timer.isTimerRunning", [this](
-            const QVariant &v)
+        const QVariant &v)
     {
 //        qDebug() << "Timer running: " << v.toString();
         setIsTimerRunning(v.toBool());
@@ -380,7 +378,7 @@ void MainWidget::fetchRecentTasks()
 
 //        qDebug() << v.toString();
         QJsonDocument itemDoc = QJsonDocument::fromJson(v.toByteArray());
-        if(itemDoc != LastTasksCache) {
+        if (itemDoc != LastTasksCache) {
             QJsonArray rootArray = itemDoc.array();
             for (QJsonValueRef val: rootArray) {
                 QJsonObject obj = val.toObject();
@@ -426,11 +424,7 @@ void MainWidget::setApiKey(const QString &apiKey)
 
 void MainWidget::setTimerName(const QString &timerName)
 {
-    QFont x = QFont();
-    QFontMetrics metrix(x);
-    int width = 100; // pixels
-    MainWidget::timerName = metrix.elidedText(timerName, Qt::ElideRight, width);
-    emit timerStatusChanged(true, MainWidget::timerName); // reenable task stopping
+    emit timerStatusChanged(true, timerName); // reenable task stopping
 }
 
 void MainWidget::setIsTimerRunning(bool isTimerRunning)
@@ -438,6 +432,6 @@ void MainWidget::setIsTimerRunning(bool isTimerRunning)
     if (isTimerRunning) {
         fetchTimerName(); // this will make menu say "Stop XYZ timer"
     } else { // no timer running
-        emit timerStatusChanged(false, "timer"); // disable the option - gray it out;  make the option say "Stop timer"
+        emit timerStatusChanged(false, ""); // disable the option - gray it out;
     }
 }
