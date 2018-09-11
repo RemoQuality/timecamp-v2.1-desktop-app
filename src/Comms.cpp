@@ -209,7 +209,7 @@ void Comms::sendAppData(QVector<AppData> *appList)
 //    qDebug() << params.toString();
 //    qDebug() << "--------------\n";
 
-    QUrl serviceURL("https://www.timecamp.com/third_party/api/activity/api_token/" + apiKey);
+    QUrl serviceURL(QString(API_URL) + "/activity/api_token/" + apiKey);
     QNetworkRequest request(serviceURL);
     request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
 
@@ -275,7 +275,7 @@ void Comms::getUserInfo()
         return;
     }
 
-    QUrl serviceURL("https://www.timecamp.com/third_party/api/user/api_token/" + apiKey + "/format/json");
+    QUrl serviceURL(QString(API_URL) + "/user/api_token/" + apiKey + "/format/json");
     QNetworkRequest request(serviceURL);
     request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
 
@@ -323,7 +323,7 @@ void Comms::getSettings()
 //    primary_group_id = 134214;
     QString primary_group_id_str = settings.value("SETT_PRIMARY_GROUP_ID").toString();
 
-    QUrl serviceURL(QString("https://www.timecamp.com/third_party/api/") + "group/" + primary_group_id_str + "/setting" + "/api_token/" + apiKey + "/format/json/");
+    QUrl serviceURL(QString(API_URL) + "/group/" + primary_group_id_str + "/setting" + "/api_token/" + apiKey + "/format/json/");
 
     QUrlQuery params;
     params.addQueryItem("api_token", apiKey);
@@ -409,7 +409,7 @@ void Comms::getTasks()
         return;
     }
 
-    QUrl serviceURL("https://www.timecamp.com/third_party/api/tasks/api_token/" + apiKey + "/format/json");
+    QUrl serviceURL(QString(API_URL) + "/tasks/api_token/" + apiKey + "/format/json");
     QNetworkRequest request(serviceURL);
     request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
 

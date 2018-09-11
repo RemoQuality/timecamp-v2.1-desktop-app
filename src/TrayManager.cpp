@@ -23,7 +23,8 @@ void TrayManager::setupTray(MainWidget *parent) {
     if (!QSystemTrayIcon::isSystemTrayAvailable()) {
         QMessageBox::critical(mainWidget, "No tray",
 
-                              "We couldn't detect system tray. Please contact us at desktopapp@timecamp.com "
+                              "We couldn't detect system tray. Please contact us at "
+                              CONTACT_EMAIL " "
                               "with information about your Operating System, Desktop Environment you use (KDE, Gnome, MATE, etc) "
                               "and their respective versions. The more information you can give the better."
                               "\n\n"
@@ -135,7 +136,7 @@ void TrayManager::openCloseWindowAction() {
 }
 
 void TrayManager::contactSupport() {
-    QUrl mail("https://www.timecamp.com/kb/contact/?utm_source=timecamp_desktop");
+    QUrl mail(CONTACT_SUPPORT_URL);
     QDesktopServices::openUrl(mail);
 };
 
