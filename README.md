@@ -4,9 +4,9 @@ Manage your tasks and timesheet on [TimeCamp](https://www.timecamp.com/), right 
 Start timers, create projects, do everything that can be done on the web version.
 
 
-| Linux/macOS (Travis) | Linux (Shippable) | Windows |
-| --- | --- | --- |
-| [![Travis](https://img.shields.io/travis/timecamp/timecamp-v2.1-desktop-app.svg)](https://travis-ci.org/timecamp/timecamp-v2.1-desktop-app/builds) | [![Shippable](https://img.shields.io/shippable/5b4cac6c36a5a20700d3e24e/master.svg)](https://app.shippable.com/github/timecamp/timecamp-v2.1-desktop-app) | [![AppVeyor](https://img.shields.io/appveyor/ci/timecamp/timecamp-v2-1-desktop-app.svg)](https://ci.appveyor.com/project/timecamp/timecamp-v2-1-desktop-app/history) |
+| Linux/macOS (Travis) | Linux (Shippable) | Windows | Coverity |
+| --- | --- | --- | --- |
+| [![Travis](https://img.shields.io/travis/timecamp/timecamp-v2.1-desktop-app.svg)](https://travis-ci.org/timecamp/timecamp-v2.1-desktop-app/builds) | [![Shippable](https://img.shields.io/shippable/5b4cac6c36a5a20700d3e24e/master.svg)](https://app.shippable.com/github/timecamp/timecamp-v2.1-desktop-app) | [![AppVeyor](https://img.shields.io/appveyor/ci/timecamp/timecamp-v2-1-desktop-app.svg)](https://ci.appveyor.com/project/timecamp/timecamp-v2-1-desktop-app/history) | [![Coverity](https://img.shields.io/coverity/scan/16725.svg)](https://scan.coverity.com/projects/timecamp-timecamp-v2-1-desktop-app) |
 ---
 
 ## Repository structure
