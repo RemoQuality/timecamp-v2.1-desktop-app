@@ -35,12 +35,17 @@ before_script:
   - mkdir -p $SRC
   - cp CMakeProjectConfig.cmake.example CMakeProjectConfig.cmake
 
+addons:
+  sonarcloud:
+    organization: "timecamp-github" # the key of the org you chose at step #3
+  
 script:
   - cd $SRC
   - cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -G "Unix Makefiles" "../"
   - cd ../
   - cmake --build $SRC --target "${CMAKE_NAME}" -- # build
-
+  - sonar-scanner
+  
 after_success:
   - cp $SRC/"${CMAKE_NAME}" $TARGET"/usr/bin/""${BUNDLE_NAME}" # copy the binary
   - cp res"/${BUNDLE_NAME}.desktop" $TARGET"/usr/share/applications/${BUNDLE_NAME}.desktop" # copy app.desktop file
