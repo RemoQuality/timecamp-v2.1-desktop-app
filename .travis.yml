@@ -12,7 +12,7 @@ before_install:
   - sudo apt-get update -qq
 
 install:
-  - sudo apt-get -y install qt59base qt59webengine qt59x11extras
+  - sudo apt-get -y install qt59base qt59webengine qt59x11extras tree
   - source /opt/qt*/bin/qt*-env.sh
   - export PATH=/opt/qt59/bin:$PATH
   - SRC="cmake-build-relwithdebinfo"
@@ -44,6 +44,7 @@ script:
   - cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -G "Unix Makefiles" "../"
   - cd ../
   - build-wrapper-linux-x86-64 --out-dir "${CMAKE_NAME}" cmake --build $SRC --target "${CMAKE_NAME}" -- # build
+  - tree
   - sonar-scanner
   
 after_success:
