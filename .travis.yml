@@ -43,7 +43,7 @@ script:
   - cd $SRC
   - cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -G "Unix Makefiles" "../"
   - cd ../
-  - build-wrapper-linux-x86-64 cmake --build $SRC --target "${CMAKE_NAME}" -- # build
+  - build-wrapper-linux-x86-64 --out-dir "${CMAKE_NAME}" cmake --build $SRC --target "${CMAKE_NAME}" -- # build
   - sonar-scanner
   
 after_success:
