@@ -255,5 +255,6 @@ void FloatingWidget::setMenu(QMenu *contextMenu) {
 }
 
 void FloatingWidget::setIcon(QString iconPath) {
-
+    // FloatingWidget has no icon for now
+    // if it had, it would be in the left corner
 }
