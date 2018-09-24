@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
     QObject::connect(hotkeyOpenWindow, &QHotkey::activated, trayManager, &TrayManager::openCloseWindowAction);
 
     //
-    QObject::connect(&mainWidget, &MainWidget::pageStatusChanged, [&](bool loggedIn, QString title)
+    QObject::connect(&mainWidget, &MainWidget::pageStatusChanged, [&syncDBtimer](bool loggedIn, QString title)
     {
         if (!loggedIn) {
             if(syncDBtimer->isActive()) {
