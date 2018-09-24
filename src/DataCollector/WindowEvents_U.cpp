@@ -95,8 +95,8 @@ void WindowEvents_U::run()
     unsigned char *pid;
     std::string app_name;
     int status;
-    long xwindowid_old;
-    long xwindowid_curr;
+    long xwindowid_old = 0;
+    long xwindowid_curr = 0;
 
     XTextProperty *text_prop_return;
 
