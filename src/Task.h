@@ -13,7 +13,7 @@ private:
 
 public:
     Task();
-    Task(qint64);
+    explicit Task(qint64);
 
     qint64 getTaskId() const;
     void setTaskId(qint64 tc_id);
