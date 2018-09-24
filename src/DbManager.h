@@ -45,7 +45,7 @@ public slots:
      */
     bool saveAppToDb(AppData *app);
 
-protected:
+private:
     explicit DbManager(QObject *parent = nullptr);
 
     QSqlDatabase m_db;
