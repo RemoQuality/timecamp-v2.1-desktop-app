@@ -28,6 +28,7 @@ public slots:
     void setIcon(QString iconPath) override;
     bool isHidden() override;
     void showContextMenu(const QPoint &);
+    void emitTaskNameClicked();
     void startStopClicked();
     void updateWidgetStatus(bool, QString);
 

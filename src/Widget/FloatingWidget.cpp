@@ -26,9 +26,7 @@ FloatingWidget::FloatingWidget(QWidget *parent)
     startStopLabel = new ClickableLabel(this);
 
     QMetaObject::Connection conn1 = QObject::connect(taskTextLabel, &ClickableLabel::clicked,
-                                                     [&]() {
-                                                         emit taskNameClicked();
-                                                     });
+                                                     this, &FloatingWidget::emitTaskNameClicked);
     this->setContextMenuPolicy(Qt::CustomContextMenu);
 
     QMetaObject::Connection conn2 = QObject::connect(this, &FloatingWidget::customContextMenuRequested,
@@ -36,6 +34,10 @@ FloatingWidget::FloatingWidget(QWidget *parent)
 
     QMetaObject::Connection conn3 = QObject::connect(startStopLabel, &ClickableLabel::clicked,
                                                      this, &FloatingWidget::startStopClicked);
+}
+
+void FloatingWidget::emitTaskNameClicked() {
+    emit taskNameClicked();
 }
 
 void FloatingWidget::updateWidgetStatus(bool canBeStopped, QString timerName) {
