@@ -29,7 +29,7 @@ public:
     void timedUpdates();
 
     void netRequest(QNetworkRequest, QNetworkAccessManager::Operation,
-                    void (Comms::*)(QNetworkReply *), QByteArray);
+                    void (Comms::*)(QNetworkReply *), QByteArray = nullptr);
 
     bool updateApiKeyFromSettings();
 
@@ -55,12 +55,14 @@ private:
 
 signals:
     void DbSaveApp(AppData *);
+    void gotGenericReply(QNetworkReply *);
 
 public slots:
     void appDataReply(QNetworkReply *reply);
     void userInfoReply(QNetworkReply *reply);
     void settingsReply(QNetworkReply *reply);
     void tasksReply(QNetworkReply *reply);
+    void genericReply(QNetworkReply *reply);
     void checkBatchSize();
     void clearLastApp();
 };

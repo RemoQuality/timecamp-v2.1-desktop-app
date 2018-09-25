@@ -281,7 +281,7 @@ void Comms::getUserInfo()
     QUrl serviceURL(getApiUrl("/user", "json"));
     QNetworkRequest request(serviceURL);
 
-    this->netRequest(request, QNetworkAccessManager::GetOperation, &Comms::userInfoReply, "");
+    this->netRequest(request, QNetworkAccessManager::GetOperation, &Comms::userInfoReply);
 }
 
 void Comms::userInfoReply(QNetworkReply *reply)
@@ -363,7 +363,7 @@ void Comms::getSettings()
 
     QNetworkRequest request(serviceURL);
 
-    this->netRequest(request, QNetworkAccessManager::GetOperation, &Comms::settingsReply, "");
+    this->netRequest(request, QNetworkAccessManager::GetOperation, &Comms::settingsReply);
 }
 
 void Comms::settingsReply(QNetworkReply *reply)
@@ -403,7 +403,7 @@ void Comms::getTasks()
     QUrl serviceURL(getApiUrl("/tasks", "json"));
     QNetworkRequest request(serviceURL);
 
-    this->netRequest(request, QNetworkAccessManager::GetOperation, &Comms::tasksReply, "");
+    this->netRequest(request, QNetworkAccessManager::GetOperation, &Comms::tasksReply);
 }
 
 void Comms::tasksReply(QNetworkReply *reply)
@@ -434,10 +434,26 @@ void Comms::tasksReply(QNetworkReply *reply)
     }
 }
 
+void Comms::genericReply(QNetworkReply *reply)
+{
+    if (reply->error() != QNetworkReply::NoError) {
+        qWarning() << "Network error: " << reply->errorString();
+        return;
+    }
+
+    emit gotGenericReply(reply);
+}
+
+
 void Comms::netRequest(QNetworkRequest request, QNetworkAccessManager::Operation netOp, ReplyHandler callback, QByteArray data)
 {
     // connect the callback function first
-    QMetaObject::Connection conn1 = QObject::connect(&qnam, &QNetworkAccessManager::finished, this, callback);
+    QMetaObject::Connection conn1;
+    QMetaObject::Connection conn2;
+    if(callback != nullptr) {
+        conn1 = QObject::connect(&qnam, &QNetworkAccessManager::finished, this, callback);
+    }
+    conn2 = QObject::connect(&qnam, &QNetworkAccessManager::finished, this, &Comms::genericReply);
 
     // make a copy of the request URL for the logger
     QString requestUrl = request.url().toString();
@@ -475,7 +491,11 @@ void Comms::netRequest(QNetworkRequest request, QNetworkAccessManager::Operation
     }
 
     // unhook callback - so that next run of this func can set a new callback
-    QObject::disconnect(conn1);
+
+    if(callback != nullptr) {
+        QObject::disconnect(conn1);
+    }
+    QObject::disconnect(conn2);
 }
 
 const QString &Comms::getApiKey() const
