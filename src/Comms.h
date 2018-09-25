@@ -27,6 +27,7 @@ public:
     qint64 getCurrentTime() const;
     void setCurrentTime(qint64 current_time);
     void timedUpdates();
+    void tryToSendAppData();
 
     void netRequest(QNetworkRequest, QNetworkAccessManager::Operation,
                     void (Comms::*)(QNetworkReply *), QByteArray = nullptr);
