@@ -104,10 +104,10 @@ void Comms::saveApp(AppData *app)
     bool needsReporting = false;
 
     // not the same activity? we need to log
-    if (0 != QString::compare(app->getAppName(), lastApp->getAppName())) {
+    if (0 != QString::compare(app->getAppName(), lastApp->getAppName())) { // maybe AppName changed
         needsReporting = true;
     }
-    if (0 != QString::compare(app->getWindowName(), lastApp->getWindowName())) {
+    if (!needsReporting && 0 != QString::compare(app->getWindowName(), lastApp->getWindowName())) { // or maybe WindowName changed
         needsReporting = true;
     }
 
