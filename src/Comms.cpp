@@ -44,6 +44,12 @@ void Comms::timedUpdates()
 
     setCurrentTime(QDateTime::currentMSecsSinceEpoch()); // time of DB fetch is passed, so we can update to it if successful
 
+    // we can't be calling API if we don't have the key
+    if (!updateApiKeyFromSettings()) {
+        return;
+    }
+
+    // otherwise (if we have key), send apps data
     QVector<AppData> appList;
     try {
         appList = DbManager::instance().getAppsSinceLastSync(lastSync); // get apps since last sync; SQL queries for LIMIT = MAX_ACTIVITIES_BATCH_SIZE
@@ -64,6 +70,8 @@ void Comms::timedUpdates()
             retryCount = 0; // we send small amount of activities, so our last push must've been success
         }
     }
+
+    // and (if we still have api key), update settings
     getUserInfo();
     getSettings();
     getTasks();
@@ -154,10 +162,6 @@ bool Comms::updateApiKeyFromSettings()
 
 void Comms::sendAppData(QVector<AppData> *appList)
 {
-    if (!updateApiKeyFromSettings()) {
-        return;
-    }
-
     bool canSendActivityInfo = !settings.value(QString("SETT_WEB_") + QString("dontCollectComputerActivity")).toBool();
     bool canSendWindowTitles = settings.value(QString("SETT_WEB_") + QString("collectWindowTitles")).toBool();
 
@@ -273,12 +277,7 @@ void Comms::setCurrentTime(qint64 current_time)
 
 void Comms::getUserInfo()
 {
-    if (!updateApiKeyFromSettings()) {
-        return;
-    }
-
     QNetworkRequest request(getApiUrl("/user", "json"));
-
     this->netRequest(request, QNetworkAccessManager::GetOperation, &Comms::userInfoReply);
 }
 
@@ -311,10 +310,6 @@ void Comms::userInfoReply(QNetworkReply *reply)
 
 void Comms::getSettings()
 {
-    if (!updateApiKeyFromSettings()) {
-        return;
-    }
-
 //    primary_group_id = 134214;
     QString primary_group_id_str = settings.value("SETT_PRIMARY_GROUP_ID").toString();
 
@@ -394,12 +389,7 @@ void Comms::settingsReply(QNetworkReply *reply)
 
 void Comms::getTasks()
 {
-    if (!updateApiKeyFromSettings()) {
-        return;
-    }
-
     QNetworkRequest request(getApiUrl("/tasks", "json"));
-
     this->netRequest(request, QNetworkAccessManager::GetOperation, &Comms::tasksReply);
 }
 
