@@ -477,3 +477,8 @@ void Comms::netRequest(QNetworkRequest request, QNetworkAccessManager::Operation
     // unhook callback - so that next run of this func can set a new callback
     QObject::disconnect(conn1);
 }
+
+const QString &Comms::getApiKey() const
+{
+    return apiKey;
+}

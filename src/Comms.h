@@ -34,6 +34,7 @@ public:
     bool updateApiKeyFromSettings();
 
     QString getApiUrl(QString, QString);
+    const QString &getApiKey() const;
 
 protected:
     explicit Comms(QObject *parent = nullptr);
