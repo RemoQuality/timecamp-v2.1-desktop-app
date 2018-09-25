@@ -16,6 +16,7 @@
 #include "DbManager.h"
 #include "AutoTracking.h"
 #include "TrayManager.h"
+#include "TCTimer.h"
 #include "DataCollector/WindowEvents.h"
 #include "WindowEventsManager.h"
 #include "Widget/FloatingWidget.h"
@@ -111,6 +112,9 @@ int main(int argc, char *argv[])
     auto *syncDBtimer = new QTimer();
     //QObject::connect(timer, SIGNAL(timeout()), &Comms::instance(), SLOT(timedUpdates())); // Qt4
     QObject::connect(syncDBtimer, &QTimer::timeout, comms, &Comms::timedUpdates); // Qt5
+
+    auto *TimeCampTimer = new TCTimer(comms);
+    QObject::connect(syncDBtimer, &QTimer::timeout, TimeCampTimer, &TCTimer::status);
 
     // Away time bindings
     QObject::connect(windowEventsManager, &WindowEventsManager::updateAfterAwayTime, comms, &Comms::timedUpdates);

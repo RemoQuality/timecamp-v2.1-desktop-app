@@ -83,6 +83,7 @@ list(APPEND SOURCE_FILES
         "src/Autorun.cpp"
         "src/WindowEventsManager.cpp"
         "src/TrayManager.cpp"
+        "src/TCTimer.cpp"
         "third-party/mozilla_lz4/lz4.c"
         "third-party/QTLogRotation/logutils.cpp"
         "src/DataCollector/WindowEvents.cpp"
