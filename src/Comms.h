@@ -52,17 +52,17 @@ private:
     int root_group_id;
     int primary_group_id;
     QNetworkAccessManager qnam;
-    QHash<QUrl, std::function<void(Comms *, QNetworkReply *)>> commsReplies; // see https://stackoverflow.com/a/7582574/8538394
+    QHash<QUrl, std::function<void(Comms *, QByteArray buffer)>> commsReplies; // see https://stackoverflow.com/a/7582574/8538394
 
 signals:
     void DbSaveApp(AppData *);
-    void gotGenericReply(QNetworkReply *);
+    void gotGenericReply(QNetworkReply *reply);
 
 public slots:
-    void appDataReply(QNetworkReply *reply);
-    void userInfoReply(QNetworkReply *reply);
-    void settingsReply(QNetworkReply *reply);
-    void tasksReply(QNetworkReply *reply);
+    void appDataReply(QByteArray buffer);
+    void userInfoReply(QByteArray buffer);
+    void settingsReply(QByteArray buffer);
+    void tasksReply(QByteArray buffer);
     void genericReply(QNetworkReply *reply);
     void checkBatchSize();
     void clearLastApp();

@@ -248,15 +248,8 @@ void Comms::sendAppData(QVector<AppData> *appList)
     this->netRequest(request, QNetworkAccessManager::PostOperation, jsonString);
 }
 
-void Comms::appDataReply(QNetworkReply *reply)
+void Comms::appDataReply(QByteArray buffer)
 {
-    QByteArray buffer = reply->readAll();
-    if(reply->error() != QNetworkReply::NoError){
-        qWarning() << "Network error: " << reply->errorString();
-        qWarning() << "Data: " << buffer;
-        return;
-    }
-
     buffer.truncate(MAX_LOG_TEXT_LENGTH);
     qDebug() << "AppData Response: " << buffer;
     if (buffer == "") {
@@ -295,9 +288,8 @@ void Comms::getUserInfo()
     this->netRequest(request);
 }
 
-void Comms::userInfoReply(QNetworkReply *reply)
+void Comms::userInfoReply(QByteArray buffer)
 {
-    QByteArray buffer = reply->readAll();
     QJsonDocument itemDoc = QJsonDocument::fromJson(buffer);
 
     buffer.truncate(MAX_LOG_TEXT_LENGTH);
@@ -369,9 +361,8 @@ void Comms::getSettings()
     this->netRequest(request);
 }
 
-void Comms::settingsReply(QNetworkReply *reply)
+void Comms::settingsReply(QByteArray buffer)
 {
-    QByteArray buffer = reply->readAll();
     QJsonDocument itemDoc = QJsonDocument::fromJson(buffer);
     buffer.truncate(MAX_LOG_TEXT_LENGTH);
     qDebug() << "Settings Response: " << buffer;
@@ -400,9 +391,8 @@ void Comms::getTasks()
     this->netRequest(request);
 }
 
-void Comms::tasksReply(QNetworkReply *reply)
+void Comms::tasksReply(QByteArray buffer)
 {
-    QByteArray buffer = reply->readAll();
     QJsonDocument itemDoc = QJsonDocument::fromJson(buffer);
 
     buffer.truncate(MAX_LOG_TEXT_LENGTH);
@@ -426,27 +416,28 @@ void Comms::tasksReply(QNetworkReply *reply)
 void Comms::genericReply(QNetworkReply *reply)
 {
     QByteArray buffer = reply->readAll();
-    if (reply->error() != QNetworkReply::NoError) {
+    if (reply->error() != QNetworkReply::NoError || buffer.isEmpty()) {
         qWarning() << "Network error: " << reply->errorString();
         qWarning() << "Data: " << buffer;
         return;
+    } else {
+        qInfo() << "ALL OK";
     }
-
-    emit gotGenericReply(reply);
 
     QString stringUrl = reply->url().toString();
     // magic: if the stringUrl is in commsReplies Map(/Hash/Array) struct, then call the associated function
     auto &fn = commsReplies[stringUrl];
     if(fn) {
-        fn(this, reply);
+        fn(this, buffer);
+    } else {
+        emit gotGenericReply(reply);
     }
 }
 
 void Comms::netRequest(QNetworkRequest request, QNetworkAccessManager::Operation netOp, QByteArray data) // default params in Comms.h
 {
     // connect the callback function first
-    QMetaObject::Connection conn2;
-    conn2 = QObject::connect(&qnam, &QNetworkAccessManager::finished, this, &Comms::genericReply);
+    QMetaObject::Connection conn2 = QObject::connect(&qnam, &QNetworkAccessManager::finished, this, &Comms::genericReply);
 
     // make a copy of the request URL for the logger
     QString requestUrl = request.url().toString();
