@@ -211,17 +211,12 @@ void Comms::sendAppData(QVector<AppData> *appList)
 
     QUrl serviceURL(QString(API_URL) + "/activity/api_token/" + apiKey);
     QNetworkRequest request(serviceURL);
-    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
 
     QUrl URLParams;
     URLParams.setQuery(params);
     QByteArray jsonString = URLParams.toEncoded();
     QByteArray postDataSize = QByteArray::number(jsonString.size());
 
-    // set up connection parameters
-    // identify as our app
-    request.setRawHeader("User-Agent", CONN_USER_AGENT);
-    request.setRawHeader(CONN_CUSTOM_HEADER_NAME, CONN_CUSTOM_HEADER_VALUE);
     // make it "www form" because thats what API expects; and add length
     request.setRawHeader("Content-Type", "application/x-www-form-urlencoded");
     request.setRawHeader("Content-Length", postDataSize);
@@ -277,12 +272,6 @@ void Comms::getUserInfo()
 
     QUrl serviceURL(QString(API_URL) + "/user/api_token/" + apiKey + "/format/json");
     QNetworkRequest request(serviceURL);
-    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
-
-    // set up connection parameters
-    // identify as our app
-    request.setRawHeader("User-Agent", CONN_USER_AGENT);
-    request.setRawHeader(CONN_CUSTOM_HEADER_NAME, CONN_CUSTOM_HEADER_VALUE);
 
     this->netRequest(request, QNetworkAccessManager::GetOperation, &Comms::userInfoReply, "");
 }
@@ -365,12 +354,6 @@ void Comms::getSettings()
 //    qDebug() << "Query URL: " << serviceURL;
 
     QNetworkRequest request(serviceURL);
-    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
-
-    // set up connection parameters
-    // identify as our app
-    request.setRawHeader("User-Agent", CONN_USER_AGENT);
-    request.setRawHeader(CONN_CUSTOM_HEADER_NAME, CONN_CUSTOM_HEADER_VALUE);
 
     this->netRequest(request, QNetworkAccessManager::GetOperation, &Comms::settingsReply, "");
 }
@@ -411,12 +394,6 @@ void Comms::getTasks()
 
     QUrl serviceURL(QString(API_URL) + "/tasks/api_token/" + apiKey + "/format/json");
     QNetworkRequest request(serviceURL);
-    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
-
-    // set up connection parameters
-    // identify as our app
-    request.setRawHeader("User-Agent", CONN_USER_AGENT);
-    request.setRawHeader(CONN_CUSTOM_HEADER_NAME, CONN_CUSTOM_HEADER_VALUE);
 
     this->netRequest(request, QNetworkAccessManager::GetOperation, &Comms::tasksReply, "");
 }
@@ -451,12 +428,24 @@ void Comms::tasksReply(QNetworkReply *reply)
 
 void Comms::netRequest(QNetworkRequest request, QNetworkAccessManager::Operation netOp, ReplyHandler callback, QByteArray data)
 {
+    // connect the callback function first
     QMetaObject::Connection conn1 = QObject::connect(&qnam, &QNetworkAccessManager::finished, this, callback);
 
+    // make a copy of the request URL for the logger
     QString requestUrl = request.url().toString();
     requestUrl.truncate(MAX_LOG_TEXT_LENGTH);
 
+    // follow redirects
+    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+
+    // identify as our app
+    request.setRawHeader("User-Agent", CONN_USER_AGENT);
+    request.setRawHeader(CONN_CUSTOM_HEADER_NAME, CONN_CUSTOM_HEADER_VALUE);
+
+    // create a reply object
     QNetworkReply *reply = nullptr;
+
+    // make the actual request
     if(netOp == QNetworkAccessManager::GetOperation) {
         qDebug() << "[GET] URL: " << requestUrl;
         reply = qnam.get(request);
@@ -467,13 +456,16 @@ void Comms::netRequest(QNetworkRequest request, QNetworkAccessManager::Operation
         qDebug() << "[POST] Data: " << data;
     }
 
+    // if we got a reply, make sure it's finished; then queue it for deletion
+    // processing is done in the "callback" function (conn1) via async
     if(reply != nullptr) {
         QEventLoop loop;
         connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
         loop.exec(); // wait in this function till we get a Network Reply; callback from conn1 gets called in async manner
 
-        QObject::disconnect(conn1); // unhook callback - so that next run of this func can set a new callback
-
         reply->deleteLater();
     }
+
+    // unhook callback - so that next run of this func can set a new callback
+    QObject::disconnect(conn1);
 }
