@@ -22,7 +22,6 @@ Comms &Comms::instance()
 
 Comms::Comms(QObject *parent) : QObject(parent)
 {
-    apiKey = settings.value(SETT_APIKEY).toString();
     qnam.setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
 }
 
