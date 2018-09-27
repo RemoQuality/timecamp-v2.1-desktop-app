@@ -23,6 +23,8 @@ Comms &Comms::instance()
 Comms::Comms(QObject *parent) : QObject(parent)
 {
     qnam.setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
+    // connect the callback function
+    QMetaObject::Connection conn = QObject::connect(&qnam, &QNetworkAccessManager::finished, this, &Comms::genericReply);
 }
 
 QUrl Comms::getApiUrl(QString endpoint, QString format = "")
@@ -436,9 +438,6 @@ void Comms::genericReply(QNetworkReply *reply)
 
 void Comms::netRequest(QNetworkRequest request, QNetworkAccessManager::Operation netOp, QByteArray data) // default params in Comms.h
 {
-    // connect the callback function first
-    QMetaObject::Connection conn2 = QObject::connect(&qnam, &QNetworkAccessManager::finished, this, &Comms::genericReply);
-
     // make a copy of the request URL for the logger
     QString requestUrl = request.url().toString();
     requestUrl.truncate(MAX_LOG_TEXT_LENGTH);
@@ -473,10 +472,6 @@ void Comms::netRequest(QNetworkRequest request, QNetworkAccessManager::Operation
 
         reply->deleteLater();
     }
-
-    // unhook callback - so that next run of this func can set a new callback
-
-    QObject::disconnect(conn2);
 }
 
 const QString &Comms::getApiKey() const
