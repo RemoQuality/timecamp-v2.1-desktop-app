@@ -27,6 +27,15 @@ Comms::Comms(QObject *parent) : QObject(parent)
     QMetaObject::Connection conn = QObject::connect(&qnam, &QNetworkAccessManager::finished, this, &Comms::genericReply);
 }
 
+QUrlQuery Comms::getApiParams()
+{
+    QUrlQuery params;
+    params.addQueryItem("api_token", apiKey);
+    params.addQueryItem("service", SETT_API_SERVICE_FIELD);
+
+    return params;
+}
+
 QUrl Comms::getApiUrl(QString endpoint, QString format = "")
 {
     QString URL = QString(API_URL) + endpoint + "/api_token/" + apiKey;
@@ -173,9 +182,7 @@ void Comms::sendAppData(QVector<AppData> *appList)
     bool canSendActivityInfo = !settings.value(QString("SETT_WEB_") + QString("dontCollectComputerActivity")).toBool();
     bool canSendWindowTitles = settings.value(QString("SETT_WEB_") + QString("collectWindowTitles")).toBool();
 
-    QUrlQuery params;
-    params.addQueryItem("api_token", apiKey);
-    params.addQueryItem("service", SETT_API_SERVICE_FIELD);
+    QUrlQuery params = getApiParams();
 
     int count = 0;
 
@@ -230,24 +237,10 @@ void Comms::sendAppData(QVector<AppData> *appList)
         lastSync = app.getEnd(); // set our internal variable to value from last app
     }
 
-//    qDebug() << "--------------";
-//    qDebug() << "URL params: ";
-//    qDebug() << params.toString();
-//    qDebug() << "--------------\n";
+    QUrl apiUrl = getApiUrl("/activity", "json");
 
-    QNetworkRequest request(getApiUrl("/activity"));
-
-    QUrl URLParams;
-    URLParams.setQuery(params);
-    QByteArray jsonString = URLParams.toEncoded();
-    QByteArray postDataSize = QByteArray::number(jsonString.size());
-
-    // make it "www form" because thats what API expects; and add length
-    request.setRawHeader("Content-Type", "application/x-www-form-urlencoded");
-    request.setRawHeader("Content-Length", postDataSize);
-
-    commsReplies.insert(request.url(), &Comms::appDataReply);
-    this->netRequest(request, QNetworkAccessManager::PostOperation, jsonString);
+    commsReplies.insert(apiUrl, &Comms::appDataReply);
+    this->postRequest(apiUrl, params);
 }
 
 void Comms::appDataReply(QByteArray buffer)
@@ -318,9 +311,7 @@ void Comms::getSettings()
 
     QUrl serviceURL = getApiUrl("/group/" + primary_group_id_str + "/setting", "json");
 
-    QUrlQuery params;
-    params.addQueryItem("api_token", apiKey);
-    params.addQueryItem("service", SETT_API_SERVICE_FIELD);
+    QUrlQuery params = getApiParams();
 
     // dapp settings
     params.addQueryItem("name[]", "close_agent"); // bool: can close app?
@@ -430,9 +421,9 @@ void Comms::genericReply(QNetworkReply *reply)
     // magic: if the stringUrl is in commsReplies Map(/Hash/Array) struct, then call the associated function
     auto &fn = commsReplies[stringUrl];
     if(fn) {
-        fn(this, buffer);
+        fn(this, std::move(buffer));
     } else {
-        emit gotGenericReply(reply);
+        emit gotGenericReply(reply, std::move(buffer));
     }
 }
 
@@ -472,6 +463,22 @@ void Comms::netRequest(QNetworkRequest request, QNetworkAccessManager::Operation
 
         reply->deleteLater();
     }
+}
+
+void Comms::postRequest(QUrl endpointUrl, QUrlQuery params)
+{
+    QNetworkRequest request(endpointUrl);
+
+    QUrl URLParams;
+    URLParams.setQuery(params);
+    QByteArray jsonString = URLParams.toEncoded();
+    QByteArray postDataSize = QByteArray::number(jsonString.size());
+
+    // make it "www form" because thats what API expects; and add length
+    request.setRawHeader("Content-Type", "application/x-www-form-urlencoded");
+    request.setRawHeader("Content-Length", postDataSize);
+
+    this->netRequest(request, QNetworkAccessManager::PostOperation, jsonString);
 }
 
 const QString &Comms::getApiKey() const
