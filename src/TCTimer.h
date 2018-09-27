@@ -26,8 +26,8 @@ public:
     void start();
     void stop();
     void status();
-    void decideTimerReply(QNetworkReply *reply);
-    void timerStatusReply(QNetworkReply *reply);
+    void decideTimerReply(QNetworkReply *reply, QByteArray buffer);
+    void timerStatusReply(QByteArray buffer);
     void clearData();
 };
 
