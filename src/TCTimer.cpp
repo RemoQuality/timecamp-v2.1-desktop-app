@@ -10,12 +10,16 @@ TCTimer::TCTimer(Comms *comms)
 
 void TCTimer::start()
 {
-
+    QUrlQuery params = comms->getApiParams();
+    params.addQueryItem("action", "start");
+    comms->postRequest(comms->getApiUrl("/timer", "json"), params);
 }
 
 void TCTimer::stop()
 {
-
+    QUrlQuery params = comms->getApiParams();
+    params.addQueryItem("action", "stop");
+    comms->postRequest(comms->getApiUrl("/timer", "json"), params);
 }
 
 void TCTimer::status()
