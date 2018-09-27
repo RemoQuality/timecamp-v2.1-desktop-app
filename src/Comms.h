@@ -27,11 +27,16 @@ public:
     qint64 getCurrentTime() const;
     void setCurrentTime(qint64 current_time);
     void timedUpdates();
+    void tryToSendAppData();
 
-    void netRequest(QNetworkRequest, QNetworkAccessManager::Operation,
-                    void (Comms::*)(QNetworkReply *), QByteArray);
+    void netRequest(QNetworkRequest, QNetworkAccessManager::Operation = QNetworkAccessManager::GetOperation, QByteArray = nullptr);
+    void postRequest(QUrl endpointUrl, QUrlQuery params);
 
     bool updateApiKeyFromSettings();
+
+    QUrlQuery getApiParams();
+    QUrl getApiUrl(QString, QString);
+    const QString &getApiKey() const;
 
 protected:
     explicit Comms(QObject *parent = nullptr);
@@ -49,20 +54,20 @@ private:
     int root_group_id;
     int primary_group_id;
     QNetworkAccessManager qnam;
+    QHash<QUrl, std::function<void(Comms *, QByteArray buffer)>> commsReplies; // see https://stackoverflow.com/a/7582574/8538394
 
 signals:
     void DbSaveApp(AppData *);
+    void gotGenericReply(QNetworkReply *reply, QByteArray buffer);
 
 public slots:
-    void appDataReply(QNetworkReply *reply);
-    void userInfoReply(QNetworkReply *reply);
-    void settingsReply(QNetworkReply *reply);
-    void tasksReply(QNetworkReply *reply);
+    void appDataReply(QByteArray buffer);
+    void userInfoReply(QByteArray buffer);
+    void settingsReply(QByteArray buffer);
+    void tasksReply(QByteArray buffer);
+    void genericReply(QNetworkReply *reply);
     void checkBatchSize();
     void clearLastApp();
 };
-
-typedef void (Comms::*ReplyHandler)(QNetworkReply *reply);
-// https://isocpp.org/wiki/faq/pointers-to-members#typedef-for-ptr-to-memfn
 
 #endif // COMMS_H

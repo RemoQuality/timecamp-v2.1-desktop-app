@@ -22,8 +22,27 @@ Comms &Comms::instance()
 
 Comms::Comms(QObject *parent) : QObject(parent)
 {
-    apiKey = settings.value(SETT_APIKEY).toString();
     qnam.setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
+    // connect the callback function
+    QObject::connect(&qnam, &QNetworkAccessManager::finished, this, &Comms::genericReply);
+}
+
+QUrlQuery Comms::getApiParams()
+{
+    QUrlQuery params;
+    params.addQueryItem("api_token", apiKey);
+    params.addQueryItem("service", SETT_API_SERVICE_FIELD);
+
+    return params;
+}
+
+QUrl Comms::getApiUrl(QString endpoint, QString format = "")
+{
+    QString URL = QString(API_URL) + endpoint + "/api_token/" + apiKey;
+    if (!format.isEmpty()) {
+        URL += "/format/" + format;
+    }
+    return QUrl(URL);
 }
 
 void Comms::timedUpdates()
@@ -36,6 +55,22 @@ void Comms::timedUpdates()
 
     setCurrentTime(QDateTime::currentMSecsSinceEpoch()); // time of DB fetch is passed, so we can update to it if successful
 
+    // we can't be calling API if we don't have the key
+    if (!updateApiKeyFromSettings()) {
+        return;
+    }
+
+    // otherwise (if we have api key), send apps data
+    tryToSendAppData();
+
+    // and (if we still have api key), update settings
+    getUserInfo();
+    getSettings();
+    getTasks();
+}
+
+void Comms::tryToSendAppData()
+{
     QVector<AppData> appList;
     try {
         appList = DbManager::instance().getAppsSinceLastSync(lastSync); // get apps since last sync; SQL queries for LIMIT = MAX_ACTIVITIES_BATCH_SIZE
@@ -48,7 +83,7 @@ void Comms::timedUpdates()
     // send only if there is anything to send (0 is if "computer activities" are disabled, 1 is sometimes only with "IDLE" - don't send that)
     if (appList.length() > 1 || (appList.length() == 1 && appList.first().getAppName() != "IDLE")) {
         sendAppData(&appList);
-        if(appList.length() >= MAX_ACTIVITIES_BATCH_SIZE){
+        if (appList.length() >= MAX_ACTIVITIES_BATCH_SIZE) {
             qInfo() << "[AppList] was big";
             lastBatchBig = true;
         } else {
@@ -56,9 +91,6 @@ void Comms::timedUpdates()
             retryCount = 0; // we send small amount of activities, so our last push must've been success
         }
     }
-    getUserInfo();
-    getSettings();
-    getTasks();
 }
 
 void Comms::clearLastApp()
@@ -83,43 +115,44 @@ void Comms::saveApp(AppData *app)
     bool needsReporting = false;
 
     // not the same activity? we need to log
-    if (0 != QString::compare(app->getAppName(), lastApp->getAppName())) {
+    if (0 != QString::compare(app->getAppName(), lastApp->getAppName())) { // maybe AppName changed
         needsReporting = true;
     }
-    if (0 != QString::compare(app->getWindowName(), lastApp->getWindowName())) {
+    if (!needsReporting && 0 != QString::compare(app->getWindowName(), lastApp->getWindowName())) { // or maybe WindowName changed
         needsReporting = true;
     }
 
     if (needsReporting) {
         qint64 now = QDateTime::currentMSecsSinceEpoch();
-        lastApp->setEnd(now - 1); // it already has start, now we only update end
+        lastApp->setEnd(now - 1); // it already must have start, now we only update end time
 
-        if(lastApp->getStart() < lastApp->getEnd()) {
-            if((lastApp->getEnd() - lastApp->getStart()) > 1000) { // if activity is longer than 1sec
-                try {
-                    emit DbSaveApp(lastApp);
-                } catch (...) {
-                    qInfo("[DBSAVE] DB fail");
-                    return;
-                }
-
-                qInfo("[DBSAVE] %llds - %s | %s\nADD_INFO: %s \n",
-                       (lastApp->getEnd() - lastApp->getStart()) / 1000,
-                       lastApp->getAppName().toLatin1().constData(),
-                       lastApp->getWindowName().toLatin1().constData(),
-                       lastApp->getAdditionalInfo().toLatin1().constData()
-                );
-
-                app->setStart(now); // saved OK, so new App starts "NOW"
-            } else {
-                qWarning("[DBSAVE] Activity too short (%lldms) - %s",
-                      lastApp->getEnd() - lastApp->getStart(),
-                      lastApp->getAppName().toLatin1().constData()
-                );
-
-                app->setStart(lastApp->getStart()); // not saved, so new App starts when the old one has started
+        if((lastApp->getEnd() - lastApp->getStart()) > 1000) { // if activity is longer than 1sec
+            try {
+                emit DbSaveApp(lastApp);
+            } catch (...) {
+                qInfo("[DBSAVE] DB fail");
+                return;
             }
+
+            qInfo("[DBSAVE] %llds - %s | %s\nADD_INFO: %s \n",
+                   (lastApp->getEnd() - lastApp->getStart()) / 1000,
+                   lastApp->getAppName().toLatin1().constData(),
+                   lastApp->getWindowName().toLatin1().constData(),
+                   lastApp->getAdditionalInfo().toLatin1().constData()
+            );
+
+            app->setStart(now); // saved OK, so new App starts "NOW"
         } else {
+            qWarning("[DBSAVE] Activity too short (%lldms) - %s",
+                  lastApp->getEnd() - lastApp->getStart(),
+                  lastApp->getAppName().toLatin1().constData()
+            );
+
+            app->setStart(lastApp->getStart()); // not saved, so new App starts when the old one has started
+        }
+
+        // some weird case:
+        if(lastApp->getStart() > lastApp->getEnd()) { // it started later than it finished?!
             qInfo("[DBSAVE] Activity (%s) broken: from %lld, to %lld",
                   lastApp->getAppName().toLatin1().constData(),
                   lastApp->getStart(),
@@ -146,16 +179,10 @@ bool Comms::updateApiKeyFromSettings()
 
 void Comms::sendAppData(QVector<AppData> *appList)
 {
-    if (!updateApiKeyFromSettings()) {
-        return;
-    }
-
     bool canSendActivityInfo = !settings.value(QString("SETT_WEB_") + QString("dontCollectComputerActivity")).toBool();
     bool canSendWindowTitles = settings.value(QString("SETT_WEB_") + QString("collectWindowTitles")).toBool();
 
-    QUrlQuery params;
-    params.addQueryItem("api_token", apiKey);
-    params.addQueryItem("service", SETT_API_SERVICE_FIELD);
+    QUrlQuery params = getApiParams();
 
     int count = 0;
 
@@ -168,76 +195,56 @@ void Comms::sendAppData(QVector<AppData> *appList)
 //    qDebug() << "getStart: " << app->getStart();
 //    qDebug() << "getEnd: " << app->getEnd();
 
-        if (app.getAppName() != "IDLE" && app.getWindowName() != "IDLE") {
-            QString base_str = QString("computer_activities") + QString("[") + QString::number(count) + QString("]");
+        if (app.getAppName() == "IDLE" || app.getWindowName() == "IDLE") {
+            continue;
+        }
 
-            if (canSendActivityInfo) {
-                QString tempAppName = app.getAppName();
-                if(tempAppName == ""){
-                    tempAppName = "explorer2";
-                }
-                params.addQueryItem(base_str + QString("[application_name]"), tempAppName);
-                if (canSendWindowTitles) {
-                    params.addQueryItem(base_str + QString("[window_title]"), app.getWindowName());
+        QString base_str = QString("computer_activities") + QString("[") + QString::number(count) + QString("]");
 
-                    // "Web Browser App" when appName is Internet but no domain
-                    if (app.getAdditionalInfo() != "") {
-                        params.addQueryItem(base_str + QString("[website_domain]"), app.getDomainFromAdditionalInfo());
-                    }
-                } else {
-                    params.addQueryItem(base_str + QString("[window_title]"), "");
+        if (canSendActivityInfo) {
+            QString tempAppName = app.getAppName();
+            if (tempAppName.isEmpty()) {
+                tempAppName = "explorer2";
+            }
+
+            params.addQueryItem(base_str + QString("[application_name]"), tempAppName);
+
+            if (canSendWindowTitles) {
+                params.addQueryItem(base_str + QString("[window_title]"), app.getWindowName());
+
+                // "Web Browser App" when appName is Internet but no domain
+                if (app.getAdditionalInfo() != "") {
+                    params.addQueryItem(base_str + QString("[website_domain]"), app.getDomainFromAdditionalInfo());
                 }
-            } else { // can't send activity info, collect_computer_activities == 0
-                params.addQueryItem(base_str + QString("[application_name]"), "computer activity");
+            } else {
                 params.addQueryItem(base_str + QString("[window_title]"), "");
             }
 
-            QString start_time = QDateTime::fromMSecsSinceEpoch(app.getStart()).toString(Qt::ISODate).replace("T", " ");
-            params.addQueryItem(base_str + QString("[start_time]"), start_time);
+        } else { // can't send activity info, collect_computer_activities == 0
+            params.addQueryItem(base_str + QString("[application_name]"), SETT_HIDDEN_COMPUTER_ACTIVITIES_CONST_NAME);
+            params.addQueryItem(base_str + QString("[window_title]"), "");
+        }
+
+        QString start_time = QDateTime::fromMSecsSinceEpoch(app.getStart()).toString(Qt::ISODate).replace("T", " ");
+        params.addQueryItem(base_str + QString("[start_time]"), start_time);
 //            qDebug() << "converted start_time: " << start_time;
 
-            QString end_time = QDateTime::fromMSecsSinceEpoch(app.getEnd()).toString(Qt::ISODate).replace("T", " ");
-            params.addQueryItem(base_str + QString("[end_time]"), end_time);
+        QString end_time = QDateTime::fromMSecsSinceEpoch(app.getEnd()).toString(Qt::ISODate).replace("T", " ");
+        params.addQueryItem(base_str + QString("[end_time]"), end_time);
 //            qDebug() << "converted end_time: " << end_time;
-            count++;
-        }
+
+        count++;
         lastSync = app.getEnd(); // set our internal variable to value from last app
     }
 
-//    qDebug() << "--------------";
-//    qDebug() << "URL params: ";
-//    qDebug() << params.toString();
-//    qDebug() << "--------------\n";
+    QUrl apiUrl = getApiUrl("/activity", "json");
 
-    QUrl serviceURL(QString(API_URL) + "/activity/api_token/" + apiKey);
-    QNetworkRequest request(serviceURL);
-    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
-
-    QUrl URLParams;
-    URLParams.setQuery(params);
-    QByteArray jsonString = URLParams.toEncoded();
-    QByteArray postDataSize = QByteArray::number(jsonString.size());
-
-    // set up connection parameters
-    // identify as our app
-    request.setRawHeader("User-Agent", CONN_USER_AGENT);
-    request.setRawHeader(CONN_CUSTOM_HEADER_NAME, CONN_CUSTOM_HEADER_VALUE);
-    // make it "www form" because thats what API expects; and add length
-    request.setRawHeader("Content-Type", "application/x-www-form-urlencoded");
-    request.setRawHeader("Content-Length", postDataSize);
-
-    this->netRequest(request, QNetworkAccessManager::PostOperation, &Comms::appDataReply, jsonString);
+    commsReplies.insert(apiUrl, &Comms::appDataReply);
+    this->postRequest(apiUrl, params);
 }
 
-void Comms::appDataReply(QNetworkReply *reply)
+void Comms::appDataReply(QByteArray buffer)
 {
-    QByteArray buffer = reply->readAll();
-    if(reply->error() != QNetworkReply::NoError){
-        qWarning() << "Network error: " << reply->errorString();
-        qWarning() << "Data: " << buffer;
-        return;
-    }
-
     buffer.truncate(MAX_LOG_TEXT_LENGTH);
     qDebug() << "AppData Response: " << buffer;
     if (buffer == "") {
@@ -271,30 +278,13 @@ void Comms::setCurrentTime(qint64 current_time)
 
 void Comms::getUserInfo()
 {
-    if (!updateApiKeyFromSettings()) {
-        return;
-    }
-
-    QUrl serviceURL(QString(API_URL) + "/user/api_token/" + apiKey + "/format/json");
-    QNetworkRequest request(serviceURL);
-    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
-
-    // set up connection parameters
-    // identify as our app
-    request.setRawHeader("User-Agent", CONN_USER_AGENT);
-    request.setRawHeader(CONN_CUSTOM_HEADER_NAME, CONN_CUSTOM_HEADER_VALUE);
-
-    this->netRequest(request, QNetworkAccessManager::GetOperation, &Comms::userInfoReply, "");
+    QNetworkRequest request(getApiUrl("/user", "json"));
+    commsReplies.insert(request.url(), &Comms::userInfoReply);
+    this->netRequest(request);
 }
 
-void Comms::userInfoReply(QNetworkReply *reply)
+void Comms::userInfoReply(QByteArray buffer)
 {
-    if(reply->error() != QNetworkReply::NoError){
-        qWarning() << "Network error: " << reply->errorString();
-        return;
-    }
-
-    QByteArray buffer = reply->readAll();
     QJsonDocument itemDoc = QJsonDocument::fromJson(buffer);
 
     buffer.truncate(MAX_LOG_TEXT_LENGTH);
@@ -316,18 +306,12 @@ void Comms::userInfoReply(QNetworkReply *reply)
 
 void Comms::getSettings()
 {
-    if (!updateApiKeyFromSettings()) {
-        return;
-    }
-
 //    primary_group_id = 134214;
     QString primary_group_id_str = settings.value("SETT_PRIMARY_GROUP_ID").toString();
 
-    QUrl serviceURL(QString(API_URL) + "/group/" + primary_group_id_str + "/setting" + "/api_token/" + apiKey + "/format/json/");
+    QUrl serviceURL = getApiUrl("/group/" + primary_group_id_str + "/setting", "json");
 
-    QUrlQuery params;
-    params.addQueryItem("api_token", apiKey);
-    params.addQueryItem("service", SETT_API_SERVICE_FIELD);
+    QUrlQuery params = getApiParams();
 
     // dapp settings
     params.addQueryItem("name[]", "close_agent"); // bool: can close app?
@@ -365,23 +349,13 @@ void Comms::getSettings()
 //    qDebug() << "Query URL: " << serviceURL;
 
     QNetworkRequest request(serviceURL);
-    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
 
-    // set up connection parameters
-    // identify as our app
-    request.setRawHeader("User-Agent", CONN_USER_AGENT);
-    request.setRawHeader(CONN_CUSTOM_HEADER_NAME, CONN_CUSTOM_HEADER_VALUE);
-
-    this->netRequest(request, QNetworkAccessManager::GetOperation, &Comms::settingsReply, "");
+    commsReplies.insert(request.url(), &Comms::settingsReply);
+    this->netRequest(request);
 }
 
-void Comms::settingsReply(QNetworkReply *reply)
+void Comms::settingsReply(QByteArray buffer)
 {
-    if(reply->error() != QNetworkReply::NoError){
-        qWarning() << "Network error: " << reply->errorString();
-        return;
-    }
-    QByteArray buffer = reply->readAll();
     QJsonDocument itemDoc = QJsonDocument::fromJson(buffer);
     buffer.truncate(MAX_LOG_TEXT_LENGTH);
     qDebug() << "Settings Response: " << buffer;
@@ -405,30 +379,13 @@ void Comms::settingsReply(QNetworkReply *reply)
 
 void Comms::getTasks()
 {
-    if (!updateApiKeyFromSettings()) {
-        return;
-    }
-
-    QUrl serviceURL(QString(API_URL) + "/tasks/api_token/" + apiKey + "/format/json");
-    QNetworkRequest request(serviceURL);
-    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
-
-    // set up connection parameters
-    // identify as our app
-    request.setRawHeader("User-Agent", CONN_USER_AGENT);
-    request.setRawHeader(CONN_CUSTOM_HEADER_NAME, CONN_CUSTOM_HEADER_VALUE);
-
-    this->netRequest(request, QNetworkAccessManager::GetOperation, &Comms::tasksReply, "");
+    QNetworkRequest request(getApiUrl("/tasks", "json"));
+    commsReplies.insert(request.url(), &Comms::tasksReply);
+    this->netRequest(request);
 }
 
-void Comms::tasksReply(QNetworkReply *reply)
+void Comms::tasksReply(QByteArray buffer)
 {
-    if(reply->error() != QNetworkReply::NoError){
-        qWarning() << "Network error: " << reply->errorString();
-        return;
-    }
-
-    QByteArray buffer = reply->readAll();
     QJsonDocument itemDoc = QJsonDocument::fromJson(buffer);
 
     buffer.truncate(MAX_LOG_TEXT_LENGTH);
@@ -449,14 +406,44 @@ void Comms::tasksReply(QNetworkReply *reply)
     }
 }
 
-void Comms::netRequest(QNetworkRequest request, QNetworkAccessManager::Operation netOp, ReplyHandler callback, QByteArray data)
+void Comms::genericReply(QNetworkReply *reply)
 {
-    QMetaObject::Connection conn1 = QObject::connect(&qnam, &QNetworkAccessManager::finished, this, callback);
+    QByteArray buffer = reply->readAll();
+    if (reply->error() != QNetworkReply::NoError || buffer.isEmpty()) {
+        qWarning() << "Network error: " << reply->errorString();
+        qWarning() << "Data: " << buffer;
+        return;
+    } else {
+        qInfo() << "ALL OK";
+    }
 
+    QString stringUrl = reply->url().toString();
+    // magic: if the stringUrl is in commsReplies Map(/Hash/Array) struct, then call the associated function
+    auto &fn = commsReplies[stringUrl];
+    if(fn) {
+        fn(this, std::move(buffer));
+    } else {
+        emit gotGenericReply(reply, std::move(buffer));
+    }
+}
+
+void Comms::netRequest(QNetworkRequest request, QNetworkAccessManager::Operation netOp, QByteArray data) // default params in Comms.h
+{
+    // make a copy of the request URL for the logger
     QString requestUrl = request.url().toString();
     requestUrl.truncate(MAX_LOG_TEXT_LENGTH);
 
+    // follow redirects
+    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+
+    // identify as our app
+    request.setRawHeader("User-Agent", CONN_USER_AGENT);
+    request.setRawHeader(CONN_CUSTOM_HEADER_NAME, CONN_CUSTOM_HEADER_VALUE);
+
+    // create a reply object
     QNetworkReply *reply = nullptr;
+
+    // make the actual request
     if(netOp == QNetworkAccessManager::GetOperation) {
         qDebug() << "[GET] URL: " << requestUrl;
         reply = qnam.get(request);
@@ -467,13 +454,34 @@ void Comms::netRequest(QNetworkRequest request, QNetworkAccessManager::Operation
         qDebug() << "[POST] Data: " << data;
     }
 
+    // if we got a reply, make sure it's finished; then queue it for deletion
+    // processing is done in the "callback" function (conn1) via async
     if(reply != nullptr) {
         QEventLoop loop;
         connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
         loop.exec(); // wait in this function till we get a Network Reply; callback from conn1 gets called in async manner
 
-        QObject::disconnect(conn1); // unhook callback - so that next run of this func can set a new callback
-
         reply->deleteLater();
     }
+}
+
+void Comms::postRequest(QUrl endpointUrl, QUrlQuery params)
+{
+    QNetworkRequest request(endpointUrl);
+
+    QUrl URLParams;
+    URLParams.setQuery(params);
+    QByteArray jsonString = URLParams.toEncoded();
+    QByteArray postDataSize = QByteArray::number(jsonString.size());
+
+    // make it "www form" because thats what API expects; and add length
+    request.setRawHeader("Content-Type", "application/x-www-form-urlencoded");
+    request.setRawHeader("Content-Length", postDataSize);
+
+    this->netRequest(request, QNetworkAccessManager::PostOperation, jsonString);
+}
+
+const QString &Comms::getApiKey() const
+{
+    return apiKey;
 }
