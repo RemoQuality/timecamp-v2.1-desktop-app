@@ -4,9 +4,9 @@ Manage your tasks and timesheet on [TimeCamp](https://www.timecamp.com/), right 
 Start timers, create projects, do everything that can be done on the web version.
 
 
-| Linux/macOS (Travis) | Linux (Shippable) | Windows | SonarCloud | Codacy | Coverity |
+| Linux/macOS (Travis) | Linux (Shippable) | Windows | SonarCloud | Codacy | CodeFactor |
 | --- | --- | --- | --- | --- | --- |
-| [![Travis](https://img.shields.io/travis/timecamp/timecamp-v2.1-desktop-app.svg)](https://travis-ci.org/timecamp/timecamp-v2.1-desktop-app/builds) | [![Shippable](https://img.shields.io/shippable/5b4cac6c36a5a20700d3e24e/master.svg)](https://app.shippable.com/github/timecamp/timecamp-v2.1-desktop-app) | [![AppVeyor](https://img.shields.io/appveyor/ci/timecamp/timecamp-v2-1-desktop-app.svg)](https://ci.appveyor.com/project/timecamp/timecamp-v2-1-desktop-app/history) | [![SonarCloud Status](https://sonarcloud.io/api/project_badges/measure?project=com.lapots.breed.judge:judge-rule-engine&metric=alert_status)](https://sonarcloud.io/dashboard?id=timecamp_timecamp-v2.1-desktop-app) | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/36961683e0604b2095920f56ac9ed8e6)](https://www.codacy.com/app/timecamp/timecamp-v2.1-desktop-app?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=timecamp/timecamp-v2.1-desktop-app&amp;utm_campaign=Badge_Grade) | [![Coverity](https://img.shields.io/coverity/scan/16725.svg)](https://scan.coverity.com/projects/timecamp-timecamp-v2-1-desktop-app) |
+| [![Travis](https://img.shields.io/travis/timecamp/timecamp-v2.1-desktop-app.svg)](https://travis-ci.org/timecamp/timecamp-v2.1-desktop-app/builds) | [![Shippable](https://img.shields.io/shippable/5b4cac6c36a5a20700d3e24e/master.svg)](https://app.shippable.com/github/timecamp/timecamp-v2.1-desktop-app) | [![AppVeyor](https://img.shields.io/appveyor/ci/timecamp/timecamp-v2-1-desktop-app.svg)](https://ci.appveyor.com/project/timecamp/timecamp-v2-1-desktop-app/history) | [![SonarCloud Status](https://sonarcloud.io/api/project_badges/measure?project=com.lapots.breed.judge:judge-rule-engine&metric=alert_status)](https://sonarcloud.io/dashboard?id=timecamp_timecamp-v2.1-desktop-app) | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/36961683e0604b2095920f56ac9ed8e6)](https://www.codacy.com/app/timecamp/timecamp-v2.1-desktop-app?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=timecamp/timecamp-v2.1-desktop-app&amp;utm_campaign=Badge_Grade) | [![CodeFactor](https://www.codefactor.io/repository/github/timecamp/timecamp-v2.1-desktop-app/badge)](https://www.codefactor.io/repository/github/timecamp/timecamp-v2.1-desktop-app)  |
 ---
 ![Maintainability](https://sonarcloud.io/api/project_badges/measure?project=timecamp_timecamp-v2.1-desktop-app&metric=sqale_rating)
 ![Security](https://sonarcloud.io/api/project_badges/measure?project=timecamp_timecamp-v2.1-desktop-app&metric=security_rating)
@@ -14,6 +14,8 @@ Start timers, create projects, do everything that can be done on the web version
 ![Bugs](https://sonarcloud.io/api/project_badges/measure?project=timecamp_timecamp-v2.1-desktop-app&metric=bugs)
 ![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=timecamp_timecamp-v2.1-desktop-app&metric=code_smells)
 ![Tech debt](https://sonarcloud.io/api/project_badges/measure?project=timecamp_timecamp-v2.1-desktop-app&metric=sqale_index)
+
+[![Coverity](https://img.shields.io/coverity/scan/16725.svg)](https://scan.coverity.com/projects/timecamp-timecamp-v2-1-desktop-app)
 
 ## Repository structure
 
