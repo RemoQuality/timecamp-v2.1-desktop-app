@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
     QObject::connect(syncDBtimer, &QTimer::timeout, comms, &Comms::timedUpdates); // Qt5
 
     auto *TimeCampTimer = new TCTimer(comms);
-    QObject::connect(syncDBtimer, &QTimer::timeout, TimeCampTimer, &TCTimer::status);
+    QObject::connect(syncDBtimer, &QTimer::timeout, TimeCampTimer, &TCTimer::status); // checking Timer Status on the same interval as DB Sync
 
     // Away time bindings
     QObject::connect(windowEventsManager, &WindowEventsManager::updateAfterAwayTime, comms, &Comms::timedUpdates);
