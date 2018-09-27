@@ -6,7 +6,7 @@ TARGET="linuxdeployqt/TimeCampDesktop.AppDir"
 CMAKE_NAME="TimeCampDesktop"
 BUNDLE_NAME="TimeCampDesktop"
 LinuxDeployQtExec="/home/karololszak/Downloads/linuxdeployqt-continuous-x86_64.AppImage"
-AppImageToolExec="/home/karololszak/Downloads/appimagetool-x86_64.AppImage"
+#AppImageToolExec="/home/karololszak/Downloads/appimagetool-x86_64.AppImage"
 
 # as in https://github.com/probonopd/linuxdeployqt#simplest-example
 rm -rf $TARGET

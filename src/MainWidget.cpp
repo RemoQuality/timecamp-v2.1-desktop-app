@@ -157,7 +157,6 @@ void MainWidget::setupWebview()
 
 
     connect(QTWEPage, &QWebEnginePage::titleChanged, this, &MainWidget::webpageTitleChanged);
-
 }
 
 void MainWidget::handleLoadStarted()
@@ -335,7 +334,6 @@ void MainWidget::pressStartTimerButton()
                       "}"); // start new timer
 
 //    this->runJSinPage("$('#timer-task-picker').click();"); // task picker toggle is now launched atuomatically
-
 }
 
 void MainWidget::stopTask()

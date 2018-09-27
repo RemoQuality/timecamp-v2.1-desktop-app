@@ -58,7 +58,7 @@ QString getCurrentURLFromChromeConfig(QByteArray &data, QString &windowTitle) {
 
     // super extensive searching, removing some troublesome characters
     // might still not be enough :(
-    int pos = -1;
+    int pos;
     pos = snss.indexOf(urlTitle);
     if (pos == -1) {
         snss = snss.remove('|');

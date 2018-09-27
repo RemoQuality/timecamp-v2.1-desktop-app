@@ -37,7 +37,7 @@ protected:
     explicit Comms(QObject *parent = nullptr);
 
 private:
-    AppData *lastApp;
+    AppData *lastApp = nullptr;
     QSettings settings;
     qint64 lastSync;
     qint64 currentTime;

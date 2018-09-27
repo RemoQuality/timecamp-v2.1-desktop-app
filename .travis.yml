@@ -38,7 +38,7 @@ before_script:
 addons:
   sonarcloud:
     organization: "timecamp-github" # the key of the org you chose at step #3
-  
+
 script:
   - cd $SRC
   - cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -G "Unix Makefiles" "../"
@@ -47,7 +47,7 @@ script:
   - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then build-wrapper-linux-x86-64 --out-dir "${TARGET}" cmake --build $SRC --target "${CMAKE_NAME}" --; fi' # build
   - tree
   - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then sonar-scanner; fi' # sonar only on non-PRs
-  
+
 after_success:
   - cp $SRC/"${CMAKE_NAME}" $TARGET"/usr/bin/""${BUNDLE_NAME}" # copy the binary
   - cp res"/${BUNDLE_NAME}.desktop" $TARGET"/usr/share/applications/${BUNDLE_NAME}.desktop" # copy app.desktop file

@@ -98,8 +98,8 @@ void WindowEvents_W::HandleWinNameEvent(HWINEVENTHOOK hook, DWORD event, HWND hw
 
                 //            TCHAR windowName[255];
                 //            MultiByteToWideChar(CP_UTF8, 0, bstrName, SysStringLen(bstrName), windowName, 255);
-                char *windowName;
-                windowName = _com_util::ConvertBSTRToString(bstrName);
+                //char *windowName;
+                //windowName = _com_util::ConvertBSTRToString(bstrName);
 
                 if (SysStringLen(bstrName) > 0) {
                     WindowEvents_W::logAppName(procNameNorm, windowName2, hwnd);
