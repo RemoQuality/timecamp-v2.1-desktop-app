@@ -5,7 +5,8 @@ TCTimer::TCTimer(Comms *comms)
     : comms(comms)
 {
     clearData();
-    QMetaObject::Connection conn = QObject::connect(comms, &Comms::gotGenericReply, this, &TCTimer::decideTimerReply);
+    // connect the generic reply from Comms
+    QObject::connect(comms, &Comms::gotGenericReply, this, &TCTimer::decideTimerReply);
 }
 
 void TCTimer::start()
