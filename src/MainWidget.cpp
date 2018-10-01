@@ -338,7 +338,7 @@ void MainWidget::refreshTimerStatus()
 
 void MainWidget::shouldRefreshTimerStatus(bool isRunning, QString name)
 {
-    QTWEPage->runJavaScript("typeof(angular) !== 'undefined') && "
+    QTWEPage->runJavaScript("typeof(angular) !== 'undefined' && "
                             "angular.element(document.body).injector().get('TimerService').timer.isTimerRunning == " + QString::number(isRunning)
                             ,
                             [this](const QVariant &v)
