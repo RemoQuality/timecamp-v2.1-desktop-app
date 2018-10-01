@@ -146,7 +146,7 @@ Source:
 * [QHotkey](https://github.com/Skycoder42/QHotkey) [BSD 3-Clause] - globally working hotkeys for Windows, macOS and Linux
 * [LZ4](http://lz4.github.io/lz4/) [BSD 2-Clause] - for reading Firefox data (see `FirefoxUtils.cpp`)
 * [mini-cmake-qt](https://github.com/euler0/mini-cmake-qt) [[Unlicense](http://unlicense.org/)d] - a template for the simplest possible version of a working,  multi-platform Qt5 project
-* Previous [TimeCamp Desktop App](https://github.com/timecamp/timecamp-v2-desktop-app) - sources for macOS widgets and data collecting
+* Previous TimeCamp Desktop App - sources for macOS widgets and data collecting
 
 Tools:
 * [SQLite](https://www.sqlite.org/) - local database

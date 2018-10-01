@@ -51,8 +51,4 @@
 #define KB_SHORTCUTS_STOP_TIMER "ctrl+alt+shift+,"
 #define KB_SHORTCUTS_OPEN_WINDOW "ctrl+alt+shift+/"
 
-#define PLAY_BUTTON  "\u25B6"
-#define PAUSE_BUTTON "\u23F8"
-#define STOP_BUTTON  "\u23F9"
-
 #endif //THEGUI_SETTINGS_H
