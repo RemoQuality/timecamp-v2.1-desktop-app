@@ -31,11 +31,7 @@ void TrayManager::setupTray(MainWidget *parent) {
                               "If you're using GNOME, try their Shell Extensions: TopIcons or AppIndicator Support.");
     }
 
-    trayMenu = new QMenu(parent);
-    createActions(trayMenu);
-    assignActions(trayMenu);
-    updateStopMenu(false, "");
-
+// trayIcon is unused on MacOS
 #ifndef Q_OS_MACOS
     trayIcon = new QSystemTrayIcon(parent);
 
@@ -47,8 +43,18 @@ void TrayManager::setupTray(MainWidget *parent) {
             this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
     */
     trayIcon->setIcon(QIcon(MAIN_ICON));
-    trayIcon->setContextMenu(trayMenu);
     trayIcon->show();
+#endif
+
+    // setup Tray Menu
+    trayMenu = new QMenu(parent);
+    createActions(trayMenu);
+    assignActions(trayMenu);
+    updateStopMenu(false, "");
+
+// trayIcon is unused on MacOS
+#ifndef Q_OS_MACOS
+    trayIcon->setContextMenu(trayMenu);
 #endif
 
 #ifdef Q_OS_MACOS
@@ -57,6 +63,8 @@ void TrayManager::setupTray(MainWidget *parent) {
     widget->setIcon(":/Icons/AppIcon_Dark.png");
     widget->setTimerText(""); // at the start there should be no timer text
 #endif
+
+// lastly, sync settings
     settings.sync();
 }
 

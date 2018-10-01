@@ -80,12 +80,12 @@ int main(int argc, char *argv[])
     firstRun();
 
     QIcon appIcon = QIcon(MAIN_ICON);
-    appIcon.addFile(":/Icons/AppIcon_16.png");
-    appIcon.addFile(":/Icons/AppIcon_32.png");
-    appIcon.addFile(":/Icons/AppIcon_48.png");
-    appIcon.addFile(":/Icons/AppIcon_64.png");
-    appIcon.addFile(":/Icons/AppIcon_128.png");
     appIcon.addFile(":/Icons/AppIcon_256.png");
+    appIcon.addFile(":/Icons/AppIcon_128.png");
+    appIcon.addFile(":/Icons/AppIcon_64.png");
+    appIcon.addFile(":/Icons/AppIcon_48.png");
+    appIcon.addFile(":/Icons/AppIcon_32.png");
+    appIcon.addFile(":/Icons/AppIcon_16.png");
     QApplication::setWindowIcon(appIcon);
 
     // create DB Manager instance early, as it needs some time to prepare queries etc
@@ -101,6 +101,8 @@ int main(int argc, char *argv[])
 
     // create tray manager
     TrayManager *trayManager = &TrayManager::instance();
+    trayManager->setupTray(&mainWidget); // connect the mainWidget to tray
+
     QObject::connect(&mainWidget, &MainWidget::pageStatusChanged, trayManager, &TrayManager::loginLogout);
     QObject::connect(&mainWidget, &MainWidget::lastTasksChanged, trayManager, &TrayManager::updateRecentTasks);
     QObject::connect(trayManager, &TrayManager::pcActivitiesValueChanged, windowEventsManager, &WindowEventsManager::startOrStopThread);
@@ -110,9 +112,6 @@ int main(int argc, char *argv[])
     auto *syncDBtimer = new QTimer();
     //QObject::connect(timer, SIGNAL(timeout()), &Comms::instance(), SLOT(timedUpdates())); // Qt4
     QObject::connect(syncDBtimer, &QTimer::timeout, comms, &Comms::timedUpdates); // Qt5
-
-    auto *TimeCampTimer = new TCTimer(comms);
-    QObject::connect(syncDBtimer, &QTimer::timeout, TimeCampTimer, &TCTimer::status); // checking Timer Status on the same interval as DB Sync
 
     // Away time bindings
     QObject::connect(windowEventsManager, &WindowEventsManager::updateAfterAwayTime, comms, &Comms::timedUpdates);
@@ -125,28 +124,12 @@ int main(int argc, char *argv[])
     QObject::connect(comms, &Comms::DbSaveApp, dbManager, &DbManager::saveAppToDb);
     QObject::connect(comms, &Comms::DbSaveApp, autoTracking, &AutoTracking::checkAppKeywords);
 
-    // Starting Timer
-    QObject::connect(autoTracking, &AutoTracking::foundTask, TimeCampTimer, &TCTimer::startTaskByTaskObj);
-    QObject::connect(trayManager, &TrayManager::taskSelected, TimeCampTimer, &TCTimer::startTaskByID);
-
     // 2 sec timer for updating submenu and other features
     auto *twoSecondTimer = new QTimer();
     //QObject::connect(twoSecondTimer, SIGNAL(timeout()), &mainWidget, SLOT(twoSecTimerTimeout())); // Qt4
     QObject::connect(twoSecondTimer, &QTimer::timeout, &mainWidget, &MainWidget::twoSecTimerTimeout); // Qt5
     // above timeout triggers func that emits checkIsIdle when logged in
     QObject::connect(&mainWidget, &MainWidget::checkIsIdle, windowEventsManager->getCaptureEventsThread(), &WindowEvents::checkIdleStatus); // Qt5
-
-
-    auto hotkeyNewTimer = new QHotkey(QKeySequence(KB_SHORTCUTS_START_TIMER), true, &app);
-    QObject::connect(hotkeyNewTimer, &QHotkey::activated, TimeCampTimer, &TCTimer::startTimerSlot);
-    QObject::connect(hotkeyNewTimer, &QHotkey::activated, &mainWidget, &MainWidget::chooseTask);
-
-    auto hotkeyStopTimer = new QHotkey(QKeySequence(KB_SHORTCUTS_STOP_TIMER), true, &app);
-    QObject::connect(hotkeyStopTimer, &QHotkey::activated, TimeCampTimer, &TCTimer::stopTimerSlot);
-    QObject::connect(hotkeyStopTimer, &QHotkey::activated, &mainWidget, &MainWidget::refreshTimerStatus);
-
-    auto hotkeyOpenWindow = new QHotkey(QKeySequence(KB_SHORTCUTS_OPEN_WINDOW), true, &app);
-    QObject::connect(hotkeyOpenWindow, &QHotkey::activated, trayManager, &TrayManager::openCloseWindowAction);
 
     //
     QObject::connect(&mainWidget, &MainWidget::pageStatusChanged, [&syncDBtimer](bool loggedIn, QString title)
@@ -164,11 +147,27 @@ int main(int argc, char *argv[])
         }
     });
 
-    // everything connected via QObject, now heavy lifting
-    trayManager->setupTray(&mainWidget); // create tray
     auto *theWidget = new FloatingWidget(); // FloatingWidget can't be bound to mainwidget (it won't set state=visible when main is hidden)
 
-    // Timer start
+    auto *TimeCampTimer = new TCTimer(comms);
+    QObject::connect(syncDBtimer, &QTimer::timeout, TimeCampTimer, &TCTimer::status); // checking Timer Status on the same interval as DB Sync
+
+    // Hotkeys
+    auto hotkeyNewTimer = new QHotkey(QKeySequence(KB_SHORTCUTS_START_TIMER), true, &app);
+    QObject::connect(hotkeyNewTimer, &QHotkey::activated, TimeCampTimer, &TCTimer::startTimerSlot);
+    QObject::connect(hotkeyNewTimer, &QHotkey::activated, &mainWidget, &MainWidget::chooseTask);
+
+    auto hotkeyStopTimer = new QHotkey(QKeySequence(KB_SHORTCUTS_STOP_TIMER), true, &app);
+    QObject::connect(hotkeyStopTimer, &QHotkey::activated, TimeCampTimer, &TCTimer::stopTimerSlot);
+    QObject::connect(hotkeyStopTimer, &QHotkey::activated, &mainWidget, &MainWidget::refreshTimerStatus);
+
+    auto hotkeyOpenWindow = new QHotkey(QKeySequence(KB_SHORTCUTS_OPEN_WINDOW), true, &app);
+    QObject::connect(hotkeyOpenWindow, &QHotkey::activated, trayManager, &TrayManager::openCloseWindowAction);
+
+    // Starting Timer
+    QObject::connect(autoTracking, &AutoTracking::foundTask, TimeCampTimer, &TCTimer::startTaskByTaskObj);
+    QObject::connect(trayManager, &TrayManager::taskSelected, TimeCampTimer, &TCTimer::startTaskByID);
+
     QObject::connect(theWidget, &FloatingWidget::taskNameClicked, TimeCampTimer, &TCTimer::startTimerSlot);
     QObject::connect(theWidget, &FloatingWidget::taskNameClicked, &mainWidget, &MainWidget::chooseTask);
 
