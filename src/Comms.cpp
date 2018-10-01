@@ -398,9 +398,9 @@ void Comms::tasksReply(QByteArray buffer)
     QJsonObject rootObject = itemDoc.object();
     for (auto oneTaskJSON: rootObject) {
         QJsonObject oneTask = oneTaskJSON.toObject();
-        qint64 task_id = oneTaskJSON.toObject().value("task_id").toString().toLongLong();
-        QString name = oneTaskJSON.toObject().value("name").toString();
-        QString tags = oneTaskJSON.toObject().value("tags").toString();
+        qint64 task_id = oneTask.value("task_id").toString().toLongLong();
+        QString name = oneTask.value("name").toString();
+        QString tags = oneTask.value("tags").toString();
         Task* impTask = new Task(task_id);
         impTask->setName(name);
         impTask->setKeywords(tags);
