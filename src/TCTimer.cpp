@@ -89,8 +89,10 @@ void TCTimer::timerStatusReply(QByteArray buffer)
         external_task_id = rootObject.value("external_task_id").toString().toInt();
         name = rootObject.value("name").toString();
         if(name.isEmpty() && task_id != 0) {
-            Task * taskObj = DbManager::instance().getTaskById(task_id);
-            name = taskObj->getName();
+            Task *taskObj = DbManager::instance().getTaskById(task_id);
+            if(taskObj != nullptr) {
+                name = taskObj->getName();
+            }
         }
         start_time = rootObject.value("external_task_id").toString();
     } else {
