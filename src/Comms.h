@@ -13,6 +13,20 @@ class Comms : public QObject
 Q_OBJECT
     Q_DISABLE_COPY(Comms)
 
+    AppData *lastApp = nullptr;
+    QSettings settings;
+    qint64 lastSync;
+    qint64 currentTime;
+    QString apiKey;
+    int retryCount = 0;
+    bool lastBatchBig = false;
+
+    int user_id;
+    int root_group_id;
+    int primary_group_id;
+    QNetworkAccessManager qnam;
+    QHash<QUrl, std::function<void(Comms *, QByteArray buffer)>> commsReplies; // see https://stackoverflow.com/a/7582574/8538394
+
 public:
 
     static Comms &instance();
@@ -38,27 +52,12 @@ public:
     QUrl getApiUrl(QString, QString);
     const QString &getApiKey() const;
 
-protected:
-    explicit Comms(QObject *parent = nullptr);
-
-private:
-    AppData *lastApp = nullptr;
-    QSettings settings;
-    qint64 lastSync;
-    qint64 currentTime;
-    QString apiKey;
-    int retryCount = 0;
-    bool lastBatchBig = false;
-
-    int user_id;
-    int root_group_id;
-    int primary_group_id;
-    QNetworkAccessManager qnam;
-    QHash<QUrl, std::function<void(Comms *, QByteArray buffer)>> commsReplies; // see https://stackoverflow.com/a/7582574/8538394
-
 signals:
     void DbSaveApp(AppData *);
     void gotGenericReply(QNetworkReply *reply, QByteArray buffer);
+
+protected:
+    explicit Comms(QObject *parent = nullptr);
 
 public slots:
     void appDataReply(QByteArray buffer);

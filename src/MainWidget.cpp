@@ -285,7 +285,7 @@ void MainWidget::goToTimerPage()
                 loop.quit();
             }
         });
-        QMetaObject::Connection conn3 = QObject::connect(QTWEPage, &QWebEnginePage::iconUrlChanged, [&]()
+        QMetaObject::Connection conn3 = QObject::connect(QTWEPage, &QWebEnginePage::iconUrlChanged, [this]()
         {
             this->webpageTitleChanged(QTWEPage->title());
         });

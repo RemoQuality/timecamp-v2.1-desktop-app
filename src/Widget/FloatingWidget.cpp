@@ -100,11 +100,9 @@ void FloatingWidget::startStopClicked() {
     if (timerRunning) {
         emit pauseButtonClicked();
         startStopLabel->setPixmap(playPixmap);
-        return;
     }else{
         emit playButtonClicked();
         startStopLabel->setPixmap(pausePixmap);
-        return;
     }
 }
 
@@ -123,7 +121,7 @@ void FloatingWidget::handleSpacingEvents() {
 }
 
 void FloatingWidget::closeEvent(QCloseEvent *event) {
-    // TODO: this is copied from the MainWidget, not 100% sure we need it
+    // this is copied from the MainWidget
     hide(); // hide our window when X was pressed
     event->ignore(); // don't do the default action (which usually is app exit)
 }
