@@ -14,6 +14,7 @@ public:
     virtual void showMe() = 0;
     virtual void hideMe() = 0;
     virtual bool isHidden() = 0;
+    virtual ~Widget() = default;
 };
 
 #endif //TIMECAMPDESKTOP_WIDGET_H
