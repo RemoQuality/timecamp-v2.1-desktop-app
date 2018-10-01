@@ -4,6 +4,8 @@
 #include <QDebug>
 #include <QTimer>
 #include <QTime>
+#include <QStyle>
+#include <QBitmap>
 #include <cmath>
 
 #include "FloatingWidget.h"
@@ -21,11 +23,28 @@ FloatingWidget::FloatingWidget(QWidget *parent)
     this->hide();
     this->setMouseTracking(true); // we need this to show resize arrows
 
+
+    playPixmap = style()->standardPixmap(QStyle::SP_MediaPlay);
+    QBitmap playMask = playPixmap.createMaskFromColor(Qt::transparent, Qt::MaskInColor);
+    playPixmap.fill(Qt::white);
+    playPixmap.setMask(playMask);
+
+    pausePixmap = style()->standardPixmap(QStyle::SP_MediaPause);
+    QBitmap pauseMask = pausePixmap.createMaskFromColor(Qt::transparent, Qt::MaskInColor);
+    pausePixmap.fill(Qt::white);
+    pausePixmap.setMask(pauseMask);
+
     FloatingWidgetWasInitialised = true;
 
     timerTextLabel = new QLabel(this);
     taskTextLabel = new ClickableLabel(this);
     startStopLabel = new ClickableLabel(this);
+    QString QLabelStyle("QLabel { color: white; }");
+    timerTextLabel->setStyleSheet(QLabelStyle);
+    taskTextLabel->setStyleSheet(QLabelStyle);
+    startStopLabel->setStyleSheet(QLabelStyle);
+
+    startStopLabel->setScaledContents(true); // resize play/pause icon
 
     QMetaObject::Connection conn1 = QObject::connect(taskTextLabel, &ClickableLabel::clicked,
                                                      this, &FloatingWidget::emitTaskNameClicked);
@@ -62,9 +81,11 @@ void FloatingWidget::emitTaskNameClicked() {
 
 void FloatingWidget::updateWidgetStatus(bool canBeStopped, QString timerName) {
     if (canBeStopped) {
-        startStopLabel->setText(PAUSE_BUTTON);
+        startStopLabel->setPixmap(pausePixmap);
+        timerRunning = true;
     } else {
-        startStopLabel->setText(PLAY_BUTTON);
+        startStopLabel->setPixmap(playPixmap);
+        timerRunning = false;
         this->setTimerText(""); // set empty text (no 0:00 for timer when no task is running)
         timerName = "No task";
         timerElapsed = 0;
@@ -76,15 +97,13 @@ void FloatingWidget::updateWidgetStatus(bool canBeStopped, QString timerName) {
 }
 
 void FloatingWidget::startStopClicked() {
-    QString current = startStopLabel->text();
-    if (current == PLAY_BUTTON) {
-        emit playButtonClicked();
-        startStopLabel->setText(PAUSE_BUTTON);
-        return;
-    }
-    if (current == PAUSE_BUTTON) {
+    if (timerRunning) {
         emit pauseButtonClicked();
-        startStopLabel->setText(PLAY_BUTTON);
+        startStopLabel->setPixmap(playPixmap);
+        return;
+    }else{
+        emit playButtonClicked();
+        startStopLabel->setPixmap(pausePixmap);
         return;
     }
 }
@@ -191,12 +210,6 @@ void FloatingWidget::paintEvent(QPaintEvent *) {
 
     // special_offset is used, because PLAY and PAUSE buttons in default font are weirdly spaced
     int special_offset = 0;
-    if (startStopLabel->text() == PLAY_BUTTON) {
-        special_offset = -2;
-    }
-    if (startStopLabel->text() == PAUSE_BUTTON) {
-        special_offset = 2;
-    }
     special_offset *= fontSize/12;
 
     taskTextLabel->setFont(usedFont);
