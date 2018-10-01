@@ -94,9 +94,6 @@ QString getCurrentURLFromChromeConfig(QByteArray &data, QString &windowTitle) {
         return "";
     }
 
-    // this is broken:
-    // qDebug() << truncatedRef.mid(urlPos, truncatedRef.indexOf((QChar) '\0'));
-
     // convert to latin1 - it strips most of weird unicode chars, leaves proper URI stuff
     QString truncatedStr = truncatedRef.mid(urlPos).toLatin1();
 
