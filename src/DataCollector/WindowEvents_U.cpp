@@ -95,94 +95,105 @@ void WindowEvents_U::run()
     long xwindowid_old = 0;
     long xwindowid_curr = 0;
 
-
     while (!QThread::currentThread()->isInterruptionRequested()) {
         XNextEvent(display, &event);
-        if (event.type == PropertyNotify && (event.xproperty.atom == NET_ACTIVE_WINDOW || event.xproperty.atom == NET_WM_NAME || event.xproperty.atom == WM_NAME)) {
-            status = XGetWindowProperty(
-                display,
-                root,
-                NET_ACTIVE_WINDOW,
-                0,
-                (~0L),
-                False,
-                AnyPropertyType,
-                &actual_type,
-                &actual_format,
-                &nitems,
-                &bytes,
-                (unsigned char **) &data);
-
-            if (status != Success) {
-                qInfo("[WindowEvents_U] Error of status = %d\n", status);
-                continue;
-            }
-
-            if (xwindowid_curr != data[0] && data[0] != 0) {
-                XSelectInput(display, xwindowid_old, NoEventMask); // don't fetch events from old window
-
-                xwindowid_old = xwindowid_curr; // what was current is now old
-                xwindowid_curr = data[0];       // set new "current"
-
-                XSelectInput(display, xwindowid_curr, PropertyChangeMask);
-            }
-
-            status = XGetWindowProperty(
-                display,
-                xwindowid_curr,
-                NET_WM_NAME,
-                0,
-                (~0L),
-                False,
-                AnyPropertyType,
-                &actual_type,
-                &actual_format,
-                &nitems,
-                &bytes,
-                &window_name);
-
-            if (status != Success) {
-                qInfo("[WindowEvents_U] Error of status = %d\n", status);
-                continue;
-            }
-
-            status = XGetWindowProperty(
-                display,
-                xwindowid_curr,
-                NET_WM_PID,
-                0,
-                (~0L),
-                False,
-                AnyPropertyType,
-                &actual_type,
-                &actual_format,
-                &nitems,
-                &bytes,
-                &pid);
-
-            if (status != Success) {
-                qInfo("[WindowEvents_U] Error of status = %d\n", status);
-                continue;
-            }
-            if(pid == nullptr){
-                qInfo("[WindowEvents_U] Error: pid was NULL");
-                continue;
-            }
-
-            auto *longarr = reinterpret_cast<long *>(pid);
-            long longpid = longarr[0];
-
-            std::string command = "";
-            command += "ps ";
-            command += " -o comm= ";
-            command += QString::number(longpid).toStdString();
-
-//                qInfo() << QString::fromStdString(command);
-
-            app_name = execCommand(command.c_str());
-
-            logAppName(QString::fromStdString(app_name), QString::fromUtf8((char*)window_name));
+        // if it's not a property notify, we don't want to process it
+        if (event.type != PropertyNotify) {
+            continue;
         }
+        // if not one of the properties we want, skip it too
+        if (!(event.xproperty.atom == NET_ACTIVE_WINDOW || event.xproperty.atom == NET_WM_NAME || event.xproperty.atom == WM_NAME)) {
+            continue;
+        }
+
+        // get active window
+        status = XGetWindowProperty(
+            display,
+            root,
+            NET_ACTIVE_WINDOW,
+            0,
+            (~0L),
+            False,
+            AnyPropertyType,
+            &actual_type,
+            &actual_format,
+            &nitems,
+            &bytes,
+            (unsigned char **) &data);
+
+        if (status != Success) {
+            qInfo("[WindowEvents_U] Error of status = %d\n", status);
+            continue;
+        }
+
+        // if it's another window, listen to the new window, and ignore old window
+        if (xwindowid_curr != data[0] && data[0] != 0) {
+            XSelectInput(display, xwindowid_old, NoEventMask); // don't fetch events from old window
+
+            xwindowid_old = xwindowid_curr; // what was current is now old
+            xwindowid_curr = data[0];       // set new "current"
+
+            XSelectInput(display, xwindowid_curr, PropertyChangeMask);
+        }
+
+        // get the window name
+        status = XGetWindowProperty(
+            display,
+            xwindowid_curr,
+            NET_WM_NAME,
+            0,
+            (~0L),
+            False,
+            AnyPropertyType,
+            &actual_type,
+            &actual_format,
+            &nitems,
+            &bytes,
+            &window_name);
+
+        if (status != Success) {
+            qInfo("[WindowEvents_U] Error of status = %d\n", status);
+            continue;
+        }
+
+        // get the window PID
+        status = XGetWindowProperty(
+            display,
+            xwindowid_curr,
+            NET_WM_PID,
+            0,
+            (~0L),
+            False,
+            AnyPropertyType,
+            &actual_type,
+            &actual_format,
+            &nitems,
+            &bytes,
+            &pid);
+
+        if (status != Success) {
+            qInfo("[WindowEvents_U] Error of status = %d\n", status);
+            continue;
+        }
+        if (pid == nullptr) {
+            qInfo("[WindowEvents_U] Error: pid was NULL");
+            continue;
+        }
+
+        // convert PID to a usable number
+        auto *longarr = reinterpret_cast<long *>(pid);
+        long longpid = longarr[0];
+
+        // use `ps` to get the process name
+        std::string command = "";
+        command += "ps ";
+        command += " -o comm= ";
+        command += QString::number(longpid).toStdString();
+//                qInfo() << QString::fromStdString(command);
+        app_name = execCommand(command.c_str());
+
+        // save the app name and window name
+        logAppName(QString::fromStdString(app_name), QString::fromUtf8((char *) window_name));
     }
 
     XCloseDisplay(display);
