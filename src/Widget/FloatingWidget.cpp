@@ -100,11 +100,9 @@ void FloatingWidget::startStopClicked() {
     if (timerRunning) {
         emit pauseButtonClicked();
         startStopLabel->setPixmap(playPixmap);
-        return;
     }else{
         emit playButtonClicked();
         startStopLabel->setPixmap(pausePixmap);
-        return;
     }
 }
 
