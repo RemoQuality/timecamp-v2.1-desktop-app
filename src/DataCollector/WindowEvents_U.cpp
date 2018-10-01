@@ -83,9 +83,6 @@ void WindowEvents_U::run()
 
     XSelectInput(display, root, PropertyChangeMask);
 
-    char *last_name;
-    char *curr_name;
-
     Atom actual_type;
     int actual_format;
     unsigned long nitems;
@@ -98,7 +95,6 @@ void WindowEvents_U::run()
     long xwindowid_old = 0;
     long xwindowid_curr = 0;
 
-    XTextProperty *text_prop_return;
 
     while (!QThread::currentThread()->isInterruptionRequested()) {
         XNextEvent(display, &event);
