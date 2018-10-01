@@ -13,7 +13,6 @@ std::wstring AccControlItem::getDescription()
     r = node->get_accDescription(var, &bStrValue);
     if (r == S_OK && var.vt != VT_EMPTY && bStrValue) {
         value = (LPCWSTR) bStrValue;
-
     } else {
         value = L"";
     }
@@ -74,7 +73,6 @@ std::wstring AccControlItem::getName()
     r = node->get_accName(var, &bStrValue);
     if (r == S_OK && var.vt != VT_EMPTY && bStrValue) {
         value = (LPCWSTR) bStrValue;
-
     } else {
         value = L"";
     }
@@ -97,9 +95,6 @@ std::wstring AccControlItem::getValue()
         value = (LPCWSTR) bStrValue;
     } else {
         value = L"";
-    }
-    if (value != L"") {
-
     }
     SysFreeString(bStrValue);
     VariantClear(&var);
