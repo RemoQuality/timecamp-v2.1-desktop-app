@@ -409,12 +409,15 @@ void Comms::tasksReply(QByteArray buffer)
 void Comms::genericReply(QNetworkReply *reply)
 {
     QByteArray buffer = reply->readAll();
-    if (reply->error() != QNetworkReply::NoError || buffer.isEmpty()) {
+    if (reply->error() != QNetworkReply::NoError) {
         qWarning() << "Network error: " << reply->errorString();
-        qWarning() << "Data: " << buffer;
+        qWarning() << "URL: " << reply->url();
+        qWarning() << "TYPE: " << reply->operation();
+        qWarning() << "Response: " << buffer;
         return;
     } else {
-        qInfo() << "ALL OK";
+        qDebug() << "Network success";
+        qDebug() << "Data: " << buffer;
     }
 
     QString stringUrl = reply->url().toString();

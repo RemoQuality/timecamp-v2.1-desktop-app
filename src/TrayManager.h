@@ -38,8 +38,8 @@ public:
     void setupTray(MainWidget *);
     void setupSettings();
 
+    void updateWidget(bool);
     void updateStopMenu(bool, QString);
-    void updateWidget(bool, QString);
     void loginLogout(bool, QString);
 
     bool wasLoggedIn = false;
@@ -48,6 +48,8 @@ public:
 signals:
     void pcActivitiesValueChanged(bool);
     void taskSelected(int, bool);
+    void startTaskClicked();
+    void stopTaskClicked();
 
 public slots:
     void iconActivated(QSystemTrayIcon::ActivationReason);
@@ -85,13 +87,15 @@ private:
 
     MainWidget *mainWidget;
 
+    bool areMenusEqual(QMenu *menu1, QMenu *menu2);
+    void emitStartTaskClicked();
+    void emitStopTaskClicked();
+
 #ifdef _WIDGET_EXISTS_
     Widget *widget;
 public:
     void setWidget(Widget *widget);
 #endif
-
-    bool areMenusEqual(QMenu *menu1, QMenu *menu2);
 };
 
 

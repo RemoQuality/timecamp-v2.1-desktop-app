@@ -34,6 +34,7 @@ void TrayManager::setupTray(MainWidget *parent) {
     trayMenu = new QMenu(parent);
     createActions(trayMenu);
     assignActions(trayMenu);
+    updateStopMenu(false, "");
 
 #ifndef Q_OS_MACOS
     trayIcon = new QSystemTrayIcon(parent);
@@ -160,7 +161,7 @@ void TrayManager::createActions(QMenu *menu) {
     startTaskAct->setShortcutVisibleInContextMenu(true);
 #endif
     startTaskAct->setShortcutContext(Qt::ApplicationShortcut);
-    connect(startTaskAct, &QAction::triggered, mainWidget, &MainWidget::startTask);
+    connect(startTaskAct, &QAction::triggered, this, &TrayManager::emitStartTaskClicked);
 
     stopTaskAct = new QAction(tr("Stop timer"), this);
     stopTaskAct->setStatusTip(tr("Stop currently running timer"));
@@ -169,7 +170,7 @@ void TrayManager::createActions(QMenu *menu) {
     stopTaskAct->setShortcutVisibleInContextMenu(true);
 #endif
     stopTaskAct->setShortcutContext(Qt::ApplicationShortcut);
-    connect(stopTaskAct, &QAction::triggered, mainWidget, &MainWidget::stopTask);
+    connect(stopTaskAct, &QAction::triggered, this, &TrayManager::emitStopTaskClicked);
 
     trackerAct = new QAction(tr("Track computer activities"), this);
     trackerAct->setCheckable(true);
@@ -279,37 +280,21 @@ bool TrayManager::areMenusEqual(QMenu *menu1, QMenu *menu2) {
     return true;
 }
 
-void TrayManager::updateWidget(bool loggedIn, QString tooltipText) {
+void TrayManager::updateWidget(bool loggedIn) {
 #ifdef _WIDGET_EXISTS_
     widgetAct->setEnabled(loggedIn);
     if (!loggedIn) {
         widget->hideMe();
     }
-    if (stopTaskAct->isEnabled()) { // if timer is running
-        QString maybeTime = tooltipText.mid(0, 8); // first 8 chars: 12:23:45
-        bool ok;
-        maybeTime.mid(0, 2).toInt(&ok, 10); // take first two and try to make it int; if failed then it's not time
-        if (ok) {
-            QTime time = QTime::fromString(maybeTime, "hh:mm:ss");
-            if (time.hour() > 0) {
-                widget->setTimerText(time.toString("H:mm:ss"));
-            } else {
-                widget->setTimerText(time.toString("m:ss"));
-            }
-        } else {
-            widget->setTimerText(NO_TIMER_TEXT);
-        }
-        this->widgetToggl(widgetAct->isChecked());
-    }
+    this->widgetToggl(widgetAct->isChecked());
 #endif
 }
 
 void TrayManager::loginLogout(bool isLoggedIn, QString tooltipText) {
     qDebug() << "[Browser] Page changed; update whether logged in or not";
 
-    this->updateWidget(isLoggedIn, tooltipText);
+    this->updateWidget(isLoggedIn);
     startTaskAct->setEnabled(isLoggedIn);
-    stopTaskAct->setEnabled(isLoggedIn);
     trackerAct->setEnabled(isLoggedIn);
     autoTrackingAct->setEnabled(isLoggedIn);
 #ifndef Q_OS_MACOS
@@ -331,4 +316,13 @@ void TrayManager::loginLogout(bool isLoggedIn, QString tooltipText) {
 void TrayManager::setWidget(Widget *widget) {
     TrayManager::widget = widget;
     widget->setMenu(trayMenu);
+}
+
+
+void TrayManager::emitStartTaskClicked() {
+    emit startTaskClicked();
+}
+
+void TrayManager::emitStopTaskClicked() {
+    emit stopTaskClicked();
 }

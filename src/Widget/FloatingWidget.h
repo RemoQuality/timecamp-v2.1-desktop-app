@@ -31,6 +31,7 @@ public slots:
     void emitTaskNameClicked();
     void startStopClicked();
     void updateWidgetStatus(bool, QString);
+    void setTimerElapsed(int timerElapsed);
 
 signals:
     void taskNameClicked();
@@ -47,6 +48,7 @@ protected:
     bool mouseInGrip(QPoint mousePos);
 
 private:
+    int timerElapsed = 0;
     int radius = 4;
     int margin = 4;
     bool FloatingWidgetWasInitialised = false;
@@ -60,6 +62,7 @@ private:
     QSize gripSize;
     QSettings settings;
     int scaleToFit(double height);
+    void oneSecTimerTimeout();
 
     QLabel *timerTextLabel;
     ClickableLabel *taskTextLabel;

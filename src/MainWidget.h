@@ -42,11 +42,10 @@ public:
 
 signals:
     void pageStatusChanged(bool, QString);
-    void timerStatusChanged(bool, QString);
     void checkIsIdle();
     void windowStatusChanged(bool);
     void lastTasksChanged();
-    void startTaskViaObjToID(qint64);
+    void updateTimerStatus(QByteArray);
 
 protected:
     void handleSpacingEvents();
@@ -64,17 +63,15 @@ public slots:
 
     void wasTheWindowLeftOpened();
     void open();
-    //void status();
-    void startTask();
-    void startTaskByID(qint64);
-    void startTaskByTaskObj(Task*, bool);
-    void stopTask();
+    void chooseTask();
     void quit();
 
     void handleLoadStarted();
     void handleLoadProgress(int);
     void handleLoadFinished(bool);
     void goToAwayPage();
+    void refreshTimerStatus();
+    void shouldRefreshTimerStatus(bool, QString);
 
 private:
     Ui::MainWidget *ui;
@@ -89,14 +86,13 @@ private:
 
     void runJSinPage(QString js);
     void forceLoadUrl(QString url);
+    void showTaskPicker();
     void checkIsTimerRunning();
     void fetchRecentTasks();
     void fetchAPIkey();
-    void fetchTimerName();
     bool checkIfOnTimerPage();
     void goToTimerPage();
     void refreshTimerPageData();
-    void pressStartTimerButton();
 
     void checkIfLoggedIn(QString title);
     void setupWebview();
@@ -108,8 +104,6 @@ private:
     bool loggedIn;
 
     void setApiKey(const QString &apiKey);
-    void setTimerName(const QString &timerName);
-    void setIsTimerRunning(bool isTimerRunning);
 };
 
 #endif // MAINWIDGET_H

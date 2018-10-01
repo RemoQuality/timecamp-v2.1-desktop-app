@@ -307,85 +307,54 @@ void MainWidget::goToAwayPage()
     this->clearCache();
     this->open();
 
-//    emit windowStatusChanged(true);
     QTWEPage->load(QUrl(OFFLINE_URL));
 }
 
-void MainWidget::startTask()
+void MainWidget::chooseTask()
 {
     this->goToTimerPage();
-    this->stopTask(); // stop the last timer
+    this->showTaskPicker();
     this->open();
-    this->pressStartTimerButton();
-//    emit windowStatusChanged(true);
 }
 
-void MainWidget::pressStartTimerButton()
+void MainWidget::showTaskPicker()
 {
-    // if on manual time adding, switch to "start timer" button
-    this->runJSinPage("if($('.btn-timer').text().trim().toLowerCase() == 'add time entry') { "
-                      "$('.btn-timer').siblings('.btn-link').click();"
-                      "}"
-    );
-
-    // actually start timer
-    this->runJSinPage("if($('.btn-timer').text().trim().toLowerCase() == 'start timer') { "
-                      "$('.btn-timer').click(); "
-                      "}"); // start new timer
-
-//    this->runJSinPage("$('#timer-task-picker').click();"); // task picker toggle is now launched atuomatically
-}
-
-void MainWidget::stopTask()
-{
-    this->goToTimerPage();
-    this->runJSinPage("if($('.btn-timer').text().trim().toLowerCase() == 'stop timer') { $('.btn-timer').click(); }");
-}
-
-void MainWidget::startTaskByID(qint64 taskID)
-{
-    this->goToTimerPage();
-    this->stopTask();
-    QThread::msleep(128);
-    this->runJSinPage("$('#timer-task-picker').click();");
-    QThread::msleep(128);
-    qDebug() << "Clicking task with id: " << taskID;
-    qDebug() << "Turned into string: " << QString::number(taskID);
-    this->runJSinPage("$(\".widgetSelectTask[data-task-id='" + QString::number(taskID) + "'\")[0].click()");
-    QThread::msleep(128);
-    this->pressStartTimerButton();
-}
-
-void MainWidget::startTaskByTaskObj(Task *task, bool force)
-{
-    QTWEPage->runJavaScript(
-        "typeof(angular) !== 'undefined' && angular.element(document.body).injector().get('TimerService').timer.task_id",
-        [this, task, force](const QVariant &v) {
-            QString timerId = v.toString();
-            if (force || timerId.isEmpty() || timerId.toInt() != task->getTaskId()) {
-                emit startTaskViaObjToID(task->getTaskId());
-            }
-        });
+    this->runJSinPage("$('html').click();$('#timer-task-picker, #new-entry-task-picker').tcTTTaskPicker('hide').tcTTTaskPicker('show');");
 }
 
 void MainWidget::refreshTimerPageData()
 {
-    if (this->checkIfOnTimerPage()) {
-        this->runJSinPage("if(typeof(TC['lastReload']) === 'undefined'){TC['lastReload'] = +Date.now() - 30*1000 - 1;}"
-                          "if(TC['lastReload'] < Date.now() - 30*1000){"
-                          "$('.btn .fa-repeat').parent().click();"
-                          "TC['lastReload'] = +Date.now();"
-                          "}");
-    }
+    this->runJSinPage("if(typeof(angular) !== 'undefined'){"
+                      "angular.element(document.body).injector().get('TTEntriesService').reload();"
+                      "angular.element(document.body).injector().get('UserLogService').reload();"
+                      "}");
+    this->refreshTimerStatus();
+}
+
+void MainWidget::refreshTimerStatus()
+{
+    this->runJSinPage("typeof(angular) !== 'undefined' && angular.element(document.body).injector().get('TimerService').status()");
+}
+
+void MainWidget::shouldRefreshTimerStatus(bool isRunning, QString name)
+{
+    QTWEPage->runJavaScript("typeof(angular) !== 'undefined') && "
+                            "angular.element(document.body).injector().get('TimerService').timer.isTimerRunning == " + QString::number(isRunning)
+                            ,
+                            [this](const QVariant &v)
+                            {
+                                if(!v.toBool()) { // when the above statement IS NOT TRUE (i.e. we have no angular or isTimerRunning is a different flag
+                                    this->refreshTimerStatus();
+                                }
+                            });
 }
 
 void MainWidget::checkIsTimerRunning()
 {
-    QTWEPage->runJavaScript("typeof(angular) !== 'undefined' && angular.element(document.body).injector().get('TimerService').timer.isTimerRunning", [this](
-        const QVariant &v)
+    QTWEPage->runJavaScript("typeof(angular) !== 'undefined' && JSON.stringify(angular.element(document.body).injector().get('TimerService').timer)",
+        [this](const QVariant &v)
     {
-//        qDebug() << "Timer running: " << v.toString();
-        setIsTimerRunning(v.toBool());
+        emit updateTimerStatus(v.toByteArray());
     });
 }
 
@@ -420,15 +389,6 @@ void MainWidget::fetchAPIkey()
     });
 }
 
-void MainWidget::fetchTimerName()
-{
-    QTWEPage->runJavaScript("var task = TC.TimeTracking.getTask(angular.element(document.body).injector().get('TimerService').timer.task_id);"
-                            "if(task!=null){task.name}", [this](const QVariant &v)
-                            {
-//        qDebug() << "Timer name: " << v.toString();
-                                setTimerName(v.toString());
-                            });
-}
 
 void MainWidget::quit()
 {
@@ -439,18 +399,4 @@ void MainWidget::setApiKey(const QString &apiKey)
 {
     settings.setValue(SETT_APIKEY, apiKey); // save apikey to settings
     settings.sync();
-}
-
-void MainWidget::setTimerName(const QString &timerName)
-{
-    emit timerStatusChanged(true, timerName); // reenable task stopping
-}
-
-void MainWidget::setIsTimerRunning(bool isTimerRunning)
-{
-    if (isTimerRunning) {
-        fetchTimerName(); // this will make menu say "Stop XYZ timer"
-    } else { // no timer running
-        emit timerStatusChanged(false, ""); // disable the option - gray it out;
-    }
 }

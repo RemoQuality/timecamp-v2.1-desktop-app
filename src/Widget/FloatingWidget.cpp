@@ -2,6 +2,8 @@
 #include <QFont>
 #include <QPen>
 #include <QDebug>
+#include <QTimer>
+#include <QTime>
 #include <cmath>
 
 #include "FloatingWidget.h"
@@ -34,6 +36,24 @@ FloatingWidget::FloatingWidget(QWidget *parent)
 
     QMetaObject::Connection conn3 = QObject::connect(startStopLabel, &ClickableLabel::clicked,
                                                      this, &FloatingWidget::startStopClicked);
+
+    auto *oneSecondTimer = new QTimer();
+    QObject::connect(oneSecondTimer, &QTimer::timeout, this, &FloatingWidget::oneSecTimerTimeout);
+    oneSecondTimer->start(1000);
+    updateWidgetStatus(false, "");
+}
+
+void FloatingWidget::oneSecTimerTimeout() {
+    if (timerElapsed > 0) {
+        QTime time(0,0,0);
+        time = time.addSecs(timerElapsed);
+        if (time.hour() > 0) {
+            this->setTimerText(time.toString("H:mm:ss"));
+        } else {
+            this->setTimerText(time.toString("m:ss"));
+        }
+        timerElapsed++;
+    }
 }
 
 void FloatingWidget::emitTaskNameClicked() {
@@ -47,6 +67,7 @@ void FloatingWidget::updateWidgetStatus(bool canBeStopped, QString timerName) {
         startStopLabel->setText(PLAY_BUTTON);
         this->setTimerText(""); // set empty text (no 0:00 for timer when no task is running)
         timerName = "No task";
+        timerElapsed = 0;
     }
     if (timerName.isEmpty()) {
         timerName = "No task";
@@ -259,4 +280,9 @@ void FloatingWidget::setMenu(QMenu *contextMenu) {
 void FloatingWidget::setIcon(QString iconPath) {
     // FloatingWidget has no icon for now
     // if it had, it would be in the left corner
+}
+
+void FloatingWidget::setTimerElapsed(int timerElapsed)
+{
+    FloatingWidget::timerElapsed = timerElapsed;
 }
