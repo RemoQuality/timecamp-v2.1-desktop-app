@@ -27,6 +27,8 @@ after_build:
   - copy "Output\TimeCampDesktop.exe" "Release\TimeCampDesktop.exe"
   - copy "src\localdb.sqlite" "Release\localdb.sqlite"
   - windeployqt Release\TimeCampDesktop.exe
+  - copy C:\OpenSSL-Win64\bin\libeay32.dll "Release\libeay32.dll"
+  - copy C:\OpenSSL-Win64\bin\ssleay32.dll "Release\ssleay32.dll"
 
 artifacts:
   - path: Release
