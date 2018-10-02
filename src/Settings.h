@@ -14,7 +14,7 @@
 #define API_URL "https://www.timecamp.com/third_party/api"
 #define APPLICATION_URL "https://www.timecamp.com/app#/timesheets/timer"
 #define OFFLINE_URL "https://www.timecamp.com/helper/setdate/today/offline"
-#define CONTACT_SUPPORT_URL "https://www.timecamp.com/kb/contact/?utm_source=timecamp_desktop"
+#define CONTACT_SUPPORT_URL "https://www.timecamp.com/kb/"
 
 #define CONTACT_EMAIL "desktopapp@timecamp.com"
 
