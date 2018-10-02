@@ -19,9 +19,9 @@ before_build:
 
 build_script:
   - cd Output
-  - cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -G "NMake Makefiles" "../"
+  - cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -G "NMake Makefiles JOM" -DCMAKE_MAKE_PROGRAM=C:/Qt/Tools/QtCreator/bin/jom.exe "../"
   - cd ../
-  - cmake --build Output --target TimeCampDesktop -- # build
+  - cmake --build Output --target TimeCampDesktop -- -j 2 # -j is for JOM, for num of cores (AppVeyor has two)
 
 after_build:
   - copy "Output\TimeCampDesktop.exe" "Release\TimeCampDesktop.exe"
